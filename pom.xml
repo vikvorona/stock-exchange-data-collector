@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.sedc</groupId>
+    <artifactId>sedc-main</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <modules>
+        <module>sedc-core</module>
+        <module>sedc-package</module>
+        <module>sedc-historical</module>
+        <module>sedc-forex</module>
+        <module>sedc-quotes</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>com.sedc</groupId>
+                <artifactId>sedc-core</artifactId>
+                <version>0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sedc</groupId>
+                <artifactId>sedc-forex</artifactId>
+                <version>0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sedc</groupId>
+                <artifactId>sedc-historical</artifactId>
+                <version>0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sedc</groupId>
+                <artifactId>sedc-quotes</artifactId>
+                <version>0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>RELEASE</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>
