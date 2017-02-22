@@ -16,14 +16,17 @@
         <dependency>
             <groupId>com.sedc</groupId>
             <artifactId>sedc-forex</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sedc</groupId>
             <artifactId>sedc-historical</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sedc</groupId>
             <artifactId>sedc-quotes</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
