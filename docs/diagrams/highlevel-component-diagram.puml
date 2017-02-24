@@ -1,0 +1,60 @@
+@startuml
+left to right direction
+'top to bottom direction
+
+
+node "Finam" {
+    [Finam historical]
+}
+node "Yahoo" {
+    [Yahoo historical]
+    [Yahoo quote]
+    [Yahoo xchange]
+    [Yahoo sectors]
+    [Yahoo industry]
+}
+
+
+interface CSV
+interface JSON
+
+[Finam historical]-down-> CSV
+[Yahoo historical]-down->JSON
+[Yahoo quote]-down->JSON
+[Yahoo xchange]-down->JSON
+[Yahoo sectors]-down->JSON
+[Yahoo industry]-down->JSON
+
+database "PostgreSQL" {
+  [Stage table]
+  [Filter query]
+  [Mapping query]  
+  [Store]
+}
+
+[Stage table]-down->[Filter query]
+[Filter query]-down->[Mapping query]
+[Mapping query]-down->[Store]
+
+note top of PostgreSQL: database processing workflow
+
+node "JavaApp"{
+  [CSV Loader]
+  [JSON Loader]
+  [Processor]
+  [Writer]
+}
+
+note bottom of JavaApp: java code processing workflow
+
+CSV-down->[CSV Loader]
+JSON-down->[JSON Loader]
+
+[CSV Loader]-down->[Stage table]
+[JSON Loader]-down->[Stage table]
+
+[CSV Loader]-down->[Processor]
+[Processor]-down->[Writer]
+[Writer]-down->[Store]
+
+@enduml
