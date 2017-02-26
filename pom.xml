@@ -12,9 +12,8 @@
     <modules>
         <module>sedc-core</module>
         <module>sedc-package</module>
-        <module>sedc-historical</module>
-        <module>sedc-forex</module>
-        <module>sedc-quotes</module>
+        <module>sedc-api</module>
+        <module>sedc-web</module>
     </modules>
 
     <dependencyManagement>
@@ -82,6 +81,12 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <configuration>
+                        <webXml>src\main\web-app\WEB-INF\web.xml</webXml>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

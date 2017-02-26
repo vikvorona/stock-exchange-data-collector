@@ -15,17 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.sedc</groupId>
-            <artifactId>sedc-forex</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sedc</groupId>
-            <artifactId>sedc-historical</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sedc</groupId>
-            <artifactId>sedc-quotes</artifactId>
+            <artifactId>sedc-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
