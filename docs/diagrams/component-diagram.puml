@@ -1,0 +1,38 @@
+@startuml
+
+node "sedc-package" as package{
+    [shell scripts]
+    [java libraries]
+    [configuration files]
+}
+
+node [sedc-api] as api {
+    [REST API]
+}
+
+node [sedc-core] as core {
+    [database entity objects]
+    [main classes]
+    [processing step classes]
+    [hibernate configuration]
+    [spring configuration]
+}
+
+node [sedc-web] as web{
+    [web-UI]
+}
+
+database [PostgreSQL] as db {
+    [stage tables]
+    [data tables]
+    [system codes table]
+    [system variables table]
+}
+
+core-->db
+api-->db
+api-->core
+package-->core
+web-->core
+
+@enduml
