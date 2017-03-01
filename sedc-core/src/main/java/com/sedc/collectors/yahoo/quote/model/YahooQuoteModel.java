@@ -17,7 +17,7 @@ public class YahooQuoteModel {
     private Double yearHigh;
     private Double marketCapitalization;
     private Double lastTradePriceOnly;
-    private Integer DaysRange;
+    private Integer daysRange;
     private String name;
     private String stockSymbol; //todo: find out what is it
     private Double volume;
