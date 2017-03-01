@@ -5,7 +5,7 @@ import org.springframework.util.StringUtils;
 /**
  * Created by oshulyakov on 3/1/2017.
  */
-public enum FinamPeriods {
+public enum FinamPeriod {
 
     TIK("0"), //TODO: for finam there is another format
     ONE_MINUTE("1"),
@@ -20,16 +20,16 @@ public enum FinamPeriods {
 
     private String value;
 
-    FinamPeriods(String value) {
+    FinamPeriod(String value) {
         this.value = value;
     }
 
-    public static FinamPeriods getInstance(String value) {
+    public static FinamPeriod getInstance(String value) {
 
         if (StringUtils.isEmpty(value))
             return null;
 
-        for (FinamPeriods p : FinamPeriods.values()) {
+        for (FinamPeriod p : FinamPeriod.values()) {
             if (p.getValue().equalsIgnoreCase(value)) {
                 return p;
             }

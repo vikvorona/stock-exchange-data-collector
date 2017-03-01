@@ -16,6 +16,8 @@ public class FinamApiProcessor implements ItemProcessor<FinamApiRecord, FinamApi
     @Override
     public FinamApiRecord process(FinamApiRecord item) throws Exception {
         LOG.info("Processing item=" + item);
+
+        //TODO: make login here
         return item;
     }
 }

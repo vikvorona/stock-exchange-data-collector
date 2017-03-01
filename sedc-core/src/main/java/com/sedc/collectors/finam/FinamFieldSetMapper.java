@@ -24,7 +24,7 @@ public class FinamFieldSetMapper implements FieldSetMapper<FinamApiRecord> {
         record.setTicker(fieldSet.readString(i));
 
         String period = fieldSet.readString(++i);
-        record.setPeriod(FinamPeriods.getInstance(period));
+        record.setPeriod(FinamPeriod.getInstance(period));
 
         String date = fieldSet.readString(++i);
         try {
