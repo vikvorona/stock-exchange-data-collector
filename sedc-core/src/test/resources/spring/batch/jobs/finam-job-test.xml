@@ -8,14 +8,11 @@
 
     <!--read the data from finam api-->
     <bean id="finamReader" class="org.springframework.batch.item.file.FlatFileItemReader">
-        <property name="resource" value="classpath:com/sedc/collectors/finam/sample-data.csv"/>
         <property name="lineMapper" ref="finamLineMapper"/>
     </bean>
 
     <!--filter & calculate the data-->
-    <bean id="finamProcessor" class="com.sedc.collectors.finam.FinamApiProcessor">
-        <!--<property name="<name>" value="<value>"/>-->
-    </bean>
+    <bean id="finamProcessor" class="com.sedc.collectors.finam.FinamApiProcessor"/>
 
     <!--store the data-->
     <bean id="finamWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
