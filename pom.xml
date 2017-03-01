@@ -9,25 +9,85 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <properties>
+        <jdk.version>1.8</jdk.version>
+        <spring.version>4.3.6.RELEASE</spring.version>
+        <spring.batch.version>3.0.7.RELEASE</spring.batch.version>
+        <lombok.version>1.16.14</lombok.version>
+        <junit.version>4.12</junit.version>
+        <log4j.version>1.2.17</log4j.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- Spring Core -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <!-- Spring jdbc, for database -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <!-- Spring Batch dependencies -->
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-core</artifactId>
+                <version>${spring.batch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-infrastructure</artifactId>
+                <version>${spring.batch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Spring Batch unit test -->
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-test</artifactId>
+                <version>${spring.batch.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
     <modules>
         <module>sedc-core</module>
         <module>sedc-package</module>
         <module>sedc-api</module>
         <module>sedc-web</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>RELEASE</version>
-                <scope>test</scope>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <directory>${project.basedir}/target</directory>
@@ -49,43 +109,30 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                </plugin>
-                <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-jar-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-release-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-source-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
                     <configuration>
                         <webXml>src\main\web-app\WEB-INF\web.xml</webXml>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok-maven-plugin</artifactId>
+                    <version>1.16.12.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-idea-plugin</artifactId>
+                    <version>2.2.1</version>
+                    <configuration>
+                        <downloadSources>true</downloadSources>
+                        <downloadJavadocs>true</downloadJavadocs>
                     </configuration>
                 </plugin>
             </plugins>
@@ -95,5 +142,96 @@
     <reporting>
         <outputDirectory>${project.build.directory}/site</outputDirectory>
     </reporting>
+
+    <repositories>
+        <repository>
+            <id>central-mirror</id>
+            <name>Central Repository</name>
+            <layout>default</layout>
+            <url>http://central.maven.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>spring</id>
+            <name>Spring Libs Repository</name>
+            <layout>default</layout>
+            <url>http://repo.spring.io/libs-milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>sonatype</id>
+            <name>Sonatype Releases Repository</name>
+            <layout>default</layout>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>apache</id>
+            <name>Apache Releases Repository</name>
+            <layout>default</layout>
+            <url>https://repository.apache.org/content/repositories/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <name>Maven Plugin Repository</name>
+            <url>http://repo1.maven.org/maven2</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+        </pluginRepository>
+
+        <pluginRepository>
+            <id>spring</id>
+            <name>Spring Plugins Repository</name>
+            <url>http://repo.spring.io/plugins-release</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>
