@@ -13,15 +13,15 @@ import java.util.Date;
  */
 public class FinamApiRecord {
 
-    public String ticker;
-    public FinamPeriod period;
-    public Date date;
-    public Date time;
-    public Double open;
-    public Double high;
-    public Double low;
-    public Double close;
-    public Double volume;
+    private String ticker;
+    private FinamPeriod period;
+    private Date date;
+    private Date time;
+    private Double open;
+    private Double high;
+    private Double low;
+    private Double close;
+    private Double volume;
 
     public String getTicker() {
         return ticker;
