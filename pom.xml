@@ -16,6 +16,7 @@
         <lombok.version>1.16.14</lombok.version>
         <junit.version>4.12</junit.version>
         <log4j.version>1.2.17</log4j.version>
+        <hsqldb.version>2.3.2</hsqldb.version>
     </properties>
 
     <dependencyManagement>
@@ -77,8 +78,30 @@
                 <groupId>org.springframework.batch</groupId>
                 <artifactId>spring-batch-test</artifactId>
                 <version>${spring.batch.version}</version>
+                <scope>test</scope>
             </dependency>
 
+            <!--Test SQL queries-->
+            <dependency>
+                <groupId>com.googlecode.log4jdbc</groupId>
+                <artifactId>log4jdbc</artifactId>
+                <version>1.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.lazyluke</groupId>
+                <artifactId>log4jdbc-remix</artifactId>
+                <version>0.2.7</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- HyperSQL DB -->
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+                <!--TODO: <scope>test</scope>-->
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
