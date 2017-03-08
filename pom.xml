@@ -169,6 +169,7 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.6.1</version>
                     <configuration>
                         <source>${jdk.version}</source>
                         <target>${jdk.version}</target>
@@ -176,6 +177,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
+                    <version>3.0.0</version>
                     <configuration>
                         <webXml>src\main\web-app\WEB-INF\web.xml</webXml>
                     </configuration>
@@ -226,7 +228,6 @@
                     <artifactId>maven-pmd-plugin</artifactId>
                     <version>3.7</version>
                     <configuration>
-                        <linkXref>true</linkXref>
                         <sourceEncoding>utf-8</sourceEncoding>
                         <minimumTokens>100</minimumTokens>
                         <targetJdk>1.8</targetJdk>
