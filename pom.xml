@@ -159,6 +159,10 @@
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+            </plugin>
         </plugins>
 
         <pluginManagement>
@@ -239,6 +243,27 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>3.0.4</version>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/findbugs</outputDirectory>
+                        <xmlOutput>true</xmlOutput>
+                        <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+                        <xmlOutputDirectory>${project.build.directory}/findbugs</xmlOutputDirectory>
+                        <failOnError>false</failOnError>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>findbug</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -262,6 +287,17 @@
                         <reports>
                             <report>pmd</report>
                             <report>cpd</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>check</report>
                         </reports>
                     </reportSet>
                 </reportSets>
