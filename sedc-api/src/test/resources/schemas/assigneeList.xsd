@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="assigneeList" type="assigneeList"/>
+  <xs:complexType name="assignedByType">
+    <xs:sequence>
+      <xs:element type="userGroupRefType" name="userGroupRef" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="userGroupRefType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="name" use="optional"/>
+        <xs:attribute type="xs:string" name="url" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="assignee">
+    <xs:sequence>
+      <xs:element type="assignedByType" name="assignedBy"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="login" use="optional"/>
+    <xs:attribute type="xs:string" name="isIndividualAssignee" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="assigneeList">
+    <xs:sequence>
+      <xs:element type="assignees" name="assignees"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="groupsUrl"/>
+    <xs:attribute type="xs:string" name="individualsUrl"/>
+  </xs:complexType>
+  <xs:complexType name="assignees">
+    <xs:sequence>
+      <xs:element type="assignee" name="assignee" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="user" type="user"/>
+  <xs:complexType name="user">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="login"/>
+        <xs:attribute type="xs:string" name="fullName"/>
+        <xs:attribute type="xs:string" name="lastAccess"/>
+        <xs:attribute type="xs:string" name="groupsUrl"/>
+        <xs:attribute type="xs:string" name="rolesUrl"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>
