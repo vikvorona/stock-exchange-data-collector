@@ -9,6 +9,8 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>stock-exchange-data-collector</name>
+
     <properties>
         <jdk.version>1.8</jdk.version>
         <spring.version>4.3.6.RELEASE</spring.version>
@@ -251,7 +253,6 @@
                     <configuration>
                         <outputDirectory>${project.build.directory}/findbugs</outputDirectory>
                         <xmlOutput>true</xmlOutput>
-                        <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
                         <xmlOutputDirectory>${project.build.directory}/findbugs</xmlOutputDirectory>
                         <failOnError>false</failOnError>
                     </configuration>
@@ -278,7 +279,6 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.7</version>
                 <configuration>
-                    <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <minimumTokens>100</minimumTokens>
                     <targetJdk>1.8</targetJdk>
