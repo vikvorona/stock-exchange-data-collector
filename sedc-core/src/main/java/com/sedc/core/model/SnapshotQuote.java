@@ -61,7 +61,7 @@ public class SnapshotQuote {
         return sq_id;
     }
 
-    public void setSqId(Long id) {
+    public void setSqId(Long sq_id) {
         this.sq_id = sq_id;
     }
 
@@ -199,7 +199,7 @@ public class SnapshotQuote {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(sq_id);
     }
 
     @Override
