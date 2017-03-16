@@ -1,7 +1,5 @@
 package com.sedc.core.model;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -13,7 +11,7 @@ public class SnapshotQuote {
 
 
     private Long sq_id;
-    private Long scei_id;
+    private SourceCenterEngineInstance scei;
     private Date business_date;
     private Long sym_id;
     private Double avg_daily_volume;
@@ -35,24 +33,6 @@ public class SnapshotQuote {
         this.sq_id = sq_id;
     }
 
-    public SnapshotQuote(Long sq_id, Long scei_id, Date business_date, Long sym_id, Double avg_daily_volume, Double change, Double days_low, Double days_high, Double years_low, Double years_high, Double market_capitalization, Double last_trade_price, Double days_range, String name, Long volume;) {
-        this.sq_id = sq_id;
-        this.scei_id = scei_id;
-        this.business_date = business_date;
-        this.sym_id = sym_id;
-        this.avg_daily_volume = avg_daily_volume;
-        this.change = change;
-        this.days_low = days_low;
-        this.days_high = days_high;
-        this.years_low = years_low;
-        this.years_high = years_high;
-        this.market_capitalization = market_capitalization;
-        this.last_trade_price = last_trade_price;
-        this.days_range = days_range;
-        this.name = name;
-        this.volume = volume;
-    }
-
     @Id
     @SequenceGenerator(name = "SNAPSHOT_QUOTE_GEN", sequenceName = "s_snapshot_quote_pk")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SNAPSHOT_QUOTE_GEN")
@@ -65,13 +45,14 @@ public class SnapshotQuote {
         this.sq_id = sq_id;
     }
 
-    @Column(name = "SCEI_ID")
-    public Long getSceiId() {
-        return scei_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SCEI_ID")
+    public SourceCenterEngineInstance getScei) {
+        return scei;
     }
 
-    public void setSceiId(Long scei_id) {
-        this.scei_id = scei_id;
+    public void setSceiId(SourceCenterEngineInstance scei) {
+        this.scei = scei;
     }
 
     @Column(name = "BUSINESS_DATE")

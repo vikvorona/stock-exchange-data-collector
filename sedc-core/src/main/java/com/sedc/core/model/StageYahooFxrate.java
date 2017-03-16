@@ -1,6 +1,5 @@
 package com.sedc.core.model;
 
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -28,19 +27,6 @@ public class StageYahooFxrate {
 
     public StageYahooFxrate(Long syx_id) {
         this.syx_id = syx_id;
-    }
-
-    public StageYahooFxrate(Long syx_id, Long hash, Long id, String name, Double rate, Date date, Long time, Double ask, Long bid, Long sym_id) {
-        this.syx_id = syx_id;
-        this.hash = hash;
-        this.id = id;
-        this.name = name;
-        this.rate = rate;
-        this.date = date;
-        this.time = time;
-        this.ask = ask;
-        this.bid = bid;
-        this.sym_id = sym_id;
     }
 
     @Id
