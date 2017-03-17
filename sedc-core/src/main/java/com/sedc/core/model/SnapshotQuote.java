@@ -10,27 +10,27 @@ import java.util.Objects;
 public class SnapshotQuote {
 
 
-    private Long sq_id;
+    private Long sqId;
     private SourceCenterEngineInstance scei;
-    private Date business_date;
-    private Long sym_id;
-    private Double avg_daily_volume;
+    private Date businessDate;
+    private Symbol symId;
+    private Double avgDailyVolume;
     private Double change;
-    private Double days_low;
-    private Double days_high;
-    private Double years_low;
-    private Double years_high;
-    private Double market_capitalization;
-    private Double last_trade_price;
-    private Double days_range;
+    private Double daysLow;
+    private Double daysHigh;
+    private Double yearsLow;
+    private Double yearsHigh;
+    private Double marketCapitalization;
+    private Double lastTradePrice;
+    private Double daysRange;
     private String name;
     private Long volume;
 
     public SnapshotQuote() {
     }
 
-    public SnapshotQuote(Long sq_id) {
-        this.sq_id = sq_id;
+    public SnapshotQuote(Long sqId) {
+        this.sqId = sqId;
     }
 
     @Id
@@ -38,11 +38,11 @@ public class SnapshotQuote {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SNAPSHOT_QUOTE_GEN")
     @Column(name = "SQ_ID")
     public Long getSqId() {
-        return sq_id;
+        return sqId;
     }
 
-    public void setSqId(Long sq_id) {
-        this.sq_id = sq_id;
+    public void setSqId(Long sqId) {
+        this.sqId = sqId;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,28 +56,29 @@ public class SnapshotQuote {
     }
 
     @Column(name = "BUSINESS_DATE")
-    public Date getBusinessDate() { return business_date; }
+    public Date getBusinessDate() { return businessDate; }
 
-    public void setBusinessDate(Date business_date) {
-        this.business_date = business_date;
+    public void setBusinessDate(Date businessDate) {
+        this.businessDate = businessDate;
     }
 
-    @Column(name = "SYM_ID")
-    public Long getSymId() {
-        return sym_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SYM_ID")
+    public Symbol getSymId() {
+        return symId;
     }
 
-    public void setSymId(Long sym_id) {
-        this.sym_id = sym_id;
+    public void setSymId(Symbol symId) {
+        this.symId = symId;
     }
 
     @Column(name = "AVG_DAILY_VOLUME")
     public Long getAvgDailyVolume() {
-        return avg_daily_volume;
+        return avgDailyVolume;
     }
 
-    public void setAvgDailyVolume(Long avg_daily_volume) {
-        this.avg_daily_volume = avg_daily_volume;
+    public void setAvgDailyVolume(Long avgDailyVolume) {
+        this.avgDailyVolume = avgDailyVolume;
     }
 
     @Column(name = "CHANGE")
@@ -91,65 +92,65 @@ public class SnapshotQuote {
 
     @Column(name = "DAYS_LOW")
     public Double getDaysL() {
-        return days_low;
+        return daysLow;
     }
 
-    public void setDaysL(Double days_low) {
-        this.days_low = days_low;
+    public void setDaysL(Double daysLow) {
+        this.daysLow = daysLow;
     }
 
     @Column(name = "DAYS_HIGH")
     public Double getDaysH() {
-        return days_high;
+        return daysHigh;
     }
 
-    public void setDaysH(Double days_high) {
-        this.days_high = days_high;
+    public void setDaysH(Double daysHigh) {
+        this.daysHigh = daysHigh;
     }
 
     @Column(name = "YEARS_LOW")
     public Double getYearsL() {
-        return years_low;
+        return yearsLow;
     }
 
-    public void setYearsL(Double years_low) {
-        this.years_low = years_low;
+    public void setYearsL(Double yearsLow) {
+        this.yearsLow = yearsLow;
     }
 
     @Column(name = "YEARS_HIGH")
     public Double getYearsH() {
-        return years_high;
+        return yearsHigh;
     }
 
-    public void setYearsH(Double years_high) {
-        this.years_high = years_high;
+    public void setYearsH(Double yearsHigh) {
+        this.yearsHigh = yearsHigh;
     }
 
     @Column(name = "MARKET_CAPITALIZATION")
     public Double getMarketCapitalization() {
-        return market_capitalization;
+        return marketCapitalization;
     }
 
-    public void setMarketCapitalization(Double market_capitalization) {
+    public void setMarketCapitalization(Double marketCapitalization) {
         this.market_capitalization = market_capitalization;
     }
 
     @Column(name = "LAST_TRADE_PRICE")
     public Double getLastTradePrice() {
-        return last_trade_price;
+        return lastTradePrice;
     }
 
-    public void setLastTradePrice(Double last_trade_price) {
-        this.last_trade_price = last_trade_price;
+    public void setLastTradePrice(Double lastTradePrice) {
+        this.lastTradePrice = lastTradePrice;
     }
 
     @Column(name = "DAYS_RANGE")
     public Double getDaysRange() {
-        return days_range;
+        return daysRange;
     }
 
-    public void setDaysRange(Double days_range) {
-        this.days_range = days_range;
+    public void setDaysRange(Double daysRange) {
+        this.daysRange = daysRange;
     }
 
     @Column(name = "NAME")
@@ -175,16 +176,16 @@ public class SnapshotQuote {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SnapshotQuote that = (SnapshotQuote) o;
-        return Objects.equals(sq_id, that.sq_id);
+        return name.equals(that.name) && businessDate.equals(that.businessDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sq_id);
+        return name.hashCode()
     }
 
     @Override
     public String toString() {
-        return name;
+        return name + " date: " + businessDate + " change: " + change + " volume: " + volume;
     }
 }

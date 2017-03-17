@@ -10,23 +10,22 @@ import java.util.Objects;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class StageYahooFxrate {
 
-
-    private Long syx_id;
+    private Long syxId;
     private Long hash;
     private Long id;
     private String name;
     private Double rate;
     private Date date;
-    private Long time;
+    private Date time;
     private Double ask;
     private Long bid;
-    private Long sym_id;
+    private Symbol symId;
 
     public StageYahooFxrate() {
     }
 
-    public StageYahooFxrate(Long syx_id) {
-        this.syx_id = syx_id;
+    public StageYahooFxrate(Long syxId) {
+        this.syxId = syxId;
     }
 
     @Id
@@ -34,11 +33,11 @@ public class StageYahooFxrate {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STAGE_YAHOO_FXRATE_GEN")
     @Column(name = "SYX_ID")
     public Long getSyxId() {
-        return syx_id;
+        return syxId;
     }
 
-    public void setSyxId(Long syx_id) {
-        this.syx_id = syx_id;
+    public void setSyxId(Long syxId) {
+        this.syxId = syxId;
     }
 
     @Column(name = "HASH")
@@ -111,13 +110,14 @@ public class StageYahooFxrate {
         this.bid = bid;
     }
 
-    @Column(name = "SYM_ID")
-    public Long getSymId() {
-        return sym_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SYM_ID")
+    public Symbol getSymId() {
+        return symId;
     }
 
-    public void setSymId(Long sym_id) {
-        this.sym_id = sym_id;
+    public void setSymId(Symbol symId) {
+        this.symId = symId;
     }
 
     @Override
@@ -125,16 +125,16 @@ public class StageYahooFxrate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StageYahooFxrate that = (StageYahooFxrate) o;
-        return Objects.equals(syx_id, that.syx_id);
+        return name.equals(that.name) && date.equals(that.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(syx_id);
+        name.hashCode();
     }
 
     @Override
     public String toString() {
-        return name;
+        return name + " date: " + date + " rate: " + rate;
     }
 }
