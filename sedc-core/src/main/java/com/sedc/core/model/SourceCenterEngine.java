@@ -3,6 +3,7 @@ package com.sedc.core.model;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.lang.Object;
 import java.util.Date;
 
 @Entity
@@ -10,12 +11,19 @@ import java.util.Date;
 @Table(name = "SOURCE_CENTER_ENGINE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class SourceCenterEngine {
+
     private Long id;
+
     private SourceCenter sourceCenter;
+
     private String name;
+
     private CodeGeneric region;
+
     private Long currentScei;
+
     private Date lastUpdateTime;
+
     private Boolean activeFlag;
 
     public SourceCenterEngine() {
@@ -25,8 +33,9 @@ public class SourceCenterEngine {
         this.id = id;
     }
 
-    public SourceCenterEngine(Long id, SourceCenter sourceCenter, String name, CodeGeneric region,
-                              Long currentScei, Date lastUpdateTime, Boolean activeFlag) {
+    public SourceCenterEngine(Long id, SourceCenter sourceCenter, String name,
+                              CodeGeneric region, Long currentScei,
+                              Date lastUpdateTime, Boolean activeFlag) {
         this.id = id;
         this.sourceCenter = sourceCenter;
         this.name = name;
@@ -37,8 +46,10 @@ public class SourceCenterEngine {
     }
 
     @Id
-    @SequenceGenerator(name = "SOURCE_CENTER_ENGINE_GEN", sequenceName = "s_source_center_engine_pk")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOURCE_CENTER_ENGINE_GEN")
+    @SequenceGenerator(name = "SOURCE_CENTER_ENGINE_GEN",
+            sequenceName = "s_source_center_engine_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "SOURCE_CENTER_ENGINE_GEN")
     @Column(name = "SCE_ID")
     public Long getId() {
         return id;
@@ -106,16 +117,22 @@ public class SourceCenterEngine {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public synchronized boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SourceCenterEngine that = (SourceCenterEngine) o;
-        return name.equals(that.name) && lastUpdateTime.equals(that.lastUpdateTime);
+        return name.equals(that.name)
+                && lastUpdateTime.equals(that.lastUpdateTime);
     }
 
     @Override
-    public int hashCode() {
-        return name.hashCode() * 37 + lastUpdateTime.hashCode();
+    public synchronized int hashCode() {
+        int hash = 37;
+        return name.hashCode() * hash + lastUpdateTime.hashCode();
     }
 
     @Override
