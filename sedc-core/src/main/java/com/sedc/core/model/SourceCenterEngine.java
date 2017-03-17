@@ -1,8 +1,9 @@
 package com.sedc.core.model;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @Cacheable
@@ -85,7 +86,7 @@ public class SourceCenterEngine {
         this.currentScei = currentScei;
     }
 
-    @Column(name = "LAST_UPDATE_TIME")
+    @Column(name = "LAST_UPDATE_TM")
     public Date getLastUpdateTime() {
         return lastUpdateTime;
     }
@@ -95,6 +96,7 @@ public class SourceCenterEngine {
     }
 
     @Column(name = "ACTIVE_FLAG")
+    @Type(type = "yes_no")
     public Boolean getActiveFlag() {
         return activeFlag;
     }
@@ -108,12 +110,12 @@ public class SourceCenterEngine {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SourceCenterEngine that = (SourceCenterEngine) o;
-        return Objects.equals(id, that.id);
+        return name.equals(that.name) && lastUpdateTime.equals(that.lastUpdateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return name.hashCode() * 37 + lastUpdateTime.hashCode();
     }
 
     @Override
