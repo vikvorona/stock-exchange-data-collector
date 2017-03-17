@@ -3,7 +3,6 @@ package com.sedc.core.model;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.lang.Object;
 import java.util.Date;
 
 @Entity
