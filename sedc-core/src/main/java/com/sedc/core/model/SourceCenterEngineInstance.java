@@ -2,19 +2,26 @@ package com.sedc.core.model;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Objects;
+
 
 @Entity
 @Cacheable
 @Table(name = "SOURCE_CENTER_ENGINE_INSTANCE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class SourceCenterEngineInstance {
+
     private Long id;
+
     private SourceCenterEngine sourceCenterEngine;
+
     private Date businessDate;
+
     private CodeGeneric codeGeneric;
+
     private Long detailStateId;
+
     private Date startTime;
+
     private Date endTime;
 
     public SourceCenterEngineInstance() {
@@ -24,8 +31,13 @@ public class SourceCenterEngineInstance {
         this.id = id;
     }
 
-    public SourceCenterEngineInstance(Long id, SourceCenterEngine sourceCenterEngine, Date businessDate,
-                                      CodeGeneric codeGeneric, Long detailStateId, Date startTime, Date endTime) {
+    public SourceCenterEngineInstance(Long id,
+                                      SourceCenterEngine sourceCenterEngine,
+                                      Date businessDate,
+                                      CodeGeneric codeGeneric,
+                                      Long detailStateId,
+                                      Date startTime,
+                                      Date endTime) {
         this.id = id;
         this.sourceCenterEngine = sourceCenterEngine;
         this.businessDate = businessDate;
@@ -36,8 +48,10 @@ public class SourceCenterEngineInstance {
     }
 
     @Id
-    @SequenceGenerator(name = "SOURCE_CENTER_ENGINE_INSTANCE_GEN", sequenceName = "s_source_center_engine_instance_pk")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOURCE_CENTER_ENGINE_INSTANCE_GEN")
+    @SequenceGenerator(name = "SOURCE_CENTER_ENGINE_INSTANCE_GEN",
+            sequenceName = "s_source_center_engine_instance_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "SOURCE_CENTER_ENGINE_INSTANCE_GEN")
     @Column(name = "SCEI_ID")
     public Long getId() {
         return id;
@@ -104,7 +118,7 @@ public class SourceCenterEngineInstance {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public synchronized boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -112,16 +126,20 @@ public class SourceCenterEngineInstance {
             return false;
         }
         SourceCenterEngineInstance that = (SourceCenterEngineInstance) o;
-        return Objects.equals(id, that.id);
+        return sourceCenterEngine.getName()
+                .equals(that.sourceCenterEngine.getName()) &&
+                codeGeneric.getName().equals(that.codeGeneric.getName()) &&
+                businessDate.equals(that.businessDate);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public synchronized int hashCode() {
+        return sourceCenterEngine.getName().hashCode() +
+                codeGeneric.getName().hashCode() + businessDate.hashCode();
     }
 
     @Override
     public String toString() {
-        return "source center: " + sourceCenterEngine.getName() + " code: " + codeGeneric.getName() + " date: " + businessDate;
+        return "code: " + codeGeneric.getName() + " date: " + businessDate;
     }
 }
