@@ -1,3 +1,22 @@
 CREATE TABLE STAGE_FINAM_HISTORICAL (
+                  SFH_ID        NUMERIC(18) NOT NULL,
+                  HASH          NUMERIC(18) NOT NULL,
+                  SYMBOL        NUMERIC(18) NOT NULL,
+                  SYM_ID        NUMERIC(18) NOT NULL,
+                  PER           NUMERIC(18) NOT NULL,
+                  DATE          NUMERIC(18) NOT NULL,
+                  TIME          NUMERIC(18) NOT NULL,
+                  OPEN          NUMERIC(18) NOT NULL,
+                  HIGH          NUMERIC(18) NOT NULL,
+                  LOW           NUMERIC(18) NOT NULL,
+                  CLOSE         NUMERIC(18) NOT NULL,
+                  VOLUME        NUMERIC(18) NOT NULL,
+                  ACTIVE_FLAG       CHAR(1) DEFAULT 'Y' NOT NULL,
+                  ACTIVE_REASON     CHAR(1) DEFAULT 'X' NOT NULL,
 
+CONSTRAINT IPK_STAGE_FINAM_HISTORICAL PRIMARY KEY (SFH_ID) DEFAULT nextval('S_STAGE_FINAM_HISTORICAL_PK')
 ) TABLESPACE GENERAL_INDEX;
+
+CREATE UNIQUE INDEX IUK_STAGE_FINAM_HISTORICAL_NAME ON STAGE_FINAM_HISTORICAL (TYPE, NAME) TABLESPACE GENERAL_INDEX;
+
+ALTER TABLE STAGE_FINAM_HISTORICAL ADD ( CHECK (ACTIVE_FLAG in ('Y','N') );
