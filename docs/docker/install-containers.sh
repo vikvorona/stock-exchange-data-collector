@@ -36,7 +36,7 @@ POSTGRES_PASSWORD="postgres"
 POSTGRES_DB="postgres"
 
 docker run --name postgres-server -t \
-      -p ${DB_SERVER_PORT}:5423 \
+      -p ${DB_SERVER_PORT}:5432 \
       -e POSTGRES_USER=${POSTGRES_USER} \
       -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
       -e POSTGRES_DB=${POSTGRES_DB} \
@@ -74,7 +74,7 @@ docker run --name zabbix-web-nginx-pgsql -t \
       -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
       -e POSTGRES_DB=${POSTGRES_DB} \
       --link postgres-server:postgres \
-      --link zabbix-server-mysql:zabbix-server \
+      --link zabbix-server-pgsql:zabbix-server \
       -p 8020:8020 \
       -v /etc/ssl/nginx:/etc/ssl/nginx:ro \
       -d zabbix/zabbix-web-nginx-pgsql:latest
