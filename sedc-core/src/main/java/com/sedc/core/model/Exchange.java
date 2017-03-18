@@ -1,36 +1,36 @@
 package com.sedc.core.model;
 
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
 @Cacheable
-@Table(name = "SOURCE_CENTER")
+@Table(name = "EXCHANGE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class SourceCenter {
+public class Exchange {
 
     private Long id;
     private String name;
     private String description;
+    private String country;
+    private CodeGeneric region;
+    private Integer timeZone;
     private Timestamp lastUpdateTm;
-    private Boolean activeFlag;
 
-    public SourceCenter() {
+    public Exchange() {
     }
 
-    public SourceCenter(Long id) {
+    public Exchange(Long id) {
         this.id = id;
     }
 
     @Id
-    @SequenceGenerator(name = "SOURCE_CENTER_GEN", sequenceName = "S_SOURCE_CENTER_PK")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOURCE_CENTER_GEN")
-    @Column(name = "SC_ID")
+    @SequenceGenerator(name = "EXCHANGE_GEN", sequenceName = "s_exchange_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EXCHANGE_GEN")
+    @Column(name = "EX_ID")
     public Long getId() {
         return id;
     }
@@ -57,6 +57,34 @@ public class SourceCenter {
         this.description = description;
     }
 
+    @Column(name = "COUNTRY")
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "REGION_CG_ID")
+    public CodeGeneric getRegion() {
+        return region;
+    }
+
+    public void setRegion(CodeGeneric region) {
+        this.region = region;
+    }
+
+    @Column(name = "TIMEZONE_UTC_DIFF")
+    public Integer getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(Integer timeZone) {
+        this.timeZone = timeZone;
+    }
+
     @Column(name = "LAST_UPDATE_TM")
     public Timestamp getLastUpdateTm() {
         return lastUpdateTm;
@@ -66,46 +94,32 @@ public class SourceCenter {
         this.lastUpdateTm = lastUpdateTm;
     }
 
-    @Column(name = "ACTIVE_FLAG")
-    @Type(type = "yes_no")
-    public Boolean getActiveFlag() {
-        return activeFlag;
-    }
-
-    public void setActiveFlag(Boolean activeFlag) {
-        this.activeFlag = activeFlag;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        SourceCenter that = (SourceCenter) o;
+        Exchange exchange = (Exchange) o;
 
         return new EqualsBuilder()
-                .append(id, that.id)
-                .append(name, that.name)
-                .append(description, that.description)
-                .append(lastUpdateTm, that.lastUpdateTm)
-                .append(activeFlag, that.activeFlag)
+                .append(name, exchange.name)
+                .append(country, exchange.country)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(id)
                 .append(name)
-                .append(description)
-                .append(lastUpdateTm)
-                .append(activeFlag)
+                .append(country)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "SourceCenter{" + "name=" + name + '}';
+        return "Exchange{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }
