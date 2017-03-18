@@ -3,7 +3,7 @@
 HOST_IP=$(hostname -I | awk '{print $1}')
 
 # Install Portainer
-docker run -d -p 8000:8000 --memory="100m" \
+docker run -d -p 9000:9000 --memory="100m" \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --restart=unless-stopped \
     --name=portainer \
@@ -16,7 +16,7 @@ docker run -d -p 80:80 -p 443:443 --memory="100m" \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --restart=unless-stopped \
     --name=nginx \
-    nginx/nginx
+    nginx
 
 echo "Nginx installed in Docker, ports 80,443"
 
