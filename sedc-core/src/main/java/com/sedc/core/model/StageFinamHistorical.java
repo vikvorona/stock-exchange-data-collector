@@ -9,7 +9,7 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class StageFinamHistorical {
 
-    private Long sfhId;
+    private Long id;
     private Long hash;
     private Symbol symbol;
     private String ticket;
@@ -27,20 +27,20 @@ public class StageFinamHistorical {
     public StageFinamHistorical() {
     }
 
-    public StageFinamHistorical(Long sfhId) {
-        this.sfhId = sfhId;
+    public StageFinamHistorical(Long id) {
+        this.id = id;
     }
 
     @Id
     @SequenceGenerator(name = "STAGE_FINAM_HISTORICAL_GEN", sequenceName = "S_STAGE_FINAM_HISTORICAL_PK")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STAGE_FINAM_HISTORICAL_GEN")
     @Column(name = "SFH_ID")
-    public Long getSfhId() {
-        return sfhId;
+    public Long getId() {
+        return id;
     }
 
-    public void setSfhId(Long sfhId) {
-        this.sfhId = sfhId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Column(name = "HASH")

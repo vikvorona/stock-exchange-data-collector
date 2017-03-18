@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class SourceCenter {
 
-    private Long scId;
+    private Long id;
     private String name;
     private String description;
     private Timestamp lastUpdateTm;
@@ -23,20 +23,20 @@ public class SourceCenter {
     public SourceCenter() {
     }
 
-    public SourceCenter(Long scId) {
-        this.scId = scId;
+    public SourceCenter(Long id) {
+        this.id = id;
     }
 
     @Id
     @SequenceGenerator(name = "SOURCE_CENTER_GEN", sequenceName = "S_SOURCE_CENTER_PK")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOURCE_CENTER_GEN")
     @Column(name = "SC_ID")
-    public Long getScId() {
-        return scId;
+    public Long getId() {
+        return id;
     }
 
-    public void setScId(Long scId) {
-        this.scId = scId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Column(name = "NAME")
@@ -85,7 +85,7 @@ public class SourceCenter {
         SourceCenter that = (SourceCenter) o;
 
         return new EqualsBuilder()
-                .append(scId, that.scId)
+                .append(id, that.id)
                 .append(name, that.name)
                 .append(description, that.description)
                 .append(lastUpdateTm, that.lastUpdateTm)
@@ -96,7 +96,7 @@ public class SourceCenter {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(scId)
+                .append(id)
                 .append(name)
                 .append(description)
                 .append(lastUpdateTm)
