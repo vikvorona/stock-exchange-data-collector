@@ -1,5 +1,7 @@
 package com.sedc.core.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -116,26 +118,38 @@ public class SourceCenterEngine {
     }
 
     @Override
-    public synchronized boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
         SourceCenterEngine that = (SourceCenterEngine) o;
-        return name.equals(that.name)
-                && lastUpdateTime.equals(that.lastUpdateTime);
+
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(sourceCenter, that.sourceCenter)
+                .append(name, that.name)
+                .append(region, that.region)
+                .isEquals();
     }
 
     @Override
-    public synchronized int hashCode() {
-        int hash = 37;
-        return name.hashCode() * hash + lastUpdateTime.hashCode();
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(sourceCenter)
+                .append(name)
+                .append(region)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return name;
+        return "SourceCenterEngine{" +
+                "id=" + id +
+                ", sourceCenter=" + sourceCenter +
+                ", name='" + name + '\'' +
+                ", region=" + region +
+                '}';
     }
 }
