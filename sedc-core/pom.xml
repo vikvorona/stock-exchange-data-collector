@@ -58,9 +58,10 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.3.11.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
 
+        <!-- TEST DEPENDENCIES -->
 
         <dependency>
             <groupId>junit</groupId>
@@ -96,14 +97,5 @@
             <!--TODO: <scope>test</scope>-->
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
