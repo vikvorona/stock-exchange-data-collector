@@ -1,5 +1,9 @@
 package com.sedc.core.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -16,9 +20,9 @@ public class SourceCenterEngineInstance {
 
     private Date businessDate;
 
-    private CodeGeneric codeGeneric;
+    private CodeGeneric state;
 
-    private Long detailStateId;
+    private CodeGeneric detailState;
 
     private Date startTime;
 
@@ -34,15 +38,15 @@ public class SourceCenterEngineInstance {
     public SourceCenterEngineInstance(Long id,
                                       SourceCenterEngine sourceCenterEngine,
                                       Date businessDate,
-                                      CodeGeneric codeGeneric,
-                                      Long detailStateId,
+                                      CodeGeneric state,
+                                      CodeGeneric detailState,
                                       Date startTime,
                                       Date endTime) {
         this.id = id;
         this.sourceCenterEngine = sourceCenterEngine;
         this.businessDate = businessDate;
-        this.codeGeneric = codeGeneric;
-        this.detailStateId = detailStateId;
+        this.state = state;
+        this.detailState = detailState;
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -82,21 +86,21 @@ public class SourceCenterEngineInstance {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SCEI_STATE_CG_ID")
-    public CodeGeneric getCodeGeneric() {
-        return codeGeneric;
+    public CodeGeneric getState() {
+        return state;
     }
 
-    public void setCodeGeneric(CodeGeneric codeGeneric) {
-        this.codeGeneric = codeGeneric;
+    public void setState(CodeGeneric state) {
+        this.state = state;
     }
 
     @Column(name = "SCEI_DETAIL_STATE_CG_ID")
-    public Long getDetailStateId() {
-        return detailStateId;
+    public CodeGeneric getDetailState() {
+        return detailState;
     }
 
-    public void setDetailStateId(Long detailStateId) {
-        this.detailStateId = detailStateId;
+    public void setDetailState(CodeGeneric detailState) {
+        this.detailState = detailState;
     }
 
     @Column(name = "START_TM")
@@ -118,28 +122,35 @@ public class SourceCenterEngineInstance {
     }
 
     @Override
-    public synchronized boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
         SourceCenterEngineInstance that = (SourceCenterEngineInstance) o;
-        return sourceCenterEngine.getName()
-                .equals(that.sourceCenterEngine.getName()) &&
-                codeGeneric.getName().equals(that.codeGeneric.getName()) &&
-                businessDate.equals(that.businessDate);
+
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(sourceCenterEngine, that.sourceCenterEngine)
+                .append(businessDate, that.businessDate)
+                .isEquals();
     }
 
     @Override
-    public synchronized int hashCode() {
-        return sourceCenterEngine.getName().hashCode() +
-                codeGeneric.getName().hashCode() + businessDate.hashCode();
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(sourceCenterEngine)
+                .append(businessDate)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "code: " + codeGeneric.getName() + " date: " + businessDate;
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("sourceCenterEngine", sourceCenterEngine)
+                .append("businessDate", businessDate)
+                .toString();
     }
 }
