@@ -1,5 +1,8 @@
 package com.sedc.core.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -11,19 +14,33 @@ public class SnapshotQuote {
 
 
     private Long sqId;
+
     private SourceCenterEngineInstance scei;
+
     private Date businessDate;
+
     private Symbol symId;
+
     private Double avgDailyVolume;
+
     private Double change;
+
     private Double daysLow;
+
     private Double daysHigh;
+
     private Double yearsLow;
+
     private Double yearsHigh;
+
     private Double marketCapitalization;
+
     private Double lastTradePrice;
+
     private Double daysRange;
+
     private String name;
+
     private Long volume;
 
     public SnapshotQuote() {
@@ -34,8 +51,10 @@ public class SnapshotQuote {
     }
 
     @Id
-    @SequenceGenerator(name = "SNAPSHOT_QUOTE_GEN", sequenceName = "s_snapshot_quote_pk")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SNAPSHOT_QUOTE_GEN")
+    @SequenceGenerator(name = "SNAPSHOT_QUOTE_GEN",
+            sequenceName = "s_snapshot_quote_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "SNAPSHOT_QUOTE_GEN")
     @Column(name = "SQ_ID")
     public Long getSqId() {
         return sqId;
@@ -56,7 +75,9 @@ public class SnapshotQuote {
     }
 
     @Column(name = "BUSINESS_DATE")
-    public Date getBusinessDate() { return businessDate; }
+    public Date getBusinessDate() {
+        return businessDate;
+    }
 
     public void setBusinessDate(Date businessDate) {
         this.businessDate = businessDate;
@@ -172,20 +193,38 @@ public class SnapshotQuote {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SnapshotQuote that = (SnapshotQuote) o;
-        return name.equals(that.name) && businessDate.equals(that.businessDate) && scei.getId().equals(that.scei.getId());
+    public boolean equals(Object object) {
+        if (this == object) return true;
+
+        if (object == null || getClass() != object.getClass()) return false;
+
+        SnapshotQuote that = (SnapshotQuote) object;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(object))
+                .append(scei, that.scei)
+                .append(businessDate, that.businessDate)
+                .append(name, that.name)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode() + businessDate.hashCode() + scei.getId().hashCode();
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(scei)
+                .append(businessDate)
+                .append(name)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return name + " date: " + businessDate + " change: " + change + " volume: " + volume;
+        return "SnapshotQuote{" +
+                "businessDate=" + businessDate +
+                ", change=" + change +
+                ", name='" + name + '\'' +
+                ", volume=" + volume +
+                '}';
     }
 }

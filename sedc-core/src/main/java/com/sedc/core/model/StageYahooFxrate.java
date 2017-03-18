@@ -1,5 +1,7 @@
 package com.sedc.core.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -11,14 +13,23 @@ import java.util.Date;
 public class StageYahooFxrate {
 
     private Long syxId;
+
     private Long hash;
+
     private Long id;
+
     private String name;
+
     private Double rate;
+
     private Date date;
+
     private Date time;
+
     private Double ask;
+
     private Long bid;
+
     private Symbol symId;
 
     public StageYahooFxrate() {
@@ -29,8 +40,10 @@ public class StageYahooFxrate {
     }
 
     @Id
-    @SequenceGenerator(name = "STAGE_YAHOO_FXRATE_GEN", sequenceName = "s_stage_yahoo_fxrate_pk")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STAGE_YAHOO_FXRATE_GEN")
+    @SequenceGenerator(name = "STAGE_YAHOO_FXRATE_GEN",
+            sequenceName = "s_stage_yahoo_fxrate_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "STAGE_YAHOO_FXRATE_GEN")
     @Column(name = "SYX_ID")
     public Long getSyxId() {
         return syxId;
@@ -121,20 +134,37 @@ public class StageYahooFxrate {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        StageYahooFxrate that = (StageYahooFxrate) o;
-        return name.equals(that.name) && date.equals(that.date) && time.equals(that.time);
+    public boolean equals(Object object) {
+        if (this == object) return true;
+
+        if (object == null || getClass() != object.getClass()) return false;
+
+        StageYahooFxrate that = (StageYahooFxrate) object;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(object))
+                .append(name, that.name)
+                .append(date, that.date)
+                .append(time, that.time)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        name.hashCode() + date.hashCode() + time.hashCode();
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(name)
+                .append(date)
+                .append(time)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return name + " date: " + date + " rate: " + rate;
+        return "StageYahooFxrate{" +
+                "name='" + name + '\'' +
+                ", rate=" + rate +
+                ", date=" + date +
+                '}';
     }
 }
