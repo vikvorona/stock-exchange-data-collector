@@ -8,28 +8,29 @@ import java.sql.Timestamp;
 
 @Entity
 @Cacheable
-@Table(name = "SYMBOL")
+@Table(name = "EXCHANGE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class Symbol {
+public class Exchange {
 
     private Long id;
     private String name;
     private String description;
-    private Symbol masterSymbol;
-    private Exchange exchange;
+    private String country;
+    private CodeGeneric region;
+    private Integer timeZone;
     private Timestamp lastUpdateTm;
 
-    public Symbol() {
+    public Exchange() {
     }
 
-    public Symbol(Long id) {
+    public Exchange(Long id) {
         this.id = id;
     }
 
     @Id
-    @SequenceGenerator(name = "SYMBOL_GEN", sequenceName = "s_symbol_pk")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SYMBOL_GEN")
-    @Column(name = "SYM_ID")
+    @SequenceGenerator(name = "EXCHANGE_GEN", sequenceName = "s_exchange_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EXCHANGE_GEN")
+    @Column(name = "EX_ID")
     public Long getId() {
         return id;
     }
@@ -56,24 +57,32 @@ public class Symbol {
         this.description = description;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MASTER_SYM_ID")
-    public Symbol getMasterSymbol() {
-        return masterSymbol;
+    @Column(name = "COUNTRY")
+    public String getCountry() {
+        return country;
     }
 
-    public void setMasterSymbol(Symbol masterSymbol) {
-        this.masterSymbol = masterSymbol;
+    public void setCountry(String country) {
+        this.country = country;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "EX_ID")
-    public Exchange getExchange() {
-        return exchange;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "REGION_CG_ID")
+    public CodeGeneric getRegion() {
+        return region;
     }
 
-    public void setExchange(Exchange exchange) {
-        this.exchange = exchange;
+    public void setRegion(CodeGeneric region) {
+        this.region = region;
+    }
+
+    @Column(name = "TIMEZONE_UTC_DIFF")
+    public Integer getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(Integer timeZone) {
+        this.timeZone = timeZone;
     }
 
     @Column(name = "LAST_UPDATE_TM")
@@ -91,12 +100,11 @@ public class Symbol {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        Symbol symbol = (Symbol) o;
+        Exchange exchange = (Exchange) o;
 
         return new EqualsBuilder()
-                .append(name, symbol.name)
-                .append(description, symbol.description)
-                .append(exchange, symbol.exchange)
+                .append(name, exchange.name)
+                .append(country, exchange.country)
                 .isEquals();
     }
 
@@ -104,14 +112,13 @@ public class Symbol {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(name)
-                .append(description)
-                .append(exchange)
+                .append(country)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "Symbol{" +
+        return "Exchange{" +
                 "name='" + name + '\'' +
                 '}';
     }
