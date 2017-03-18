@@ -22,8 +22,8 @@ echo "Installing Docker CE"
 sudo yum makecache fast
 sudo yum install -y docker-ce
 
-echo "$USER adding into docker group"
-sudo usermod -aG docker $USER
+echo "${USER} adding into docker group"
+sudo usermod -aG docker ${USER}
 
 echo "Disabling Docker-CE repository"
 sudo yum config-manager --disable docker-ce-edge
