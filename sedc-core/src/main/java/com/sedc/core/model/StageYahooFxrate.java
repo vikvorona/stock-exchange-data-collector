@@ -2,7 +2,7 @@ package com.sedc.core.model;
 
 
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.Date;
 
 @Entity
 @Cacheable
@@ -125,12 +125,12 @@ public class StageYahooFxrate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StageYahooFxrate that = (StageYahooFxrate) o;
-        return name.equals(that.name) && date.equals(that.date);
+        return name.equals(that.name) && date.equals(that.date) && time.equals(that.time);
     }
 
     @Override
     public int hashCode() {
-        name.hashCode();
+        name.hashCode() + date.hashCode() + time.hashCode();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.sedc.core.model;
 
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.Date;
 
 @Entity
 @Cacheable
@@ -47,7 +47,7 @@ public class SnapshotQuote {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SCEI_ID")
-    public SourceCenterEngineInstance getScei) {
+    public SourceCenterEngineInstance getScei() {
         return scei;
     }
 
@@ -73,11 +73,11 @@ public class SnapshotQuote {
     }
 
     @Column(name = "AVG_DAILY_VOLUME")
-    public Long getAvgDailyVolume() {
+    public Double getAvgDailyVolume() {
         return avgDailyVolume;
     }
 
-    public void setAvgDailyVolume(Long avgDailyVolume) {
+    public void setAvgDailyVolume(Double avgDailyVolume) {
         this.avgDailyVolume = avgDailyVolume;
     }
 
@@ -132,7 +132,7 @@ public class SnapshotQuote {
     }
 
     public void setMarketCapitalization(Double marketCapitalization) {
-        this.market_capitalization = market_capitalization;
+        this.marketCapitalization = marketCapitalization;
     }
 
     @Column(name = "LAST_TRADE_PRICE")
@@ -176,12 +176,12 @@ public class SnapshotQuote {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SnapshotQuote that = (SnapshotQuote) o;
-        return name.equals(that.name) && businessDate.equals(that.businessDate);
+        return name.equals(that.name) && businessDate.equals(that.businessDate) && scei.getId().equals(that.scei.getId());
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode()
+        return name.hashCode() + businessDate.hashCode() + scei.getId().hashCode();
     }
 
     @Override
