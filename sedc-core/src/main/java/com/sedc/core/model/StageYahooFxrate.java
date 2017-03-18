@@ -40,10 +40,8 @@ public class StageYahooFxrate {
     }
 
     @Id
-    @SequenceGenerator(name = "STAGE_YAHOO_FXRATE_GEN",
-            sequenceName = "s_stage_yahoo_fxrate_pk")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "STAGE_YAHOO_FXRATE_GEN")
+    @SequenceGenerator(name = "STAGE_YAHOO_FXRATE_GEN", sequenceName = "s_stage_yahoo_fxrate_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STAGE_YAHOO_FXRATE_GEN")
     @Column(name = "SYX_ID")
     public Long getSyxId() {
         return syxId;
@@ -63,7 +61,9 @@ public class StageYahooFxrate {
     }
 
     @Column(name = "ID")
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -134,15 +134,14 @@ public class StageYahooFxrate {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
-        if (object == null || getClass() != object.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        StageYahooFxrate that = (StageYahooFxrate) object;
+        StageYahooFxrate that = (StageYahooFxrate) o;
 
         return new EqualsBuilder()
-                .appendSuper(super.equals(object))
                 .append(name, that.name)
                 .append(date, that.date)
                 .append(time, that.time)
@@ -152,7 +151,6 @@ public class StageYahooFxrate {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
                 .append(name)
                 .append(date)
                 .append(time)
