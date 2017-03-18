@@ -1,36 +1,35 @@
 package com.sedc.core.model;
 
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
 @Cacheable
-@Table(name = "SOURCE_CENTER")
+@Table(name = "SYMBOL")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class SourceCenter {
+public class Symbol {
 
     private Long id;
     private String name;
     private String description;
+    private Symbol masterSymbol;
+    private Exchange exchange;
     private Timestamp lastUpdateTm;
-    private Boolean activeFlag;
 
-    public SourceCenter() {
+    public Symbol() {
     }
 
-    public SourceCenter(Long id) {
+    public Symbol(Long id) {
         this.id = id;
     }
 
     @Id
-    @SequenceGenerator(name = "SOURCE_CENTER_GEN", sequenceName = "S_SOURCE_CENTER_PK")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOURCE_CENTER_GEN")
-    @Column(name = "SC_ID")
+    @SequenceGenerator(name = "SYMBOL_GEN", sequenceName = "s_symbol_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SYMBOL_GEN")
+    @Column(name = "SYM_ID")
     public Long getId() {
         return id;
     }
@@ -57,6 +56,26 @@ public class SourceCenter {
         this.description = description;
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MASTER_SYM_ID")
+    public Symbol getMasterSymbol() {
+        return masterSymbol;
+    }
+
+    public void setMasterSymbol(Symbol masterSymbol) {
+        this.masterSymbol = masterSymbol;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "EX_ID")
+    public Exchange getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(Exchange exchange) {
+        this.exchange = exchange;
+    }
+
     @Column(name = "LAST_UPDATE_TM")
     public Timestamp getLastUpdateTm() {
         return lastUpdateTm;
@@ -66,46 +85,34 @@ public class SourceCenter {
         this.lastUpdateTm = lastUpdateTm;
     }
 
-    @Column(name = "ACTIVE_FLAG")
-    @Type(type = "yes_no")
-    public Boolean getActiveFlag() {
-        return activeFlag;
-    }
-
-    public void setActiveFlag(Boolean activeFlag) {
-        this.activeFlag = activeFlag;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        SourceCenter that = (SourceCenter) o;
+        Symbol symbol = (Symbol) o;
 
         return new EqualsBuilder()
-                .append(id, that.id)
-                .append(name, that.name)
-                .append(description, that.description)
-                .append(lastUpdateTm, that.lastUpdateTm)
-                .append(activeFlag, that.activeFlag)
+                .append(name, symbol.name)
+                .append(description, symbol.description)
+                .append(exchange, symbol.exchange)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(id)
                 .append(name)
                 .append(description)
-                .append(lastUpdateTm)
-                .append(activeFlag)
+                .append(exchange)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "SourceCenter{" + "name=" + name + '}';
+        return "Symbol{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }
