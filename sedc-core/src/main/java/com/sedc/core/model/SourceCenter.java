@@ -20,6 +20,13 @@ public class SourceCenter {
     private Timestamp lastUpdateTm;
     private Boolean activeFlag;
 
+    public SourceCenter() {
+    }
+
+    public SourceCenter(Long scId) {
+        this.scId = scId;
+    }
+
     @Id
     @SequenceGenerator(name = "SOURCE_CENTER_GEN", sequenceName = "S_SOURCE_CENTER_PK")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOURCE_CENTER_GEN")

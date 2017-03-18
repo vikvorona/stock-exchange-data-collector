@@ -15,6 +15,14 @@ public class SystemControl {
     private String name;
     private String value;
 
+    public SystemControl() {
+    }
+
+    public SystemControl(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
     @Id
     @Column(name = "NAME")
     public String getName() {
