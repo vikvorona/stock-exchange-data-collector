@@ -13,7 +13,7 @@ import java.util.Date;
 public class SnapshotQuote {
 
 
-    private Long sqId;
+    private Long id;
 
     private SourceCenterEngineInstance scei;
 
@@ -46,22 +46,20 @@ public class SnapshotQuote {
     public SnapshotQuote() {
     }
 
-    public SnapshotQuote(Long sqId) {
-        this.sqId = sqId;
+    public SnapshotQuote(Long id) {
+        this.id = id;
     }
 
     @Id
-    @SequenceGenerator(name = "SNAPSHOT_QUOTE_GEN",
-            sequenceName = "s_snapshot_quote_pk")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "SNAPSHOT_QUOTE_GEN")
+    @SequenceGenerator(name = "SNAPSHOT_QUOTE_GEN", sequenceName = "s_snapshot_quote_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SNAPSHOT_QUOTE_GEN")
     @Column(name = "SQ_ID")
-    public Long getSqId() {
-        return sqId;
+    public Long getId() {
+        return id;
     }
 
-    public void setSqId(Long sqId) {
-        this.sqId = sqId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -193,15 +191,14 @@ public class SnapshotQuote {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
-        if (object == null || getClass() != object.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        SnapshotQuote that = (SnapshotQuote) object;
+        SnapshotQuote that = (SnapshotQuote) o;
 
         return new EqualsBuilder()
-                .appendSuper(super.equals(object))
                 .append(scei, that.scei)
                 .append(businessDate, that.businessDate)
                 .append(name, that.name)
@@ -211,7 +208,6 @@ public class SnapshotQuote {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
                 .append(scei)
                 .append(businessDate)
                 .append(name)
