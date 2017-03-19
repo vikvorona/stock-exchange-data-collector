@@ -3,7 +3,7 @@
 HOST_IP=$(hostname -I | awk '{print $1}')
 
 # Install Portainer
-docker run -d -p 9000:9000 --memory="100m" \
+docker run -d -p 8000:9000 --memory="100m" \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --restart=unless-stopped \
     --name=portainer \
@@ -20,8 +20,20 @@ docker run -d -p 80:80 -p 443:443 --memory="100m" \
 
 echo "Nginx installed in Docker, ports 80,443"
 
+docker run -d --memory="100m" \
+  --volume=/:/rootfs:ro \
+  --volume=/var/run:/var/run:rw \
+  --volume=/sys:/sys:ro \
+  --volume=/var/lib/docker/:/var/lib/docker:ro \
+  --restart=unless-stopped \
+  --publish=8010:8080 \
+  --name=cadvisor \
+  google/cadvisor
+
+echo "cAdvisor installed in Docker, ports 8010"
+
 # Install Grafana
-docker run -d -p 8010:8010 --memory="100m" \
+docker run -d -p 8020:8080 --memory="100m" \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --restart=unless-stopped \
     --name=grafana \
