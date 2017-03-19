@@ -23,13 +23,26 @@ echo "Nginx installed in Docker, ports 80,443"
 # Install influxDB
 docker run -d --memory="100m" \
     -p 8086:8086 -p 8083:8083 \
-    --expose 8090 --expose 8099 \
-    -e INFLUXDB_GRAPHITE_ENABLED=true \
-    -e PRE_CREATE_DB=cadvisor \
-    --name influxsrv \
+    --name influxdb \
     influxdb
 
 echo "influxDB installed in Docker, ports 8086, 8083"
+
+# Install Telegraf
+docker run -d --restart=unless-stopped \
+    --memory="100m" \
+    -e "HOST_PROC=/proc" \
+    -e "HOST_SYS=/sys" \
+    -e "HOST_ETC=/etc" \
+    -v $(pwd)/telegraf.conf:/etc/telegraf/telegraf.conf:ro \
+    -v /var/run/docker.sock:/var/run/docker.sock:ro \
+    -v /sys:/rootfs/sys:ro \
+    -v /proc:/rootfs/proc:ro \
+    -v /etc:/rootfs/etc:ro \
+    --name telegraf \
+    telegraf
+
+echo "Telegraf installed in Docker"
 
 # Install cAdvisor
 docker run -d --memory="100m" \
@@ -39,12 +52,12 @@ docker run -d --memory="100m" \
     --volume=/var/lib/docker/:/var/lib/docker:ro \
     --restart=unless-stopped \
     --publish=8010:8080 \
-    --link=influxsrv:influxsrv \
+    --link=influxdb:influxdb \
     --name=cadvisor \
     google/cadvisor \
     -storage_driver=influxdb \
     -storage_driver_db=cadvisor \
-    -storage_driver_host=influxsrv:8086
+    -storage_driver_host=influxdb:8086
 
 echo "cAdvisor installed in Docker, ports 8010"
 
@@ -57,7 +70,7 @@ docker run -d -p 8020:3000 --memory="100m" \
     -e INFLUXDB_NAME=cadvisor \
     -e INFLUXDB_USER=root \
     -e INFLUXDB_PASS=root \
-    --link=influxsrv:influxsrv  \
+    --link=influxdb:influxdb  \
     --restart=unless-stopped \
     --name=grafana \
     grafana/grafana
