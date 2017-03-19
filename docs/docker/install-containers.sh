@@ -20,26 +20,51 @@ docker run -d -p 80:80 -p 443:443 --memory="100m" \
 
 echo "Nginx installed in Docker, ports 80,443"
 
+# Install influxDB
 docker run -d --memory="100m" \
-  --volume=/:/rootfs:ro \
-  --volume=/var/run:/var/run:rw \
-  --volume=/sys:/sys:ro \
-  --volume=/var/lib/docker/:/var/lib/docker:ro \
-  --restart=unless-stopped \
-  --publish=8010:8080 \
-  --name=cadvisor \
-  google/cadvisor
+    -p 8086:8086 -p 8083:8083 \
+    --expose 8090 --expose 8099 \
+    -e INFLUXDB_GRAPHITE_ENABLED=true \
+    -e PRE_CREATE_DB=cadvisor \
+    --name influxsrv \
+    influxdb
+
+echo "influxDB installed in Docker, ports 8086, 8083"
+
+# Install cAdvisor
+docker run -d --memory="100m" \
+    --volume=/:/rootfs:ro \
+    --volume=/var/run:/var/run:rw \
+    --volume=/sys:/sys:ro \
+    --volume=/var/lib/docker/:/var/lib/docker:ro \
+    --restart=unless-stopped \
+    --publish=8010:8080 \
+    --link=influxsrv:influxsrv \
+    --name=cadvisor \
+    google/cadvisor \
+    -storage_driver=influxdb \
+    -storage_driver_db=cadvisor \
+    -storage_driver_host=influxsrv:8086
 
 echo "cAdvisor installed in Docker, ports 8010"
 
 # Install Grafana
-docker run -d -p 8020:8080 --memory="100m" \
-    -v /var/run/docker.sock:/var/run/docker.sock \
+docker run -d -p 8020:3000 --memory="100m" \
+    -e HTTP_USER=admin \
+    -e HTTP_PASS=admin \
+    -e INFLUXDB_HOST=localhost \
+    -e INFLUXDB_PORT=8086 \
+    -e INFLUXDB_NAME=cadvisor \
+    -e INFLUXDB_USER=root \
+    -e INFLUXDB_PASS=root \
+    --link=influxsrv:influxsrv  \
     --restart=unless-stopped \
     --name=grafana \
     grafana/grafana
 
-echo "Grafana installed in Docker, port 8010"
+# Details https://dockerhanoi.wordpress.com/2015/08/19/docker-monitoring-with-cadvisor-influxdb-and-grafana/
+
+echo "Grafana installed in Docker, port 8020"
 
 # Zabbix parameters
 DB_SERVER_PORT=3542
