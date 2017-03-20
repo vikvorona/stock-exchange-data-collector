@@ -4,7 +4,6 @@ import com.sedc.Region;
 import com.sedc.collectors.finam.model.FinamApiRecord;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
-import org.junit.runner.RunWith;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -20,8 +19,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.UrlResource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.net.URISyntaxException;
 
@@ -29,8 +26,6 @@ import java.net.URISyntaxException;
  * Created by SuperOleg on 01.03.2017.
  */
 @Configurable
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/spring/batch/config/context.xml", "/spring/batch/jobs/finam-job.xml"})
 public class FinamApplication {
 
     private static final Logger LOG = Logger.getLogger(FinamApplication.class);
@@ -67,8 +62,7 @@ public class FinamApplication {
         }
 
         ApplicationContext context =
-                new ClassPathXmlApplicationContext("/spring/batch/config/context.xml",
-                        "/spring/batch/jobs/finam-job.xml");
+                new ClassPathXmlApplicationContext("/spring/batch/jobs/finam-job.xml");
         FinamApplication finamApplication = (FinamApplication) context.getBean("finamApplication");
         try {
             finamApplication.run(args);

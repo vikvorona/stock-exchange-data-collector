@@ -23,13 +23,6 @@
         <constructor-arg ref="jobRepository"/>
     </bean>
 
-    <bean id="finamApplication" class="com.sedc.collectors.finam.FinamApplication">
-        <constructor-arg ref="jobLauncher"/>
-        <constructor-arg ref="stepBuilderFactory"/>
-        <constructor-arg ref="jobBuilderFactory"/>
-        <constructor-arg ref="finamReader"/>
-        <constructor-arg ref="finamProcessor"/>
-        <constructor-arg ref="finamWriter"/>
-    </bean>
+
 
 </beans>
