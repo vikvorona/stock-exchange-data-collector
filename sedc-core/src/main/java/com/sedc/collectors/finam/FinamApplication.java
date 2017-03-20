@@ -64,21 +64,23 @@ public class FinamApplication {
         ApplicationContext context =
                 new ClassPathXmlApplicationContext("/spring/batch/jobs/finam-job.xml");
         FinamApplication finamApplication = (FinamApplication) context.getBean("finamApplication");
+        String testParams[] = {"1", "16842", "GAZP", "0", "24", "1", "2017", "24.02.2017", "1", "2", "2017",
+                "01.03.2017", "5", "GAZP_170224_170301", ".txt", "GAZP", "1", "1", "1", "on", "1", "1", "1", "1"};
         try {
-            finamApplication.run(args);
+            finamApplication.run(args, testParams);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
     }
 
-    public void run(String[] args) throws Exception {
+    public void run(String[] args, String[] queryParams) throws Exception {
 
 
         FinamPeriod period = FinamPeriod.getInstance(args[0]);
         Region region = Region.valueOf(args[1]);
 
         //TODO: make logic here, all below is just an example
-        reader.setResource(new UrlResource("http://export.finam.ru/GAZP_170224_170301.txt?market=1&em=16842&code=GAZP&apply=0&df=24&mf=1&yf=2017&from=24.02.2017&dt=1&mt=2&yt=2017&to=01.03.2017&p=5&f=GAZP_170224_170301&e=.txt&cn=GAZP&dtf=1&tmf=1&MSOR=1&mstime=on&mstimever=1&sep=1&sep2=1&datf=1"));
+        reader.setResource(new UrlResource(FinamUtils.buildUrl(queryParams)));
 
         TaskletStep step = stepBuilderFactory.get("finamStep")
                 .<FinamApiRecord, FinamApiRecord>chunk(1)
