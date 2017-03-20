@@ -71,7 +71,7 @@ public class SourceCenterEngineInstance {
         return sourceCenterEngine;
     }
 
-    public void setSourceCenterEngineId(SourceCenterEngine sourceCenterEngine) {
+    public void setSourceCenterEngine(SourceCenterEngine sourceCenterEngine) {
         this.sourceCenterEngine = sourceCenterEngine;
     }
 
@@ -94,7 +94,8 @@ public class SourceCenterEngineInstance {
         this.state = state;
     }
 
-    @Column(name = "SCEI_DETAIL_STATE_CG_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SCEI_DETAIL_STATE_CG_ID")
     public CodeGeneric getDetailState() {
         return detailState;
     }
