@@ -1,5 +1,5 @@
 CREATE TABLE SYSTEM_VARIABLE (
-                NAME           NUMERIC(18) NOT NULL,
+                NAME           VARCHAR(20) NOT NULL,
                 VALUE          NUMERIC(18) NOT NULL,
 
 ) TABLESPACE GENERAL_INDEX;
