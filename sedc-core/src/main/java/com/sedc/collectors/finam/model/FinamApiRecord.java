@@ -14,7 +14,7 @@ import java.util.Date;
 public class FinamApiRecord {
 
     private String ticker;
-    private FinamPeriod period;
+    private String period;
     private Date date;
     private Date time;
     private Double open;
@@ -31,11 +31,11 @@ public class FinamApiRecord {
         this.ticker = ticker;
     }
 
-    public FinamPeriod getPeriod() {
+    public String getPeriod() {
         return period;
     }
 
-    public void setPeriod(FinamPeriod period) {
+    public void setPeriod(String period) {
         this.period = period;
     }
 
