@@ -14,6 +14,9 @@ echo "Portainer installed in Docker, port 8000"
 # Install Nginx
 docker run -d -p 80:80 -p 443:443 --memory="100m" \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf \
+    -v /etc/nginx/conf.d:/etc/nginx/conf.d \
+    -v /usr/share/nginx/html:/usr/share/nginx/html \
     --restart=unless-stopped \
     --name=nginx \
     nginx
