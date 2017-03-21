@@ -47,6 +47,13 @@
                 <version>${spring.version}</version>
             </dependency>
 
+            <!-- Spring orm, for database -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
             <!-- Spring Batch dependencies -->
             <dependency>
                 <groupId>org.springframework.batch</groupId>

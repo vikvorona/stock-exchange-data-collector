@@ -68,7 +68,7 @@ public class SnapshotQuote {
         return scei;
     }
 
-    public void setSceiId(SourceCenterEngineInstance scei) {
+    public void setScei(SourceCenterEngineInstance scei) {
         this.scei = scei;
     }
 
