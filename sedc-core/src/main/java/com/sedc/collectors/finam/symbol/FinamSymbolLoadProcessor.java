@@ -1,6 +1,7 @@
 package com.sedc.collectors.finam.symbol;
 
 import com.sedc.collectors.finam.symbol.model.FinamJaxbSecurity;
+import com.sedc.core.model.Exchange;
 import com.sedc.core.model.Symbol;
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemProcessor;
@@ -17,9 +18,18 @@ public class FinamSymbolLoadProcessor implements ItemProcessor<FinamJaxbSecurity
         if (Objects.isNull(item)) return null;
 
         Symbol o = new Symbol();
+        o.setName(item.getCode());
+        o.setDescription(item.getName());
 
-        LOG.debug("Mapped industry: " + o);
+        //TODO: load exchanges from database
+        Exchange e = new Exchange();
+        e.setName(item.getBoard());
+        e.setCountry("RUSSIA");
 
-        return null;
+        o.setExchange(e);
+
+        LOG.debug("Mapped symbol: " + o);
+
+        return o;
     }
 }
