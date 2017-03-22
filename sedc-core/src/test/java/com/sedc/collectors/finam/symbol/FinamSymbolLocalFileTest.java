@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("spring/batch/jobs/finam/symbol/finam-symbol-load-file-job-test.xml")
+@ContextConfiguration("/spring/batch/jobs/finam/symbol/finam-symbol-load-file-job-test.xml")
 public class FinamSymbolLocalFileTest {
 
     @Autowired
@@ -24,7 +24,7 @@ public class FinamSymbolLocalFileTest {
     @Autowired
     private Job job;
 
-    @Test(timeout = 5000L)
+    @Test(timeout = 10000L)
     public void test() throws Exception {
         JobExecution execution = jobLauncher.run(job, new JobParameters());
 
@@ -32,7 +32,7 @@ public class FinamSymbolLocalFileTest {
         Assert.assertTrue(BatchStatus.COMPLETED.equals(status));
 
         List<Throwable> allFailureExceptions = execution.getAllFailureExceptions();
-        if (!allFailureExceptions.isEmpty()){
+        if (!allFailureExceptions.isEmpty()) {
             for (Throwable t : allFailureExceptions) {
                 System.err.println(t);
             }
