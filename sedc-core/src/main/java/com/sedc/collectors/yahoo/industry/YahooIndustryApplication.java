@@ -21,8 +21,9 @@ public class YahooIndustryApplication {
     private Job job;
 
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("yahoo-industry-load-job.xml");
-        new YahooIndustryApplication().run();
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring/batch/jobs/yahoo-industry-load-job.xml");
+        YahooIndustryApplication app = (YahooIndustryApplication) context.getBean("app");
+        app.run();
     }
 
     private void run() {
