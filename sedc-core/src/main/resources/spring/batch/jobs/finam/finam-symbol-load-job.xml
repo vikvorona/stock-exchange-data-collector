@@ -29,11 +29,6 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean id="app" class="com.sedc.collectors.finam.symbol.FinamSymbolLoadApplication">
-        <property name="jobLauncher" ref="jobLauncher"/>
-        <property name="job" ref="finam-symbol-load-job"/>
-    </bean>
-
     <batch:job id="finam-symbol-load-job">
         <batch:step id="loadFromFile">
             <batch:tasklet>
