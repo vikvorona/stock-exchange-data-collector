@@ -6,9 +6,6 @@ import org.springframework.batch.item.ItemProcessor;
 
 import java.util.Objects;
 
-/**
- * Created by oshulyakov on 3/22/2017.
- */
 public class YahooIndustryProcessor  implements ItemProcessor<JaxbIndustry, Industry> {
 
     @Override
