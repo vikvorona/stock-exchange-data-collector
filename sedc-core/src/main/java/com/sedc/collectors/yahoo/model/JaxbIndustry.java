@@ -1,7 +1,6 @@
 package com.sedc.collectors.yahoo.model;
 
 import javax.xml.bind.annotation.*;
-import java.math.BigInteger;
 
 /**
  * <p>Java class for jaxbIndustry complex type.
@@ -27,7 +26,7 @@ public class JaxbIndustry {
     @XmlValue
     protected String value;
     @XmlAttribute(name = "id")
-    protected BigInteger id;
+    protected Integer id;
     @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute(name = "sector")
@@ -57,9 +56,9 @@ public class JaxbIndustry {
      * Gets the value of the id property.
      *
      * @return possible object is
-     * {@link BigInteger }
+     * {@link Integer }
      */
-    public BigInteger getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -67,9 +66,9 @@ public class JaxbIndustry {
      * Sets the value of the id property.
      *
      * @param value allowed object is
-     *              {@link BigInteger }
+     *              {@link Integer }
      */
-    public void setId(BigInteger value) {
+    public void setId(Integer value) {
         this.id = value;
     }
 
