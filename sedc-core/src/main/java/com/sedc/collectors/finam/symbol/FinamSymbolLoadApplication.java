@@ -1,6 +1,5 @@
 package com.sedc.collectors.finam.symbol;
 
-import com.sedc.collectors.yahoo.industry.YahooIndustryApplication;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -22,7 +21,7 @@ public class FinamSymbolLoadApplication {
     private Job job;
 
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("spring/batch/jobs/yahoo-industry-load-job.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring/batch/jobs/finam/finam-symbol-load-job.xml");
         FinamSymbolLoadApplication app = (FinamSymbolLoadApplication) context.getBean("app");
         app.run();
     }
