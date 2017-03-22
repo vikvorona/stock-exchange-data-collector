@@ -12,8 +12,8 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.UrlResource;
@@ -21,8 +21,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/spring/batch/jobs/finam-job-test.xml")
-public class FinamSimpleTest {
+@ContextConfiguration("/spring/batch/jobs/finam-database-test.xml")
+public class FinamDatabaseTest {
 
     private static final Logger LOG = Logger.getLogger(FinamSimpleTest.class);
 
@@ -37,7 +37,10 @@ public class FinamSimpleTest {
     @Autowired
     private FinamApiProcessor processor;
     @Autowired
-    private FlatFileItemWriter writer;
+    private JdbcBatchItemWriter writer;
+
+    public FinamDatabaseTest() {
+    }
 
     @Test
     public void testFile() throws Exception {
