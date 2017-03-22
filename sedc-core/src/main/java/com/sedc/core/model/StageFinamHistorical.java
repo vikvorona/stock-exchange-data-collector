@@ -1,19 +1,15 @@
-package com.sedc.collectors.finam.model;
+package com.sedc.core.model;
 
-import com.sedc.collectors.finam.FinamPeriod;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Date;
 
+public class StageFinamHistorical {
 
-/**
- * Created by oshulyakov on 2/28/2017.
- */
-public class FinamApiRecord {
-
-    private String ticker;
+    private Long hash;
+    private String ticket;
+    private Long symbol;
     private String period;
     private Date date;
     private Date time;
@@ -22,13 +18,34 @@ public class FinamApiRecord {
     private Double low;
     private Double close;
     private Double volume;
+    private Boolean activeFlag;
+    private String activeReason;
 
-    public String getTicker() {
-        return ticker;
+    public StageFinamHistorical() {
     }
 
-    public void setTicker(String ticker) {
-        this.ticker = ticker;
+    public Long getHash() {
+        return hash;
+    }
+
+    public void setHash(Long hash) {
+        this.hash = hash;
+    }
+
+    public Long getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(Long symbol) {
+        this.symbol = symbol;
+    }
+
+    public String getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
     }
 
     public String getPeriod() {
@@ -95,55 +112,48 @@ public class FinamApiRecord {
         this.volume = volume;
     }
 
+    public Boolean getActiveFlag() {
+        return activeFlag;
+    }
+
+    public void setActiveFlag(Boolean activeFlag) {
+        this.activeFlag = activeFlag;
+    }
+
+    public String getActiveReason() {
+        return activeReason;
+    }
+
+    public void setActiveReason(String activeReason) {
+        this.activeReason = activeReason;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof FinamApiRecord)) {
-            return false;
-        }
+        if (this == o) return true;
 
-        FinamApiRecord user = (FinamApiRecord) o;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StageFinamHistorical that = (StageFinamHistorical) o;
 
         return new EqualsBuilder()
-                .append(ticker, user.ticker)
-                .append(period, user.period)
-                .append(date, user.date)
-                .append(time, user.time)
-                .append(open, user.open)
-                .append(high, user.high)
-                .append(low, user.low)
-                .append(close, user.close)
-                .append(volume, user.ticker)
+                .append(ticket, that.ticket)
+                .append(period, that.period)
+                .append(date, that.date)
+                .append(time, that.time)
+                .append(activeFlag, that.activeFlag)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(ticker)
+        return new HashCodeBuilder(17, 37)
+                .append(ticket)
                 .append(period)
                 .append(date)
                 .append(time)
-                .append(open)
-                .append(high)
-                .append(low)
-                .append(close)
-                .append(volume)
+                .append(activeFlag)
                 .toHashCode();
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append(ticker)
-                .append(period)
-                .append(date)
-                .append(time)
-                .append(open)
-                .append(high)
-                .append(low)
-                .append(close)
-                .append(volume)
-                .build();
-    }
 }
