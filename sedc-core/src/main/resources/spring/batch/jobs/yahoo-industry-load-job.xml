@@ -29,11 +29,6 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean id="app" class="com.sedc.collectors.yahoo.industry.YahooIndustryApplication">
-        <property name="jobLauncher" ref="jobLauncher"/>
-        <property name="job" ref="yahoo-industry-load-job"/>
-    </bean>
-
     <batch:job id="yahoo-industry-load-job">
         <batch:step id="loadFromFile">
             <batch:tasklet>
