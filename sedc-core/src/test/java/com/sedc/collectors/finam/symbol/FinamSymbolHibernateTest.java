@@ -18,7 +18,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("spring/batch/jobs/finam/symbol/finam-symbol-load-hibernate-job-test.xml")
+@ContextConfiguration("/spring/batch/jobs/finam/symbol/finam-symbol-load-hibernate-job-test.xml")
 public class FinamSymbolHibernateTest {
 
     @Autowired
@@ -30,7 +30,7 @@ public class FinamSymbolHibernateTest {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Test(timeout = 5000L)
+    @Test(timeout = 10000L)
     public void test() throws Exception {
         JobExecution execution = jobLauncher.run(job, new JobParameters());
 
@@ -38,7 +38,7 @@ public class FinamSymbolHibernateTest {
         Assert.assertTrue(BatchStatus.COMPLETED.equals(status));
 
         List<Throwable> allFailureExceptions = execution.getAllFailureExceptions();
-        if (!allFailureExceptions.isEmpty()){
+        if (!allFailureExceptions.isEmpty()) {
             for (Throwable t : allFailureExceptions) {
                 System.err.println(t);
             }
@@ -48,6 +48,6 @@ public class FinamSymbolHibernateTest {
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM SYMBOL").uniqueResult();
         session.close();
-        Assert.assertTrue(count.intValue() == 215);
+        Assert.assertTrue(count.intValue() == 3126);
     }
 }
