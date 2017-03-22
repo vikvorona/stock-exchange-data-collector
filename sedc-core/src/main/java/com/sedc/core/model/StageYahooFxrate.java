@@ -3,20 +3,13 @@ package com.sedc.core.model;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.persistence.*;
 import java.util.Date;
 
-@Entity
-@Cacheable
-@Table(name = "STAGE_YAHOO_FXRATE")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class StageYahooFxrate {
-
-    private Long syxId;
 
     private Long hash;
 
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -30,28 +23,12 @@ public class StageYahooFxrate {
 
     private Long bid;
 
-    private Symbol symId;
+    private Long symId;
 
-    public StageYahooFxrate() {
-    }
+    private Boolean activeFlag;
 
-    public StageYahooFxrate(Long syxId) {
-        this.syxId = syxId;
-    }
+    private String activeReason;
 
-    @Id
-    @SequenceGenerator(name = "STAGE_YAHOO_FXRATE_GEN", sequenceName = "s_stage_yahoo_fxrate_pk")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STAGE_YAHOO_FXRATE_GEN")
-    @Column(name = "SYX_ID")
-    public Long getSyxId() {
-        return syxId;
-    }
-
-    public void setSyxId(Long syxId) {
-        this.syxId = syxId;
-    }
-
-    @Column(name = "HASH")
     public Long getHash() {
         return hash;
     }
@@ -60,16 +37,14 @@ public class StageYahooFxrate {
         this.hash = hash;
     }
 
-    @Column(name = "ID")
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    @Column(name = "NAME")
     public String getName() {
         return name;
     }
@@ -78,7 +53,6 @@ public class StageYahooFxrate {
         this.name = name;
     }
 
-    @Column(name = "RATE")
     public Double getRate() {
         return rate;
     }
@@ -87,7 +61,6 @@ public class StageYahooFxrate {
         this.rate = rate;
     }
 
-    @Column(name = "DATE")
     public Date getDate() {
         return date;
     }
@@ -96,7 +69,6 @@ public class StageYahooFxrate {
         this.date = date;
     }
 
-    @Column(name = "TIME")
     public Date getTime() {
         return time;
     }
@@ -105,7 +77,6 @@ public class StageYahooFxrate {
         this.time = time;
     }
 
-    @Column(name = "ASK")
     public Double getAsk() {
         return ask;
     }
@@ -114,23 +85,36 @@ public class StageYahooFxrate {
         this.ask = ask;
     }
 
-    @Column(name = "BID")
-    public Long getBId() {
+    public Long getBid() {
         return bid;
     }
 
-    public void setBId(Long bid) {
+    public void setBid(Long bid) {
         this.bid = bid;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SYM_ID")
-    public Symbol getSymId() {
+    public Long getSymId() {
         return symId;
     }
 
-    public void setSymId(Symbol symId) {
+    public void setSymId(Long symId) {
         this.symId = symId;
+    }
+
+    public Boolean getActiveFlag() {
+        return activeFlag;
+    }
+
+    public void setActiveFlag(Boolean activeFlag) {
+        this.activeFlag = activeFlag;
+    }
+
+    public String getActiveReason() {
+        return activeReason;
+    }
+
+    public void setActiveReason(String activeReason) {
+        this.activeReason = activeReason;
     }
 
     @Override
@@ -142,27 +126,22 @@ public class StageYahooFxrate {
         StageYahooFxrate that = (StageYahooFxrate) o;
 
         return new EqualsBuilder()
+                .append(id, that.id)
                 .append(name, that.name)
                 .append(date, that.date)
                 .append(time, that.time)
+                .append(activeFlag, that.activeFlag)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
+                .append(id)
                 .append(name)
                 .append(date)
                 .append(time)
+                .append(activeFlag)
                 .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "StageYahooFxrate{" +
-                "name='" + name + '\'' +
-                ", rate=" + rate +
-                ", date=" + date +
-                '}';
     }
 }
