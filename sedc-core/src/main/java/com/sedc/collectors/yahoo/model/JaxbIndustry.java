@@ -1,6 +1,7 @@
 package com.sedc.collectors.yahoo.model;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * <p>Java class for jaxbIndustry complex type.
@@ -19,38 +20,14 @@ import javax.xml.bind.annotation.*;
  * &lt;/complexType>
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "yahooindustry", propOrder = {"value"})
+@XmlRootElement(name = "yahooindustry")
 public class JaxbIndustry {
 
-    @XmlValue
-    protected String value;
-    @XmlAttribute(name = "id")
-    protected Integer id;
-    @XmlAttribute(name = "name")
-    protected String name;
-    @XmlAttribute(name = "sector")
-    protected String sector;
+    private Integer id;
 
-    /**
-     * Gets the value of the value property.
-     *
-     * @return possible object is
-     * {@link String }
-     */
-    public String getValue() {
-        return value;
-    }
+    private String name;
 
-    /**
-     * Sets the value of the value property.
-     *
-     * @param value allowed object is
-     *              {@link String }
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
+    private String sector;
 
     /**
      * Gets the value of the id property.
@@ -58,6 +35,7 @@ public class JaxbIndustry {
      * @return possible object is
      * {@link Integer }
      */
+    @XmlAttribute(name = "id")
     public Integer getId() {
         return id;
     }
@@ -78,6 +56,7 @@ public class JaxbIndustry {
      * @return possible object is
      * {@link String }
      */
+    @XmlAttribute(name = "name")
     public String getName() {
         return name;
     }
@@ -98,6 +77,7 @@ public class JaxbIndustry {
      * @return possible object is
      * {@link String }
      */
+    @XmlAttribute(name = "sector")
     public String getSector() {
         return sector;
     }
