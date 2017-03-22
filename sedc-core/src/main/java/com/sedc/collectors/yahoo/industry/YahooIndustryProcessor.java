@@ -21,7 +21,7 @@ public class YahooIndustryProcessor  implements ItemProcessor<JaxbIndustry, Indu
         o.setName(item.getName());
         o.setSector(item.getSector());
 
-        LOG.info("Mapped industry: " + o);
+        LOG.debug("Mapped industry: " + o);
 
         return o;
     }
