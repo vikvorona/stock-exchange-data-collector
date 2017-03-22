@@ -2,6 +2,7 @@ package com.sedc.collectors.finam;
 
 import com.sedc.Region;
 import com.sedc.collectors.finam.model.FinamApiRecord;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -14,11 +15,17 @@ import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.UrlResource;
+
+import java.net.URISyntaxException;
 
 /**
  * Created by SuperOleg on 01.03.2017.
  */
+@Configurable
 public class FinamApplication {
 
     private static final Logger LOG = Logger.getLogger(FinamApplication.class);
@@ -36,20 +43,35 @@ public class FinamApplication {
     @Autowired
     private FlatFileItemWriter writer;
 
+    public FinamApplication() {
+    }
+
+    public FinamApplication(JobLauncher jobLauncher, StepBuilderFactory stepBuilderFactory, JobBuilderFactory jobBuilderFactory, FlatFileItemReader reader, FinamApiProcessor processor, FlatFileItemWriter writer) {
+        this.jobLauncher = jobLauncher;
+        this.stepBuilderFactory = stepBuilderFactory;
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.reader = reader;
+        this.processor = processor;
+        this.writer = writer;
+    }
+
     public static void main(String[] args) {
         if (args == null || args.length != 2) {
             LOG.info("USAGE: <period> <region>"); //TODO: make usage
             return;
         }
 
+        ApplicationContext context =
+                new ClassPathXmlApplicationContext("/spring/batch/jobs/finam-job.xml");
+        FinamApplication finamApplication = (FinamApplication) context.getBean("finamApplication");
         try {
-            new FinamApplication().run(args);
+            finamApplication.run(args);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
     }
 
-    private void run(String[] args) throws Exception {
+    public void run(String[] args) throws Exception {
 
 
         FinamPeriod period = FinamPeriod.getInstance(args[0]);
@@ -73,5 +95,12 @@ public class FinamApplication {
 
         JobExecution execution = jobLauncher.run(job, new JobParameters());
         LOG.info("Exit Status : " + execution.getStatus());
+    }
+
+    private String getUrl(String args[]) throws URISyntaxException {
+        URIBuilder uri = new URIBuilder("http://export.finam.ru");
+        uri.addParameter("market", "1");
+        uri.addParameter("em", "16842");
+        return uri.build().getPath();
     }
 }
