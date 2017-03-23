@@ -14,8 +14,8 @@
     <bean id="yahooHistoricalProcessor" class="com.sedc.collectors.yahoo.historical.YahooHistoricalProcessor">
     </bean>
 
+    <!-- Fallback csv writer
     <bean id="yahooHistoricalWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
-        <!-- write to this csv file -->
         <property name="resource" value="file:target/cvs/yahoo-historical.csv"/>
         <property name="shouldDeleteIfExists" value="true"/>
 
@@ -29,6 +29,11 @@
                 </property>
             </bean>
         </property>
+    </bean>
+    -->
+
+    <bean id="yahooHistoricalWriter" class="org.springframework.batch.item.database.HibernateItemWriter">
+        <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
     <bean id="yahooHistoricalApplication" class="com.sedc.collectors.yahoo.historical.YahooHistoricalApplication">

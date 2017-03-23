@@ -1,8 +1,15 @@
 package com.sedc.core.model;
 
+import javax.persistence.*;
 import java.util.Date;
 
+//TODO: implement properly. This is just a writer test
+
+@Entity
+@Table(name = "STAGE_YAHOO_HISTORICAL")
 public class StageYahooHistorical {
+
+	private Long id;
 	private String symbol;
 	private Date date;
 	private Double open;
@@ -12,6 +19,17 @@ public class StageYahooHistorical {
 	private Double volume;
 	private Double adjClose;
 
+	@Id
+	@GeneratedValue
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Column(name = "SYMBOL")
 	public String getSymbol() {
 		return symbol;
 	}
@@ -20,6 +38,7 @@ public class StageYahooHistorical {
 		this.symbol = symbol;
 	}
 
+	@Column(name = "DATE")
 	public Date getDate() {
 		return date;
 	}
@@ -28,6 +47,7 @@ public class StageYahooHistorical {
 		this.date = date;
 	}
 
+	@Column(name = "OPEN")
 	public Double getOpen() {
 		return open;
 	}
@@ -36,6 +56,7 @@ public class StageYahooHistorical {
 		this.open = open;
 	}
 
+	@Column(name = "HIGH")
 	public Double getHigh() {
 		return high;
 	}
@@ -44,6 +65,7 @@ public class StageYahooHistorical {
 		this.high = high;
 	}
 
+	@Column(name = "LOW")
 	public Double getLow() {
 		return low;
 	}
@@ -52,6 +74,7 @@ public class StageYahooHistorical {
 		this.low = low;
 	}
 
+	@Column(name = "CLOSE")
 	public Double getClose() {
 		return close;
 	}
@@ -60,6 +83,7 @@ public class StageYahooHistorical {
 		this.close = close;
 	}
 
+	@Column(name = "VOLUME")
 	public Double getVolume() {
 		return volume;
 	}
@@ -68,6 +92,7 @@ public class StageYahooHistorical {
 		this.volume = volume;
 	}
 
+	@Column(name = "ADJ_CLOSE")
 	public Double getAdjClose() {
 		return adjClose;
 	}
