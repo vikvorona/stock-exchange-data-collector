@@ -12,39 +12,39 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class YahooResultReader<T> implements ItemReader<T> {
-	private String resultKey;
-	private Class<T> targetClass;
-	private Resource resource;
+    private String resultKey;
+    private Class<T> targetClass;
+    private Resource resource;
 
-	private ObjectMapper mapper;
-	private Iterator<JsonNode> it;
+    private ObjectMapper mapper;
+    private Iterator<JsonNode> it;
 
-	public YahooResultReader(String resultKey, Class<T> targetClass) {
-		this.resultKey = resultKey;
-		this.targetClass = targetClass;
-	}
+    public YahooResultReader(String resultKey, Class<T> targetClass) {
+        this.resultKey = resultKey;
+        this.targetClass = targetClass;
+    }
 
-	public void setResource(Resource resource) {
-		this.resource = resource;
-	}
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
 
-	@Override
-	public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-		//TODO: make sure this fits the contract
-		//TODO: maybe use streaming api instead for smaller first read overhead
-		if (it == null) {
-			init();
-		}
-		if (it.hasNext()) {
-			return mapper.treeToValue(it.next(), targetClass);
-		}
-		return null;
-	}
+    @Override
+    public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+        //TODO: make sure this fits the contract
+        //TODO: maybe use streaming api instead for smaller first read overhead
+        if (it == null) {
+            init();
+        }
+        if (it.hasNext()) {
+            return mapper.treeToValue(it.next(), targetClass);
+        }
+        return null;
+    }
 
-	private void init() throws IOException {
-		mapper = new ObjectMapper();
-		it = mapper.readTree(resource.getInputStream()).get("query").get("results").get(resultKey).elements();
-	}
+    private void init() throws IOException {
+        mapper = new ObjectMapper();
+        it = mapper.readTree(resource.getInputStream()).get("query").get("results").get(resultKey).elements();
+    }
 
 
 }

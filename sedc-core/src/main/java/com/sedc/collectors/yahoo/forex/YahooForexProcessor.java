@@ -5,8 +5,8 @@ import com.sedc.core.model.StageYahooFxrate;
 import org.springframework.batch.item.ItemProcessor;
 
 public class YahooForexProcessor implements ItemProcessor<YahooForexRecord, StageYahooFxrate> {
-	@Override
-	public StageYahooFxrate process(YahooForexRecord item) throws Exception {
-		throw new UnsupportedOperationException("Later");
-	}
+    @Override
+    public StageYahooFxrate process(YahooForexRecord item) throws Exception {
+        throw new UnsupportedOperationException("Later");
+    }
 }
