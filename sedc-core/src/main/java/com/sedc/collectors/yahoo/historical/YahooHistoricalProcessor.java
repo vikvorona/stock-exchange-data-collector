@@ -15,7 +15,8 @@ public class YahooHistoricalProcessor implements ItemProcessor<YahooHistoricalRe
 		stageYahooHistorical.setClose(item.getClose());
 		stageYahooHistorical.setDate(item.getDate());
 		stageYahooHistorical.setHigh(item.getHigh());
-		stageYahooHistorical.setLow(item.getOpen());
+		stageYahooHistorical.setLow(item.getLow());
+		stageYahooHistorical.setOpen(item.getOpen());
 		stageYahooHistorical.setVolume(item.getVolume());
 		return stageYahooHistorical;
 	}

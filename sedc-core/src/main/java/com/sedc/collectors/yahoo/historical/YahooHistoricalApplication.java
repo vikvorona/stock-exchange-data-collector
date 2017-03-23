@@ -1,6 +1,7 @@
 package com.sedc.collectors.yahoo.historical;
 
 import com.sedc.collectors.yahoo.historical.model.YahooHistoricalRecord;
+import com.sedc.collectors.yahoo.util.YahooResourceHelper;
 import com.sedc.collectors.yahoo.util.YahooResultReader;
 import com.sedc.core.model.StageYahooHistorical;
 import com.sedc.managers.SymbolManager;
@@ -22,6 +23,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.UrlResource;
 
 import java.net.MalformedURLException;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Configurable
@@ -76,7 +79,11 @@ public class YahooHistoricalApplication {
         SymbolManager manager = new SymbolManagerImpl();
         List<String> symbols = manager.getStringSymbolsBySource(sourceEngineName);
 
-        UrlResource resource = getResource(symbols);
+        //TODO: acquire proper start and end dates;
+        LocalDate startDate = LocalDate.now().minusMonths(1);
+        LocalDate endDate = LocalDate.now();
+
+        UrlResource resource = YahooResourceHelper.getHistoricalDataResource(symbols, startDate, endDate);
         reader.setResource(resource);
 
         TaskletStep step = stepBuilderFactory.get("yahooHistoricalStep")

@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class YahooResultReader<T> implements ItemReader<T> {
-	private Resource resource;
 	private String resultKey;
 	private Class<T> targetClass;
+	private Resource resource;
 
 	private ObjectMapper mapper;
 	private Iterator<JsonNode> it;

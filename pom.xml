@@ -66,6 +66,13 @@
                 <version>${spring.batch.version}</version>
             </dependency>
 
+            <!-- Spring Web dependencies -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
