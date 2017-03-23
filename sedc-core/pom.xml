@@ -87,6 +87,14 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.0.0</version>
+        </dependency>
+
+
+
         <!-- TEST DEPENDENCIES -->
 
         <dependency>
@@ -121,13 +129,6 @@
             <version>0.2.7</version>
             <scope>test</scope>
         </dependency>
-        <!-- HyperSQL DB -->
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
-            <!--TODO: <scope>test</scope>-->
-        </dependency>
 
         <!-- H2 DB -->
         <dependency>
@@ -136,7 +137,6 @@
             <version>1.2.136</version>
             <scope>test</scope>
         </dependency>
-
 
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>
