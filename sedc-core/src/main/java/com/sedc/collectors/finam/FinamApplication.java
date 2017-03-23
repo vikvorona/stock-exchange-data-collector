@@ -37,16 +37,21 @@ public class FinamApplication {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
     @Autowired
-    private FlatFileItemReader reader;
+    private FlatFileItemReader<FinamApiRecord> reader;
     @Autowired
     private FinamApiProcessor processor;
     @Autowired
-    private FlatFileItemWriter writer;
+    private FlatFileItemWriter<FinamApiRecord> writer;
 
     public FinamApplication() {
     }
 
-    public FinamApplication(JobLauncher jobLauncher, StepBuilderFactory stepBuilderFactory, JobBuilderFactory jobBuilderFactory, FlatFileItemReader reader, FinamApiProcessor processor, FlatFileItemWriter writer) {
+    public FinamApplication(JobLauncher jobLauncher,
+                            StepBuilderFactory stepBuilderFactory,
+                            JobBuilderFactory jobBuilderFactory,
+                            FlatFileItemReader<FinamApiRecord> reader,
+                            FinamApiProcessor processor,
+                            FlatFileItemWriter<FinamApiRecord> writer) {
         this.jobLauncher = jobLauncher;
         this.stepBuilderFactory = stepBuilderFactory;
         this.jobBuilderFactory = jobBuilderFactory;
