@@ -1,18 +1,15 @@
 package com.sedc.core.model;
 
-import javax.persistence.*;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Date;
 
-@Entity
-@Cacheable
-@Table(name = "STAGE_FINAM_HISTORICAL")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class StageFinamHistorical {
 
-    private Long id;
     private Long hash;
-    private Symbol symbol;
     private String ticket;
+    private Long symbol;
     private String period;
     private Date date;
     private Date time;
@@ -27,23 +24,6 @@ public class StageFinamHistorical {
     public StageFinamHistorical() {
     }
 
-    public StageFinamHistorical(Long id) {
-        this.id = id;
-    }
-
-    @Id
-    @SequenceGenerator(name = "STAGE_FINAM_HISTORICAL_GEN", sequenceName = "S_STAGE_FINAM_HISTORICAL_PK")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STAGE_FINAM_HISTORICAL_GEN")
-    @Column(name = "SFH_ID")
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Column(name = "HASH")
     public Long getHash() {
         return hash;
     }
@@ -52,17 +32,14 @@ public class StageFinamHistorical {
         this.hash = hash;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SYMBOL")
-    public Symbol getSymbol() {
+    public Long getSymbol() {
         return symbol;
     }
 
-    public void setSymbol(Symbol symbol) {
+    public void setSymbol(Long symbol) {
         this.symbol = symbol;
     }
 
-    @Column(name = "TICKET")
     public String getTicket() {
         return ticket;
     }
@@ -71,7 +48,6 @@ public class StageFinamHistorical {
         this.ticket = ticket;
     }
 
-    @Column(name = "PER")
     public String getPeriod() {
         return period;
     }
@@ -80,7 +56,6 @@ public class StageFinamHistorical {
         this.period = period;
     }
 
-    @Column(name = "DATE")
     public Date getDate() {
         return date;
     }
@@ -89,7 +64,6 @@ public class StageFinamHistorical {
         this.date = date;
     }
 
-    @Column(name = "TIME")
     public Date getTime() {
         return time;
     }
@@ -98,7 +72,6 @@ public class StageFinamHistorical {
         this.time = time;
     }
 
-    @Column(name = "OPEN")
     public Double getOpen() {
         return open;
     }
@@ -107,7 +80,6 @@ public class StageFinamHistorical {
         this.open = open;
     }
 
-    @Column(name = "HIGH")
     public Double getHigh() {
         return high;
     }
@@ -116,7 +88,6 @@ public class StageFinamHistorical {
         this.high = high;
     }
 
-    @Column(name = "LOW")
     public Double getLow() {
         return low;
     }
@@ -125,7 +96,6 @@ public class StageFinamHistorical {
         this.low = low;
     }
 
-    @Column(name = "CLOSE")
     public Double getClose() {
         return close;
     }
@@ -134,7 +104,6 @@ public class StageFinamHistorical {
         this.close = close;
     }
 
-    @Column(name = "VOLUME")
     public Double getVolume() {
         return volume;
     }
@@ -143,7 +112,6 @@ public class StageFinamHistorical {
         this.volume = volume;
     }
 
-    @Column(name = "ACTIVE_FLAG")
     public Boolean getActiveFlag() {
         return activeFlag;
     }
@@ -152,7 +120,6 @@ public class StageFinamHistorical {
         this.activeFlag = activeFlag;
     }
 
-    @Column(name = "ACTIVE_REASON")
     public String getActiveReason() {
         return activeReason;
     }
@@ -160,4 +127,33 @@ public class StageFinamHistorical {
     public void setActiveReason(String activeReason) {
         this.activeReason = activeReason;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StageFinamHistorical that = (StageFinamHistorical) o;
+
+        return new EqualsBuilder()
+                .append(ticket, that.ticket)
+                .append(period, that.period)
+                .append(date, that.date)
+                .append(time, that.time)
+                .append(activeFlag, that.activeFlag)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(ticket)
+                .append(period)
+                .append(date)
+                .append(time)
+                .append(activeFlag)
+                .toHashCode();
+    }
+
 }

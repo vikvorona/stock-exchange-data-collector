@@ -8,17 +8,17 @@ import javax.persistence.*;
 
 @Entity
 @Cacheable
-@Table(name = "SYSTEM_CONTROL")
+@Table(name = "SYSTEM_VARIABLE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class SystemControl {
+public class SystemVariable {
 
     private String name;
     private String value;
 
-    public SystemControl() {
+    public SystemVariable() {
     }
 
-    public SystemControl(String name, String value) {
+    public SystemVariable(String name, String value) {
         this.name = name;
         this.value = value;
     }
@@ -48,7 +48,7 @@ public class SystemControl {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        SystemControl that = (SystemControl) o;
+        SystemVariable that = (SystemVariable) o;
 
         return new EqualsBuilder()
                 .append(name, that.name)
