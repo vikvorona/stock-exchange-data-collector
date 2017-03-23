@@ -8,7 +8,7 @@ public class YahooHistoricalProcessor implements ItemProcessor<YahooHistoricalRe
 
     @Override
     public StageYahooHistorical process(YahooHistoricalRecord item) throws Exception {
-        //TODO: fix entities
+
         StageYahooHistorical stageYahooHistorical = new StageYahooHistorical();
         stageYahooHistorical.setSymbol(item.getSymbol());
         stageYahooHistorical.setAdjClose(item.getAdjClose());
@@ -18,6 +18,7 @@ public class YahooHistoricalProcessor implements ItemProcessor<YahooHistoricalRe
         stageYahooHistorical.setLow(item.getLow());
         stageYahooHistorical.setOpen(item.getOpen());
         stageYahooHistorical.setVolume(item.getVolume());
+
         return stageYahooHistorical;
     }
 }

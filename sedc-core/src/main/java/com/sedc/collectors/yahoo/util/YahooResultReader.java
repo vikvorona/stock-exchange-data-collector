@@ -3,9 +3,6 @@ package com.sedc.collectors.yahoo.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -29,9 +26,7 @@ public class YahooResultReader<T> implements ItemReader<T> {
     }
 
     @Override
-    public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-        //TODO: make sure this fits the contract
-        //TODO: maybe use streaming api instead for smaller first read overhead
+    public T read() throws Exception {
         if (it == null) {
             init();
         }

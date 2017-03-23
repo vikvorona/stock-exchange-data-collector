@@ -43,7 +43,7 @@ public class YahooResourceHelper {
 
     private static String getSymbolCriteria(List<String> symbols) {
         String symbolCriteria = symbols.stream()
-                .map(s -> "\"" + s + "\"")
+                .map(s -> '"' + s + '"')
                 .collect(Collectors.joining(","));
         return "symbol in (" + symbolCriteria + ")";
     }

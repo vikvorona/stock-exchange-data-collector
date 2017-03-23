@@ -77,7 +77,6 @@ public class YahooHistoricalApplication {
         SymbolManager manager = new SymbolManagerImpl();
         List<String> symbols = manager.getStringSymbolsBySource(sourceEngineName);
 
-        //TODO: acquire proper start and end dates;
         LocalDate startDate = LocalDate.now().minusMonths(1);
         LocalDate endDate = LocalDate.now();
 
