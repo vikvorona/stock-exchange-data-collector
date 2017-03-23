@@ -24,10 +24,10 @@
         <property name="delimiter" value=","/>
     </bean>
 
-    <bean name="finamFieldMapper" class="com.sedc.collectors.finam.FinamFieldSetMapper"/>
+    <bean name="finamFieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
 
     <!--filter & calculate the data-->
-    <bean id="finamProcessor" class="com.sedc.collectors.finam.FinamApiProcessor"/>
+    <bean id="finamProcessor" class="com.sedc.collectors.finam.historical.FinamApiProcessor"/>
 
     <!--store the data-->
     <bean id="finamWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">

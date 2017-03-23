@@ -1,0 +1,88 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+	http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <import resource="classpath:spring/batch/config/context.xml"/>
+    <import resource="classpath:spring/batch/config/database.xml"/>
+
+    <!--read the data from finam api-->
+    <bean id="flatFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+        <property name="lineMapper" ref="finamLineMapper"/>
+    </bean>
+
+    <!--filter & calculate the data-->
+    <bean id="finamProcessor" class="com.sedc.collectors.finam.historical.FinamApiProcessor"/>
+
+    <!--store the data-->
+    <bean id="finamWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+        <!-- write to this csv file -->
+        <property name="resource" value="file:target/cvs/report.csv"/>
+        <property name="shouldDeleteIfExists" value="true"/>
+
+        <property name="lineAggregator">
+            <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+                <property name="delimiter" value=","/>
+                <property name="fieldExtractor">
+                    <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+                        <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean name="finamLineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+        <property name="lineTokenizer" ref="finamTokenizer"/>
+        <property name="fieldSetMapper" ref="finamFieldMapper"/>
+    </bean>
+
+    <bean name="finamTokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+        <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
+        <property name="delimiter" value=","/>
+    </bean>
+
+    <bean name="finamFieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
+
+    <bean name="symbolReader" class="com.sedc.collectors.finam.historical.FinamSymbolReader">
+        <property name="symbolManager" ref="symbolManager"/>
+    </bean>
+
+    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
+
+    <bean name="resourceGenerator" class="com.sedc.collectors.finam.historical.FinamResourceGenerator">
+        <property name="urls" ref="urls"/>
+    </bean>
+
+    <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
+        <property name="resources" ref="urls" />
+        <property name="delegate" ref="flatFileItemReader" />
+    </bean>
+
+    <util:list id="urls" list-class="java.util.ArrayList"/>
+
+    <batch:job id="finam-historical-load-job" job-repository="jobRepository">
+        <batch:step id="loadSymbols" next="loadToStage">
+            <batch:tasklet>
+                <batch:chunk reader="symbolReader"
+                             writer="resourceGenerator"
+                             commit-interval="1">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToStage" parent="loadSymbols">
+            <batch:tasklet>
+                <batch:chunk reader="multiResourceReader"
+                             writer="finamWriter"
+                             processor="finamProcessor"
+                             commit-interval="100">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+</beans>

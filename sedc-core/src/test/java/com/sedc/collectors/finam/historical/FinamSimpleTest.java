@@ -1,6 +1,6 @@
-package com.sedc.collectors.finam;
+package com.sedc.collectors.finam.historical;
 
-import com.sedc.collectors.finam.model.FinamApiRecord;
+import com.sedc.collectors.finam.historical.model.FinamApiRecord;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +42,7 @@ public class FinamSimpleTest {
     @Test
     public void testFile() throws Exception {
 
-        reader.setResource(new ClassPathResource("com/sedc/collectors/finam/sample-data.csv"));
+        reader.setResource(new ClassPathResource("com/sedc/collectors/finam/historical/sample-data.csv"));
 
         TaskletStep step = stepBuilderFactory.get("testFileStep")
                 .<FinamApiRecord, FinamApiRecord>chunk(1)
