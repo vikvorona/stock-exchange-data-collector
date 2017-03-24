@@ -10,6 +10,6 @@ public class FinamHistoricalApplication {
 //            return;
 //        }
 
-        CommandLineJobRunner.main(new String[]{"spring/batch/jobs/finam/finam-job.xml","finam-historical-load-job"});
+        CommandLineJobRunner.main(new String[]{"spring/batch/jobs/finam/finam-historical-load-job.xml","finam-historical-load-job"});
     }
 }
