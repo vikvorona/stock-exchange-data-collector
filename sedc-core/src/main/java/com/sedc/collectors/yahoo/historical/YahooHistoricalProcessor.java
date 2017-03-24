@@ -5,20 +5,15 @@ import com.sedc.core.model.StageYahooHistorical;
 import org.springframework.batch.item.ItemProcessor;
 
 public class YahooHistoricalProcessor implements ItemProcessor<YahooHistoricalRecord, StageYahooHistorical> {
-
     @Override
-    public StageYahooHistorical process(YahooHistoricalRecord item) throws Exception {
-
+    public StageYahooHistorical process(YahooHistoricalRecord yahooHistoricalRecord) throws Exception {
         StageYahooHistorical stageYahooHistorical = new StageYahooHistorical();
-        stageYahooHistorical.setSymbol(item.getSymbol());
-        stageYahooHistorical.setAdjClose(item.getAdjClose());
-        stageYahooHistorical.setClose(item.getClose());
-        stageYahooHistorical.setDate(item.getDate());
-        stageYahooHistorical.setHigh(item.getHigh());
-        stageYahooHistorical.setLow(item.getLow());
-        stageYahooHistorical.setOpen(item.getOpen());
-        stageYahooHistorical.setVolume(item.getVolume());
-
+        stageYahooHistorical.setAdjClose(yahooHistoricalRecord.getAdjClose());
+        stageYahooHistorical.setClose(yahooHistoricalRecord.getClose());
+        stageYahooHistorical.setHigh(yahooHistoricalRecord.getHigh());
+        stageYahooHistorical.setLow(yahooHistoricalRecord.getLow());
+        stageYahooHistorical.setOpen(yahooHistoricalRecord.getOpen());
+        stageYahooHistorical.setVolume(yahooHistoricalRecord.getVolume());
         return stageYahooHistorical;
     }
 }

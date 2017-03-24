@@ -25,7 +25,7 @@ public class YahooResourceHelper {
         return getYQLResource(query);
     }
 
-    public static UrlResource getQuoteResource(List<String> symbols, LocalDate startDate, LocalDate endDate)
+    public static UrlResource getQuoteResource(List<String> symbols)
             throws MalformedURLException {
         String query = String.format(YQL_QUOTE, getSymbolCriteria(symbols));
         return getYQLResource(query);

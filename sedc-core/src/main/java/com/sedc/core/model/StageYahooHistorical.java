@@ -1,15 +1,15 @@
 package com.sedc.core.model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "STAGE_YAHOO_HISTORICAL")
 public class StageYahooHistorical {
-
     private Long id;
-    private String symbol;
-    private Date date;
+    private Symbol symbol;
+    private LocalDateTime createdDateTime;
     private Double open;
     private Double high;
     private Double low;
@@ -18,7 +18,9 @@ public class StageYahooHistorical {
     private Double adjClose;
 
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "STAGE_YAHOO_HISTORICAL_GEN", sequenceName = "s_stage_yahoo_historical_pk")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STAGE_YAHOO_HISTORICAL_GEN")
+    @Column(name = "SYH_ID")
     public Long getId() {
         return id;
     }
@@ -27,22 +29,23 @@ public class StageYahooHistorical {
         this.id = id;
     }
 
-    @Column(name = "SYMBOL")
-    public String getSymbol() {
+    @OneToOne
+    @JoinColumn(name = "SYM_ID")
+    public Symbol getSymbol() {
         return symbol;
     }
 
-    public void setSymbol(String symbol) {
+    public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
     }
 
-    @Column(name = "DATE")
-    public Date getDate() {
-        return date;
+    @Column(name = "CREATION_TM")
+    public LocalDateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreatedDateTime(LocalDateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 
     @Column(name = "OPEN")

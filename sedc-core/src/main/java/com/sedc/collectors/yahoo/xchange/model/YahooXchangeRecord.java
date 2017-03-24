@@ -1,15 +1,11 @@
-package com.sedc.collectors.yahoo.forex.model;
+package com.sedc.collectors.yahoo.xchange.model;
 
 import lombok.Data;
 
 import java.util.Date;
 
-/**
- * Created by SuperOleg on 01.03.2017.
- */
 @Data
-public class YahooForexRecord {
-
+public class YahooXchangeRecord {
     private String id;
     private String name;
     private Double Rate;

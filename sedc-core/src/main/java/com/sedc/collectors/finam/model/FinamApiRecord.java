@@ -1,6 +1,5 @@
 package com.sedc.collectors.finam.model;
 
-import com.sedc.collectors.finam.FinamPeriod;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;

@@ -1,12 +1,26 @@
 package com.sedc.collectors.yahoo.quote;
 
-import com.sedc.collectors.yahoo.historical.YahooHistoricalProcessor;
-import com.sedc.core.model.StageYahooHistorical;
+import com.sedc.collectors.yahoo.quote.model.YahooQuoteRecord;
+import com.sedc.core.model.StageYahooQuote;
 import org.springframework.batch.item.ItemProcessor;
 
-public class YahooQuoteProcessor implements ItemProcessor<YahooHistoricalProcessor, StageYahooHistorical> {
+public class YahooQuoteProcessor implements ItemProcessor<YahooQuoteRecord, StageYahooQuote> {
     @Override
-    public StageYahooHistorical process(YahooHistoricalProcessor item) throws Exception {
-        throw new UnsupportedOperationException("Later");
+    public StageYahooQuote process(YahooQuoteRecord yahooQuoteRecord) throws Exception {
+        StageYahooQuote stageYahooQuote = new StageYahooQuote();
+        stageYahooQuote.setAverageDailyVolume(yahooQuoteRecord.getAverageDailyVolume());
+        stageYahooQuote.setChange(yahooQuoteRecord.getChange());
+        stageYahooQuote.setDaysHigh(yahooQuoteRecord.getDaysHigh());
+        stageYahooQuote.setDaysLow(yahooQuoteRecord.getDaysLow());
+
+
+        stageYahooQuote.setLastTradePriceOnly(yahooQuoteRecord.getLastTradePriceOnly());
+        stageYahooQuote.setName(yahooQuoteRecord.getName());
+        stageYahooQuote.setStockExchange(yahooQuoteRecord.getStockExchange());
+        stageYahooQuote.setStockSymbol(yahooQuoteRecord.getStockSymbol());
+        stageYahooQuote.setVolume(yahooQuoteRecord.getVolume());
+        stageYahooQuote.setYearHigh(yahooQuoteRecord.getYearHigh());
+        stageYahooQuote.setYearLow(yahooQuoteRecord.getYearLow());
+        return stageYahooQuote;
     }
 }
