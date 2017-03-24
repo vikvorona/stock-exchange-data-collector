@@ -35,8 +35,6 @@ public class FinamDatabaseTest {
     @Autowired
     private FlatFileItemReader reader;
     @Autowired
-    private FinamApiProcessor processor;
-    @Autowired
     private JdbcBatchItemWriter writer;
 
     public FinamDatabaseTest() {
@@ -50,7 +48,6 @@ public class FinamDatabaseTest {
         TaskletStep step = stepBuilderFactory.get("testFileStep")
                 .<FinamApiRecord, FinamApiRecord>chunk(1)
                 .reader(reader)
-                .processor(processor)
                 .writer(writer)
                 .build();
 
@@ -72,7 +69,6 @@ public class FinamDatabaseTest {
         TaskletStep step = stepBuilderFactory.get("testUrlStep")
                 .<FinamApiRecord, FinamApiRecord>chunk(1)
                 .reader(reader)
-                .processor(processor)
                 .writer(writer)
                 .build();
 

@@ -35,7 +35,7 @@ public class FinamSimpleTest {
     @Autowired
     private FlatFileItemReader reader;
     @Autowired
-    private FinamApiProcessor processor;
+    private StageTableFilter processor;
     @Autowired
     private FlatFileItemWriter writer;
 
@@ -47,7 +47,6 @@ public class FinamSimpleTest {
         TaskletStep step = stepBuilderFactory.get("testFileStep")
                 .<FinamApiRecord, FinamApiRecord>chunk(1)
                 .reader(reader)
-                .processor(processor)
                 .writer(writer)
                 .build();
 
@@ -69,7 +68,6 @@ public class FinamSimpleTest {
         TaskletStep step = stepBuilderFactory.get("testUrlStep")
                 .<FinamApiRecord, FinamApiRecord>chunk(1)
                 .reader(reader)
-                .processor(processor)
                 .writer(writer)
                 .build();
 

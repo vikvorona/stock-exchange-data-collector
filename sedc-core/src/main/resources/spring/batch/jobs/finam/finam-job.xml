@@ -3,24 +3,20 @@
        xmlns:batch="http://www.springframework.org/schema/batch"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+       http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
 	http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/database.xml"/>
 
-    <!--read the data from finam api-->
     <bean id="flatFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
         <property name="lineMapper" ref="finamLineMapper"/>
     </bean>
 
-    <!--filter & calculate the data-->
-    <bean id="finamProcessor" class="com.sedc.collectors.finam.historical.FinamApiProcessor"/>
+    <bean id="stageFilter" class="com.sedc.collectors.finam.historical.StageTableFilter"/>
 
-    <!--store the data-->
-    <bean id="finamWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
-        <!-- write to this csv file -->
+    <bean id="flatFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
         <property name="resource" value="file:target/cvs/report.csv"/>
         <property name="shouldDeleteIfExists" value="true"/>
 
@@ -74,12 +70,18 @@
                 </batch:chunk>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="loadToStage" parent="loadSymbols">
+        <batch:step id="loadToStage" parent="loadSymbols" next="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
-                             writer="finamWriter"
-                             processor="finamProcessor"
+                             writer="flatFileItemWriter"
                              commit-interval="100">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterStage" parent="loadToStage">
+            <batch:tasklet>
+                <batch:chunk reader="stageFilter"
+                             commit-interval="1">
                 </batch:chunk>
             </batch:tasklet>
         </batch:step>

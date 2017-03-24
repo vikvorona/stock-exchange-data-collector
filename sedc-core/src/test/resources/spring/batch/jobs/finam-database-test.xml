@@ -27,7 +27,7 @@
     <bean name="finamFieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
 
     <!--filter & calculate the data-->
-    <bean id="finamProcessor" class="com.sedc.collectors.finam.historical.FinamApiProcessor"/>
+    <bean id="finamProcessor" class="com.sedc.collectors.finam.historical.StageTableFilter"/>
 
     <!--store the data-->
     <bean id="finamWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
