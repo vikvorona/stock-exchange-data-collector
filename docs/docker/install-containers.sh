@@ -17,6 +17,7 @@ docker run -d -p 80:80 -p 443:443 --memory="100m" \
     -v /etc/nginx/nginx.conf:/etc/nginx/nginx.conf \
     -v /etc/nginx/conf.d:/etc/nginx/conf.d \
     -v /usr/share/nginx/html:/usr/share/nginx/html \
+    --add-host localnode:$(ifconfig ens160 | grep inet | grep -v inet6 | awk '{print \$2}') \
     --restart=unless-stopped \
     --name=nginx \
     nginx
