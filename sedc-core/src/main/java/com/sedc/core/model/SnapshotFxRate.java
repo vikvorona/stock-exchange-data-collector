@@ -2,6 +2,8 @@ package com.sedc.core.model;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -10,18 +12,17 @@ import java.util.Date;
 @Cacheable
 @Table(name = "SNAPSHOT_FXRATE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class SnapshotFxrate {
+public class SnapshotFxRate {
 
-
-    private Long sxid;
+    private Long sxId;
 
     private SourceCenterEngineInstance scei;
 
-    private StageYahooFxrate symId
+    private Symbol symId;
 
     private Date businessDate;
 
-    private Double id;
+    private String id;
 
     private String name;
 
@@ -29,15 +30,15 @@ public class SnapshotFxrate {
 
     private Date time;
 
-    private Float ask;
+    private Double ask;
 
-    private Float bid;
+    private Double bid;
 
-    public SnapshotFxrate() {
+    public SnapshotFxRate() {
     }
 
-    public SnapshotFxrate(Long sxid) {
-        this.sxid = sxid;
+    public SnapshotFxRate(Long sxId) {
+        this.sxId = sxId;
     }
 
     @Id
@@ -45,11 +46,11 @@ public class SnapshotFxrate {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SNAPSHOT_FXRATE_GEN")
     @Column(name = "SX_ID")
     public Long getSxId() {
-        return sxid;
+        return sxId;
     }
 
     public void setSxId(Long sxid) {
-        this.sxid = sxid;
+        this.sxId = sxid;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -64,11 +65,11 @@ public class SnapshotFxrate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SYM_ID")
-    public StageYahooFxrate getSymId() {
+    public Symbol getSymId() {
         return symId;
     }
 
-    public void setSymId(StageYahooFxrate symId) {
+    public void setSymId(Symbol symId) {
         this.symId = symId;
     }
 
@@ -82,11 +83,11 @@ public class SnapshotFxrate {
     }
 
     @Column(name = "ID")
-    public Double getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Double id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -118,20 +119,20 @@ public class SnapshotFxrate {
     }
 
     @Column(name = "ASK")
-    public Float getAsk() {
+    public Double getAsk() {
         return ask;
     }
 
-    public void setAsk(Float ask) {
+    public void setAsk(Double ask) {
         this.ask = ask;
     }
 
     @Column(name = "BID")
-    public Float getBid() {
+    public Double getBid() {
         return bid;
     }
 
-    public void setAsk(Float bid) {
+    public void setBid(Double bid) {
         this.bid = bid;
     }
 
@@ -141,35 +142,39 @@ public class SnapshotFxrate {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        SnapshotFxrate that = (SnapshotFxrate) o;
+        SnapshotFxRate that = (SnapshotFxRate) o;
 
         return new EqualsBuilder()
                 .append(scei, that.scei)
+                .append(symId, that.symId)
                 .append(businessDate, that.businessDate)
-                .append(name, that.name)
+                .append(id, that.id)
+                .append(date, that.date)
+                .append(time, that.time)
                 .isEquals();
-//maybe this isn't enougth
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(scei)
+                .append(symId)
                 .append(businessDate)
-                .append(name)
+                .append(id)
+                .append(date)
+                .append(time)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "SnapshotFxrate{" +
-                "businessDate=" + businessDate +
-                ", id=" + id +
-                ", name='" + name +
-                ", date=" + date +
-                ", time=" + time +
-                ", ask=" + ask +
-                ", bid=" + bid +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
+                .append("scei", scei)
+                .append("symId", symId)
+                .append("businessDate", businessDate)
+                .append("id", id)
+                .append("date", date)
+                .append("time", time)
+                .toString();
     }
 }
