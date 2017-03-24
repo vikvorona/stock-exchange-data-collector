@@ -2,7 +2,6 @@ package com.sedc.core.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "STAGE_YAHOO_HISTORICAL")
