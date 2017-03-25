@@ -14,7 +14,9 @@
         <property name="lineMapper" ref="finamLineMapper"/>
     </bean>
 
-    <bean id="stageFilter" class="com.sedc.collectors.finam.historical.StageTableFilter"/>
+    <bean id="stageFilter" class="com.sedc.collectors.finam.historical.StageTableFilter">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
     <bean id="flatFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
         <property name="resource" value="file:target/cvs/report.csv"/>
