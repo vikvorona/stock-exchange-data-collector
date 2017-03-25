@@ -1,17 +1,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd
 		http://www.springframework.org/schema/jdbc
 		http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
 
+    <context:property-placeholder location="/core.properties"/>
+
     <!-- connect to database -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-        <property name="url" value="jdbc:hsqldb:mem:dataSource" />
-        <property name="username" value="sa" />
-        <property name="password" value="" />
+        <property name="driverClassName" value="${DB_DRIVER}" />
+        <property name="url" value="${DB_URL}" />
+        <property name="username" value="${DB_USER}" />
+        <property name="password" value="${DB_PASSWORD}" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager" >
