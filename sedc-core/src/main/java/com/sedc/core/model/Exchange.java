@@ -66,7 +66,7 @@ public class Exchange {
         this.country = country;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "REGION_CG_ID")
     public CodeGeneric getRegion() {
         return region;

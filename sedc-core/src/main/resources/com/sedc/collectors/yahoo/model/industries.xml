@@ -1,0 +1,228 @@
+<!-- this is take from https://biz.yahoo.com/ic/ind_index.html -->
+<yahooindustries>
+
+    <yahooindustry id="112" name="Agricultural Chemicals" sector="Basic Materials"/>
+    <yahooindustry id="132" name="Aluminum" sector="Basic Materials"/>
+    <yahooindustry id="110" name="Chemicals - Major Diversified" sector="Basic Materials"/>
+    <yahooindustry id="131" name="Copper" sector="Basic Materials"/>
+    <yahooindustry id="134" name="Gold" sector="Basic Materials"/>
+    <yahooindustry id="121" name="Independent Oil &amp; Gas" sector="Basic Materials"/>
+    <yahooindustry id="133" name="Industrial Metals &amp; Minerals" sector="Basic Materials"/>
+    <yahooindustry id="120" name="Major Integrated Oil &amp; Gas" sector="Basic Materials"/>
+    <yahooindustry id="136" name="Nonmetallic Mineral Mining" sector="Basic Materials"/>
+    <yahooindustry id="123" name="Oil &amp; Gas Drilling &amp; Exploration" sector="Basic Materials"/>
+    <yahooindustry id="124" name="Oil &amp; Gas Equipment &amp; Services" sector="Basic Materials"/>
+    <yahooindustry id="125" name="Oil &amp; Gas Pipelines" sector="Basic Materials"/>
+    <yahooindustry id="122" name="Oil &amp; Gas Refining &amp; Marketing" sector="Basic Materials"/>
+    <yahooindustry id="135" name="Silver" sector="Basic Materials"/>
+    <yahooindustry id="113" name="Specialty Chemicals" sector="Basic Materials"/>
+    <yahooindustry id="130" name="Steel &amp; Iron" sector="Basic Materials"/>
+    <yahooindustry id="111" name="Synthetics" sector="Basic Materials"/>
+
+    <yahooindustry id="210" name="Conglomerates" sector="Conglomerates"/>
+
+    <yahooindustry id="310" name="Appliances" sector="Consumer Goods"/>
+    <yahooindustry id="330" name="Auto Manufacturers - Major" sector="Consumer Goods"/>
+    <yahooindustry id="333" name="Auto Parts" sector="Consumer Goods"/>
+    <yahooindustry id="346" name="Beverages - Brewers" sector="Consumer Goods"/>
+    <yahooindustry id="348" name="Beverages - Soft Drinks" sector="Consumer Goods"/>
+    <yahooindustry id="347" name="Beverages - Wineries &amp; Distillers" sector="Consumer Goods"/>
+    <yahooindustry id="313" name="Business Equipment" sector="Consumer Goods"/>
+    <yahooindustry id="350" name="Cigarettes" sector="Consumer Goods"/>
+    <yahooindustry id="326" name="Cleaning Products" sector="Consumer Goods"/>
+    <yahooindustry id="345" name="Confectioners" sector="Consumer Goods"/>
+    <yahooindustry id="344" name="Dairy Products" sector="Consumer Goods"/>
+    <yahooindustry id="314" name="Electronic Equipment" sector="Consumer Goods"/>
+    <yahooindustry id="341" name="Farm Products" sector="Consumer Goods"/>
+    <yahooindustry id="340" name="Food - Major Diversified" sector="Consumer Goods"/>
+    <yahooindustry id="311" name="Home Furnishings &amp; Fixtures" sector="Consumer Goods"/>
+    <yahooindustry id="312" name="Housewares &amp; Accessories" sector="Consumer Goods"/>
+    <yahooindustry id="343" name="Meat Products" sector="Consumer Goods"/>
+    <yahooindustry id="327" name="Office Supplies" sector="Consumer Goods"/>
+    <yahooindustry id="325" name="Packaging &amp; Containers" sector="Consumer Goods"/>
+    <yahooindustry id="324" name="Paper &amp; Paper Products" sector="Consumer Goods"/>
+    <yahooindustry id="323" name="Personal Products" sector="Consumer Goods"/>
+    <yahooindustry id="318" name="Photographic Equipment &amp; Supplies" sector="Consumer Goods"/>
+    <yahooindustry id="342" name="Processed &amp; Packaged Goods" sector="Consumer Goods"/>
+    <yahooindustry id="317" name="Recreational Goods, Other" sector="Consumer Goods"/>
+    <yahooindustry id="332" name="Recreational Vehicles" sector="Consumer Goods"/>
+    <yahooindustry id="322" name="Rubber &amp; Plastics" sector="Consumer Goods"/>
+    <yahooindustry id="316" name="Sporting Goods" sector="Consumer Goods"/>
+    <yahooindustry id="320" name="Textile - Apparel Clothing" sector="Consumer Goods"/>
+    <yahooindustry id="321" name="Textile - Apparel Footwear &amp; Accessories" sector="Consumer Goods"/>
+    <yahooindustry id="351" name="Tobacco Products, Other" sector="Consumer Goods"/>
+    <yahooindustry id="315" name="Toys &amp; Games" sector="Consumer Goods"/>
+    <yahooindustry id="331" name="Trucks &amp; Other Vehicles" sector="Consumer Goods"/>
+
+    <yahooindustry id="431" name="Accident &amp; Health Insurance" sector="Financial"/>
+    <yahooindustry id="422" name="Asset Management" sector="Financial"/>
+    <yahooindustry id="425" name="Closed-End Fund - Debt" sector="Financial"/>
+    <yahooindustry id="426" name="Closed-End Fund - Equity" sector="Financial"/>
+    <yahooindustry id="427" name="Closed-End Fund - Foreign" sector="Financial"/>
+    <yahooindustry id="424" name="Credit Services" sector="Financial"/>
+    <yahooindustry id="423" name="Diversified Investments" sector="Financial"/>
+    <yahooindustry id="417" name="Foreign Money Center Banks" sector="Financial"/>
+    <yahooindustry id="418" name="Foreign Regional Banks" sector="Financial"/>
+    <yahooindustry id="434" name="Insurance Brokers" sector="Financial"/>
+    <yahooindustry id="420" name="Investment Brokerage - National" sector="Financial"/>
+    <yahooindustry id="421" name="Investment Brokerage - Regional" sector="Financial"/>
+    <yahooindustry id="430" name="Life Insurance" sector="Financial"/>
+    <yahooindustry id="410" name="Money Center Banks" sector="Financial"/>
+    <yahooindustry id="447" name="Mortgage Investment" sector="Financial"/>
+    <yahooindustry id="432" name="Property &amp; Casualty Insurance" sector="Financial"/>
+    <yahooindustry id="448" name="Property Management" sector="Financial"/>
+    <yahooindustry id="440" name="REIT - Diversified" sector="Financial"/>
+    <yahooindustry id="442" name="REIT - Healthcare Facilities" sector="Financial"/>
+    <yahooindustry id="443" name="REIT - Hotel/Motel" sector="Financial"/>
+    <yahooindustry id="444" name="REIT - Industrial" sector="Financial"/>
+    <yahooindustry id="441" name="REIT - Office" sector="Financial"/>
+    <yahooindustry id="445" name="REIT - Residential" sector="Financial"/>
+    <yahooindustry id="446" name="REIT - Retail" sector="Financial"/>
+    <yahooindustry id="449" name="Real Estate Development" sector="Financial"/>
+    <yahooindustry id="412" name="Regional - Mid-Atlantic Banks" sector="Financial"/>
+    <yahooindustry id="414" name="Regional - Midwest Banks" sector="Financial"/>
+    <yahooindustry id="411" name="Regional - Northeast Banks" sector="Financial"/>
+    <yahooindustry id="416" name="Regional - Pacific Banks" sector="Financial"/>
+    <yahooindustry id="413" name="Regional - Southeast Banks" sector="Financial"/>
+    <yahooindustry id="415" name="Regional - Southwest Banks" sector="Financial"/>
+    <yahooindustry id="419" name="Savings &amp; Loans" sector="Financial"/>
+    <yahooindustry id="433" name="Surety &amp; Title Insurance" sector="Financial"/>
+
+    <yahooindustry id="515" name="Biotechnology" sector="Healthcare"/>
+    <yahooindustry id="516" name="Diagnostic Substances" sector="Healthcare"/>
+    <yahooindustry id="513" name="Drug Delivery" sector="Healthcare"/>
+    <yahooindustry id="510" name="Drug Manufacturers - Major" sector="Healthcare"/>
+    <yahooindustry id="511" name="Drug Manufacturers - Other" sector="Healthcare"/>
+    <yahooindustry id="514" name="Drug Related Products" sector="Healthcare"/>
+    <yahooindustry id="512" name="Drugs - Generic" sector="Healthcare"/>
+    <yahooindustry id="522" name="Health Care Plans" sector="Healthcare"/>
+    <yahooindustry id="526" name="Home Health Care" sector="Healthcare"/>
+    <yahooindustry id="524" name="Hospitals" sector="Healthcare"/>
+    <yahooindustry id="523" name="Long-Term Care Facilities" sector="Healthcare"/>
+    <yahooindustry id="521" name="Medical Appliances &amp; Equipment" sector="Healthcare"/>
+    <yahooindustry id="520" name="Medical Instruments &amp; Supplies" sector="Healthcare"/>
+    <yahooindustry id="525" name="Medical Laboratories &amp; Research" sector="Healthcare"/>
+    <yahooindustry id="527" name="Medical Practitioners" sector="Healthcare"/>
+    <yahooindustry id="528" name="Specialized Health Services" sector="Healthcare"/>
+
+    <yahooindustry id="610" name="Aerospace/Defense - Major Diversified" sector="Industrial Goods"/>
+    <yahooindustry id="611" name="Aerospace/Defense Products &amp; Services" sector="Industrial Goods"/>
+    <yahooindustry id="633" name="Cement" sector="Industrial Goods"/>
+    <yahooindustry id="622" name="Diversified Machinery" sector="Industrial Goods"/>
+    <yahooindustry id="620" name="Farm &amp; Construction Machinery" sector="Industrial Goods"/>
+    <yahooindustry id="634" name="General Building Materials" sector="Industrial Goods"/>
+    <yahooindustry id="636" name="General Contractors" sector="Industrial Goods"/>
+    <yahooindustry id="635" name="Heavy Construction" sector="Industrial Goods"/>
+    <yahooindustry id="627" name="Industrial Electrical Equipment" sector="Industrial Goods"/>
+    <yahooindustry id="621" name="Industrial Equipment &amp; Components" sector="Industrial Goods"/>
+    <yahooindustry id="632" name="Lumber, Wood Production" sector="Industrial Goods"/>
+    <yahooindustry id="624" name="Machine Tools &amp; Accessories" sector="Industrial Goods"/>
+    <yahooindustry id="631" name="Manufactured Housing" sector="Industrial Goods"/>
+    <yahooindustry id="626" name="Metal Fabrication" sector="Industrial Goods"/>
+    <yahooindustry id="623" name="Pollution &amp; Treatment Controls" sector="Industrial Goods"/>
+    <yahooindustry id="630" name="Residential Construction" sector="Industrial Goods"/>
+    <yahooindustry id="625" name="Small Tools &amp; Accessories" sector="Industrial Goods"/>
+    <yahooindustry id="628" name="Textile Industrial" sector="Industrial Goods"/>
+    <yahooindustry id="637" name="Waste Management" sector="Industrial Goods"/>
+
+    <yahooindustry id="720" name="Advertising Agencies" sector="Services"/>
+    <yahooindustry id="773" name="Air Delivery &amp; Freight Services" sector="Services"/>
+    <yahooindustry id="772" name="Air Services, Other" sector="Services"/>
+    <yahooindustry id="730" name="Apparel Stores" sector="Services"/>
+    <yahooindustry id="744" name="Auto Dealerships" sector="Services"/>
+    <yahooindustry id="738" name="Auto Parts Stores" sector="Services"/>
+    <yahooindustry id="750" name="Auto Parts Wholesale" sector="Services"/>
+    <yahooindustry id="758" name="Basic Materials Wholesale" sector="Services"/>
+    <yahooindustry id="724" name="Broadcasting - Radio" sector="Services"/>
+    <yahooindustry id="723" name="Broadcasting - TV" sector="Services"/>
+    <yahooindustry id="751" name="Building Materials Wholesale" sector="Services"/>
+    <yahooindustry id="760" name="Business Services" sector="Services"/>
+    <yahooindustry id="725" name="CATV Systems" sector="Services"/>
+    <yahooindustry id="739" name="Catalog &amp; Mail Order Houses" sector="Services"/>
+    <yahooindustry id="755" name="Computers Wholesale" sector="Services"/>
+    <yahooindustry id="763" name="Consumer Services" sector="Services"/>
+    <yahooindustry id="731" name="Department Stores" sector="Services"/>
+    <yahooindustry id="732" name="Discount, Variety Stores" sector="Services"/>
+    <yahooindustry id="733" name="Drug Stores" sector="Services"/>
+    <yahooindustry id="756" name="Drugs Wholesale" sector="Services"/>
+    <yahooindustry id="766" name="Education &amp; Training Services" sector="Services"/>
+    <yahooindustry id="735" name="Electronics Stores" sector="Services"/>
+    <yahooindustry id="753" name="Electronics Wholesale" sector="Services"/>
+    <yahooindustry id="722" name="Entertainment - Diversified" sector="Services"/>
+    <yahooindustry id="757" name="Food Wholesale" sector="Services"/>
+    <yahooindustry id="714" name="Gaming Activities" sector="Services"/>
+    <yahooindustry id="716" name="General Entertainment" sector="Services"/>
+    <yahooindustry id="734" name="Grocery Stores" sector="Services"/>
+    <yahooindustry id="737" name="Home Furnishing Stores" sector="Services"/>
+    <yahooindustry id="736" name="Home Improvement Stores" sector="Services"/>
+    <yahooindustry id="752" name="Industrial Equipment Wholesale" sector="Services"/>
+    <yahooindustry id="742" name="Jewelry Stores" sector="Services"/>
+    <yahooindustry id="710" name="Lodging" sector="Services"/>
+    <yahooindustry id="770" name="Major Airlines" sector="Services"/>
+    <yahooindustry id="769" name="Management Services" sector="Services"/>
+    <yahooindustry id="721" name="Marketing Services" sector="Services"/>
+    <yahooindustry id="754" name="Medical Equipment Wholesale" sector="Services"/>
+    <yahooindustry id="726" name="Movie Production, Theaters" sector="Services"/>
+    <yahooindustry id="743" name="Music &amp; Video Stores" sector="Services"/>
+    <yahooindustry id="762" name="Personal Services" sector="Services"/>
+    <yahooindustry id="729" name="Publishing - Books" sector="Services"/>
+    <yahooindustry id="727" name="Publishing - Newspapers" sector="Services"/>
+    <yahooindustry id="728" name="Publishing - Periodicals" sector="Services"/>
+    <yahooindustry id="776" name="Railroads" sector="Services"/>
+    <yahooindustry id="771" name="Regional Airlines" sector="Services"/>
+    <yahooindustry id="761" name="Rental &amp; Leasing Services" sector="Services"/>
+    <yahooindustry id="768" name="Research Services" sector="Services"/>
+    <yahooindustry id="711" name="Resorts &amp; Casinos" sector="Services"/>
+    <yahooindustry id="712" name="Restaurants" sector="Services"/>
+    <yahooindustry id="765" name="Security &amp; Protection Services" sector="Services"/>
+    <yahooindustry id="775" name="Shipping" sector="Services"/>
+    <yahooindustry id="713" name="Specialty Eateries" sector="Services"/>
+    <yahooindustry id="745" name="Specialty Retail, Other" sector="Services"/>
+    <yahooindustry id="715" name="Sporting Activities" sector="Services"/>
+    <yahooindustry id="740" name="Sporting Goods Stores" sector="Services"/>
+    <yahooindustry id="764" name="Staffing &amp; Outsourcing Services" sector="Services"/>
+    <yahooindustry id="767" name="Technical Services" sector="Services"/>
+    <yahooindustry id="741" name="Toy &amp; Hobby Stores" sector="Services"/>
+    <yahooindustry id="774" name="Trucking" sector="Services"/>
+    <yahooindustry id="759" name="Wholesale, Other" sector="Services"/>
+
+    <yahooindustry id="821" name="Application Software" sector="Technology"/>
+    <yahooindustry id="826" name="Business Software &amp; Services" sector="Technology"/>
+    <yahooindustry id="841" name="Communication Equipment" sector="Technology"/>
+    <yahooindustry id="812" name="Computer Based Systems" sector="Technology"/>
+    <yahooindustry id="815" name="Computer Peripherals" sector="Technology"/>
+    <yahooindustry id="813" name="Data Storage Devices" sector="Technology"/>
+    <yahooindustry id="846" name="Diversified Communication Services" sector="Technology"/>
+    <yahooindustry id="810" name="Diversified Computer Systems" sector="Technology"/>
+    <yahooindustry id="836" name="Diversified Electronics" sector="Technology"/>
+    <yahooindustry id="825" name="Healthcare Information Services" sector="Technology"/>
+    <yahooindustry id="827" name="Information &amp; Delivery Services" sector="Technology"/>
+    <yahooindustry id="824" name="Information Technology Services" sector="Technology"/>
+    <yahooindustry id="851" name="Internet Information Providers" sector="Technology"/>
+    <yahooindustry id="850" name="Internet Service Providers" sector="Technology"/>
+    <yahooindustry id="852" name="Internet Software &amp; Services" sector="Technology"/>
+    <yahooindustry id="843" name="Long Distance Carriers" sector="Technology"/>
+    <yahooindustry id="820" name="Multimedia &amp; Graphics Software" sector="Technology"/>
+    <yahooindustry id="814" name="Networking &amp; Communication Devices" sector="Technology"/>
+    <yahooindustry id="811" name="Personal Computers" sector="Technology"/>
+    <yahooindustry id="835" name="Printed Circuit Boards" sector="Technology"/>
+    <yahooindustry id="842" name="Processing Systems &amp; Products" sector="Technology"/>
+    <yahooindustry id="837" name="Scientific &amp; Technical Instruments" sector="Technology"/>
+    <yahooindustry id="823" name="Security Software &amp; Services" sector="Technology"/>
+    <yahooindustry id="830" name="Semiconductor - Broad Line" sector="Technology"/>
+    <yahooindustry id="833" name="Semiconductor - Integrated Circuits" sector="Technology"/>
+    <yahooindustry id="832" name="Semiconductor - Specialized" sector="Technology"/>
+    <yahooindustry id="834" name="Semiconductor Equipment &amp; Materials" sector="Technology"/>
+    <yahooindustry id="831" name="Semiconductor- Memory Chips" sector="Technology"/>
+    <yahooindustry id="822" name="Technical &amp; System Software" sector="Technology"/>
+    <yahooindustry id="844" name="Telecom Services - Domestic" sector="Technology"/>
+    <yahooindustry id="845" name="Telecom Services - Foreign" sector="Technology"/>
+    <yahooindustry id="840" name="Wireless Communications" sector="Technology"/>
+
+    <yahooindustry id="913" name="Diversified Utilities" sector="Utilities"/>
+    <yahooindustry id="911" name="Electric Utilities" sector="Utilities"/>
+    <yahooindustry id="910" name="Foreign Utilities" sector="Utilities"/>
+    <yahooindustry id="912" name="Gas Utilities" sector="Utilities"/>
+    <yahooindustry id="914" name="Water Utilities" sector="Utilities"/>
+
+</yahooindustries>
