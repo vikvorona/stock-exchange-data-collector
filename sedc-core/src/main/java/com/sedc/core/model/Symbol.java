@@ -56,7 +56,7 @@ public class Symbol {
         this.description = description;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "MASTER_SYM_ID")
     public Symbol getMasterSymbol() {
         return masterSymbol;
@@ -66,7 +66,7 @@ public class Symbol {
         this.masterSymbol = masterSymbol;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "EX_ID")
     public Exchange getExchange() {
         return exchange;
