@@ -42,7 +42,7 @@ public class FinamResourceGenerator implements ItemWriter<String> {
         for (String symbol : items) {
 
             String queryParams[] = {"1", "16842", symbol, "0", startDay, startMonth, startYear, startDate, endDay, endMonth, endYear,
-                    endDate, "5", symbol + new Date(), ".txt", symbol, "1", "1", "1", "on", "1", "1", "1", "1"};
+                    endDate, "5", symbol, "1", "1", "1", "1", "1"};
 
             UrlResource resource = new UrlResource(FinamUtils.buildUrl(queryParams));
             LOG.debug("Generated resource: " + resource);
