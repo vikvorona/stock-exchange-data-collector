@@ -48,6 +48,6 @@ public class FinamSymbolHibernateTest {
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM SYMBOL").uniqueResult();
         session.close();
-        Assert.assertTrue(count.intValue() == 3126);
+        Assert.assertTrue("Current count: " + count.intValue(),count.intValue() == 3126);
     }
 }

@@ -23,7 +23,9 @@
         </property>
     </bean>
 
-    <bean id="processor" class="com.sedc.collectors.finam.symbol.FinamSymbolLoadProcessor"/>
+    <bean id="processor" class="com.sedc.collectors.finam.symbol.FinamSymbolLoadProcessor">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
     <bean id="writer" class="org.springframework.batch.item.database.HibernateItemWriter">
         <property name="sessionFactory" ref="sessionFactory"/>
