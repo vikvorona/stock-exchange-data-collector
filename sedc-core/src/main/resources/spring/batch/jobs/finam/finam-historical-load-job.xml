@@ -52,13 +52,15 @@
 
     <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
 
-    <bean name="resourceGenerator" class="com.sedc.collectors.finam.historical.FinamResourceGenerator">
+    <bean name="resourceGenerator" class="com.sedc.collectors.finam.historical.FinamResourceGenerator" scope="step">
         <property name="urls" ref="urls"/>
+        <property name="period" value="#{jobParameters[period]}"/>
+        <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
     <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
-        <property name="resources" ref="urls" />
-        <property name="delegate" ref="flatFileItemReader" />
+        <property name="resources" ref="urls"/>
+        <property name="delegate" ref="flatFileItemReader"/>
     </bean>
 
     <util:list id="urls" list-class="java.util.ArrayList"/>

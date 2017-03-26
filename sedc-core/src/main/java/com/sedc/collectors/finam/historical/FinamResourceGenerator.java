@@ -15,6 +15,10 @@ public class FinamResourceGenerator implements ItemWriter<String> {
 
     @Autowired
     private List<UrlResource> urls;
+    @Autowired
+    private String period;
+    @Autowired
+    private String region;
 
     public void write(List<? extends String> items) throws Exception {
 
@@ -31,5 +35,13 @@ public class FinamResourceGenerator implements ItemWriter<String> {
 
     public void setUrls(List<UrlResource> urls) {
         this.urls = urls;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 }

@@ -17,6 +17,10 @@ public class FinamSymbolReader implements ItemReader<String>, InitializingBean, 
 
     @Autowired
     private SymbolManager symbolManager;
+    @Autowired
+    private String period;
+    @Autowired
+    private String region;
 
     private Queue<String> buffer = new ArrayDeque<>();
 
@@ -43,5 +47,13 @@ public class FinamSymbolReader implements ItemReader<String>, InitializingBean, 
 
     public void setSymbolManager(SymbolManager symbolManager) {
         this.symbolManager = symbolManager;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 }
