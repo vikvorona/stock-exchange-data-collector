@@ -1,4 +1,4 @@
-package com.sedc.symbolload;
+package com.sedc.symbolload.micex;
 
 import com.sedc.core.model.Exchange;
 import com.sedc.core.model.Symbol;

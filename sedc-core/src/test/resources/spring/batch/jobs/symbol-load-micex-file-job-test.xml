@@ -21,13 +21,13 @@
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="classesToBeBound">
             <list>
-                <value>com.sedc.symbolload.MicexRow</value>
+                <value>com.sedc.symbolload.micex.MicexRow</value>
             </list>
         </property>
     </bean>
 
     <!--filter & calculate the data-->
-    <bean id="processor" class="com.sedc.symbolload.MicexMapper">
+    <bean id="processor" class="com.sedc.symbolload.micex.MicexMapper">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
@@ -38,10 +38,10 @@
     <bean name="multiResourceReader" class="org.springframework.batch.item.file.MultiResourceItemReader">
         <property name="resources">
             <list>
-                <bean class="com.sedc.symbolload.MicexResource">
+                <bean class="com.sedc.symbolload.micex.MicexResource">
                     <constructor-arg name="path" value="http://iss.moex.com/iss/engines/stock/markets/shares/boards/EQDP/securities.xml"/>
                 </bean>
-                <bean class="com.sedc.symbolload.MicexResource">
+                <bean class="com.sedc.symbolload.micex.MicexResource">
                     <constructor-arg name="path" value="http://iss.moex.com/iss/engines/stock/markets/shares/boards/SMAL/securities.xml"/>
                 </bean>
             </list>

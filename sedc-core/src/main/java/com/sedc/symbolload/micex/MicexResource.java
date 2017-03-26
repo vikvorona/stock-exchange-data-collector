@@ -1,4 +1,4 @@
-package com.sedc.symbolload;
+package com.sedc.symbolload.micex;
 
 import org.springframework.core.io.UrlResource;
 

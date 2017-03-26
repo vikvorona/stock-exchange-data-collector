@@ -21,13 +21,13 @@
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="classesToBeBound">
             <list>
-                <value>com.sedc.symbolload.MicexRow</value>
+                <value>com.sedc.symbolload.micex.MicexRow</value>
             </list>
         </property>
     </bean>
 
     <!--filter & calculate the data-->
-    <bean id="processor" class="com.sedc.symbolload.MicexMapper">
+    <bean id="processor" class="com.sedc.symbolload.micex.MicexMapper">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
