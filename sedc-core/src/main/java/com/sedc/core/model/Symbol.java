@@ -22,7 +22,7 @@ public class Symbol {
     @Column(name = "NAME", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 40)
+    @Column(name = "DESCRIPTION", length = 100)
     private String description;
 
     @Column(name = "ISIN", length = 12)

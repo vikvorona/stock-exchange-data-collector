@@ -19,6 +19,9 @@ public class SymbolLoadApplication {
             case "MICEX":
                 CommandLineJobRunner.main(new String[]{"spring/batch/jobs/symbol-load-micex-job.xml", "symbol-load-micex-job"});
                 break;
+            case "SPBEX":
+                CommandLineJobRunner.main(new String[]{"spring/batch/jobs/symbol-load-spbex-job.xml", "symbol-load-spbex-job"});
+                break;
             default:
                 LOG.error(exchange + " is not realized");
                 System.exit(1);
