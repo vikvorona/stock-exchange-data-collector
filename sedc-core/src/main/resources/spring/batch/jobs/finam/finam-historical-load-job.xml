@@ -52,10 +52,24 @@
 
     <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
 
+    <bean id="dateFormat" class="java.text.SimpleDateFormat">
+        <constructor-arg value="dd.MM.yyyy" />
+    </bean>
+
     <bean name="resourceGenerator" class="com.sedc.collectors.finam.historical.FinamResourceGenerator" scope="step">
         <property name="urls" ref="urls"/>
         <property name="period" value="#{jobParameters[period]}"/>
         <property name="region" value="#{jobParameters[region]}"/>
+        <property name="dateFrom">
+            <bean factory-bean="dateFormat" factory-method="parse">
+                <constructor-arg value="24.02.2017" />
+            </bean>
+        </property>
+        <property name="dateTo">
+            <bean factory-bean="dateFormat" factory-method="parse">
+                <constructor-arg value="01.03.2017" />
+            </bean>
+        </property>
     </bean>
 
     <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
