@@ -15,7 +15,7 @@
     <!--read the data from finam api-->
     <bean id="finamReader" class="org.springframework.batch.item.file.FlatFileItemReader">
         <property name="lineMapper" ref="finamLineMapper"/>
-        <property name="resource" value="classpath:com/sedc/collectors/finam/historical/sample-data.csv"/>
+        <property name="resource" value="http://export.finam.ru/GAZP_170224_170301.txt?market=1&amp;em=16842&amp;code=GAZP&amp;apply=0&amp;df=24&amp;mf=1&amp;yf=2017&amp;from=24.02.2017&amp;dt=1&amp;mt=2&amp;yt=2017&amp;to=01.03.2017&amp;p=5&amp;f=GAZP_170224_170301&amp;e=.txt&amp;cn=GAZP&amp;dtf=1&amp;tmf=1&amp;MSOR=1&amp;mstime=on&amp;mstimever=1&amp;sep=1&amp;sep2=1&amp;datf=1"/>
     </bean>
 
     <bean name="finamLineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">

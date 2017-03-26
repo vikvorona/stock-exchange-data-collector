@@ -1,0 +1,61 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <import resource="classpath:spring/batch/config/context.xml"/>
+    <import resource="classpath:spring/batch/config/database.xml"/>
+
+    <!--read the data from finam api-->
+    <bean id="finamReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+        <property name="lineMapper" ref="finamLineMapper"/>
+        <property name="resource" value="classpath:com/sedc/collectors/finam/historical/sample-data.csv"/>
+    </bean>
+
+    <!--filter & calculate the data-->
+    <bean id="finamProcessor" class="com.sedc.collectors.finam.historical.StageTableFilter"/>
+
+    <!--store the data-->
+    <bean id="finamWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+        <!-- write to this csv file -->
+        <property name="resource" value="file:target/cvs/report.csv"/>
+        <property name="shouldDeleteIfExists" value="true"/>
+
+        <property name="lineAggregator">
+            <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+                <property name="delimiter" value=","/>
+                <property name="fieldExtractor">
+                    <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+                        <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean name="finamLineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+        <property name="lineTokenizer" ref="finamTokenizer"/>
+        <property name="fieldSetMapper" ref="finamFieldMapper"/>
+    </bean>
+
+    <bean name="finamTokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+        <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
+        <property name="delimiter" value=","/>
+    </bean>
+
+    <bean name="finamFieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
+
+    <batch:job id="finam-job-test" job-repository="jobRepository">
+        <batch:step id="testFileStep">
+            <batch:tasklet>
+                <batch:chunk reader="finamReader"
+                             writer="finamWriter"
+                             commit-interval="1">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+</beans>

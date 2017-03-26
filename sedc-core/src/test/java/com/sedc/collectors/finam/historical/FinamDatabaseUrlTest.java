@@ -7,40 +7,28 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/spring/batch/jobs/finam-database-file-test.xml")
-public class FinamDatabaseFileTest {
+@ContextConfiguration("/spring/batch/jobs/finam-database-url-test.xml")
+public class FinamDatabaseUrlTest {
 
-    private static final Logger LOG = Logger.getLogger(FinamDatabaseFileTest.class);
+    private static final Logger LOG = Logger.getLogger(FinamDatabaseUrlTest.class);
 
     @Autowired
     private JobLauncher jobLauncher;
     @Autowired
     private Job job;
 
-    public FinamDatabaseFileTest() {
+    public FinamDatabaseUrlTest() {
     }
 
     @Test
-    public void testFile() throws Exception {
+    public void testUrl() throws Exception {
 
         JobExecution execution = jobLauncher.run(job, new JobParameters());
         LOG.info("Exit Status : " + execution.getStatus());
     }
-
-//    @Test
-//    public void testUrl() throws Exception {
-//
-//        reader.setResource(new UrlResource("http://export.finam.ru/GAZP_170224_170301.txt?market=1&em=16842&code=GAZP&apply=0&df=24&mf=1&yf=2017&from=24.02.2017&dt=1&mt=2&yt=2017&to=01.03.2017&p=5&f=GAZP_170224_170301&e=.txt&cn=GAZP&dtf=1&tmf=1&MSOR=1&mstime=on&mstimever=1&sep=1&sep2=1&datf=1"));
-//
-//        JobExecution execution = jobLauncher.run(job, new JobParameters());
-//        LOG.info("Exit Status : " + execution.getStatus());
-//    }
 }

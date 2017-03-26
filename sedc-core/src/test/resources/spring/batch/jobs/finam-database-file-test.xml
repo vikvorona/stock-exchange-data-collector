@@ -15,6 +15,7 @@
     <!--read the data from finam api-->
     <bean id="finamReader" class="org.springframework.batch.item.file.FlatFileItemReader">
         <property name="lineMapper" ref="finamLineMapper"/>
+        <property name="resource" value="classpath:com/sedc/collectors/finam/historical/sample-data.csv"/>
     </bean>
 
     <bean name="finamLineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
