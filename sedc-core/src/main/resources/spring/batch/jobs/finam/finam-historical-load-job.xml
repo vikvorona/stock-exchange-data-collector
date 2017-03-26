@@ -11,7 +11,7 @@
     <import resource="classpath:spring/batch/config/database.xml"/>
 
     <bean id="flatFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
-        <property name="lineMapper" ref="finamLineMapper"/>
+        <property name="lineMapper" ref="lineMapper"/>
     </bean>
 
     <bean id="stageFilter" class="com.sedc.collectors.finam.historical.StageTableFilter">
@@ -34,17 +34,17 @@
         </property>
     </bean>
 
-    <bean name="finamLineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
-        <property name="lineTokenizer" ref="finamTokenizer"/>
-        <property name="fieldSetMapper" ref="finamFieldMapper"/>
+    <bean name="lineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+        <property name="lineTokenizer" ref="tokenizer"/>
+        <property name="fieldSetMapper" ref="fieldMapper"/>
     </bean>
 
-    <bean name="finamTokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+    <bean name="tokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
         <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
         <property name="delimiter" value=","/>
     </bean>
 
-    <bean name="finamFieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
+    <bean name="fieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
 
     <bean name="symbolReader" class="com.sedc.collectors.finam.historical.FinamSymbolReader">
         <property name="symbolManager" ref="symbolManager"/>
