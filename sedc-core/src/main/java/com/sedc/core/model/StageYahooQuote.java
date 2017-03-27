@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "STAGE_YAHOO_QUOTE")
 public class StageYahooQuote {
     private Long id;
-    private Symbol symbol;
+    private String symbol;
     private Double averageDailyVolume;
     private Double change;
     private Double daysLow;
@@ -22,8 +22,7 @@ public class StageYahooQuote {
     private String stockExchange;
 
     @Id
-    @SequenceGenerator(name = "STAGE_YAHOO_QUOTE_GEN", sequenceName = "s_stage_yahoo_quote_pk")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STAGE_YAHOO_QUOTE_GEN")
+    @GeneratedValue
     @Column(name = "SYQ_ID")
     public Long getId() {
         return id;
@@ -33,13 +32,12 @@ public class StageYahooQuote {
         this.id = id;
     }
 
-    @OneToOne
-    @JoinColumn(name = "SYM_ID")
-    public Symbol getSymbol() {
+    @Column(name = "SYMBOL")
+    public String getSymbol() {
         return symbol;
     }
 
-    public void setSymbol(Symbol symbol) {
+    public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
 

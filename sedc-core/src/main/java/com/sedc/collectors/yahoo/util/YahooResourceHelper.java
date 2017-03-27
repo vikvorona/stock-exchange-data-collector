@@ -35,7 +35,7 @@ public class YahooResourceHelper {
         String uriString = UriComponentsBuilder.fromHttpUrl(API_ROOT)
                 .queryParam("q", query)
                 .queryParam("diagnostics", false)
-                .queryParam("format", "json")
+                .queryParam("format", "xml")
                 .queryParam("env", YQL_COMMUNITY_TABLES)
                 .toUriString();
         return new UrlResource(uriString);

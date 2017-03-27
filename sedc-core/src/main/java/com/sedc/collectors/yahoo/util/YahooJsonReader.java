@@ -8,7 +8,7 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class YahooResultReader<T> implements ItemReader<T> {
+public class YahooJsonReader<T> implements ItemReader<T> {
     private String resultKey;
     private Class<T> targetClass;
     private Resource resource;
@@ -16,7 +16,7 @@ public class YahooResultReader<T> implements ItemReader<T> {
     private ObjectMapper mapper;
     private Iterator<JsonNode> it;
 
-    public YahooResultReader(String resultKey, Class<T> targetClass) {
+    public YahooJsonReader(String resultKey, Class<T> targetClass) {
         this.resultKey = resultKey;
         this.targetClass = targetClass;
     }

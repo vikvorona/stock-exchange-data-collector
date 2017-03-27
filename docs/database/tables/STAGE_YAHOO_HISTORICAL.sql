@@ -4,7 +4,7 @@ CREATE TABLE STAGE_YAHOO_HISTORICAL(
     SYMBOL              VARCHAR(20) NOT NULL,
     SYM_ID              NUMERIC(18),
     PER                 VARCHAR(20) NOT NULL,
-    LOAD_DATE           TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    DATE                DATE NOT NULL,
     OPEN                NUMERIC(18),
     HIGH                NUMERIC(18),
     LOW                 NUMERIC(18),

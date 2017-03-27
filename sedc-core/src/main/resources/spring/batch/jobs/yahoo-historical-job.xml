@@ -6,16 +6,32 @@
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/embedded-database.xml"/>
 
-    <bean id="yahooHistoricalReader" class="com.sedc.collectors.yahoo.util.YahooResultReader">
+    <!-- Readers -->
+    <bean id="yahooHistoricalXmlReader" class="org.springframework.batch.item.xml.StaxEventItemReader">
+        <property name="fragmentRootElementName" value="quote"/>
+        <property name="unmarshaller" ref="yahooHistoricalRecordUnmarshaller"/>
+    </bean>
+    <bean id="yahooHistoricalRecordUnmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound" value="com.sedc.collectors.yahoo.historical.model.YahooHistoricalRecord"/>
+    </bean>
+
+    <bean id="yahooHistoricalJsonReader" class="com.sedc.collectors.yahoo.util.YahooJsonReader">
         <constructor-arg name="resultKey" value="quote"/>
         <constructor-arg name="targetClass" value="com.sedc.collectors.yahoo.historical.model.YahooHistoricalRecord"/>
     </bean>
 
+
+    <!-- Processors -->
     <bean id="yahooHistoricalProcessor" class="com.sedc.collectors.yahoo.historical.YahooHistoricalProcessor">
     </bean>
 
-    <!-- Fallback csv writer
-    <bean id="yahooHistoricalWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+
+    <!-- Writers -->
+    <bean id="yahooHistoricalDatabaseWriter" class="org.springframework.batch.item.database.HibernateItemWriter">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="yahooHistoricalCsvWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
         <property name="resource" value="file:target/cvs/yahoo-historical.csv"/>
         <property name="shouldDeleteIfExists" value="true"/>
 
@@ -24,24 +40,21 @@
                 <property name="delimiter" value=","/>
                 <property name="fieldExtractor">
                     <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
-                        <property name="names" value="symbol,date,open,high,low,close,volume,adjClose"/>
+                        <property name="names" value="symbol,entryTime,open,high,low,close,volume,adjClose"/>
                     </bean>
                 </property>
             </bean>
         </property>
     </bean>
-    -->
 
-    <bean id="yahooHistoricalWriter" class="org.springframework.batch.item.database.HibernateItemWriter">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
 
+    <!-- Job description -->
     <bean id="yahooHistoricalApplication" class="com.sedc.collectors.yahoo.historical.YahooHistoricalApplication">
         <constructor-arg ref="jobLauncher"/>
         <constructor-arg ref="stepBuilderFactory"/>
         <constructor-arg ref="jobBuilderFactory"/>
-        <constructor-arg ref="yahooHistoricalReader"/>
+        <constructor-arg ref="yahooHistoricalXmlReader"/>
         <constructor-arg ref="yahooHistoricalProcessor"/>
-        <constructor-arg ref="yahooHistoricalWriter"/>
+        <constructor-arg ref="yahooHistoricalDatabaseWriter"/>
     </bean>
 </beans>

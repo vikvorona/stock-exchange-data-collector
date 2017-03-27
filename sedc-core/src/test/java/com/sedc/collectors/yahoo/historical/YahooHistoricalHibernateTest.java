@@ -1,7 +1,7 @@
 package com.sedc.collectors.yahoo.historical;
 
 import com.sedc.collectors.yahoo.util.YahooResourceHelper;
-import com.sedc.collectors.yahoo.util.YahooResultReader;
+import com.sedc.collectors.yahoo.util.YahooJsonReader;
 import com.sedc.managers.SymbolManager;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -34,7 +34,7 @@ public class YahooHistoricalHibernateTest {
     private Job job;
 
     @Autowired
-    private YahooResultReader reader;
+    private YahooJsonReader reader;
 
     @Autowired
     private SymbolManager symbolManager;

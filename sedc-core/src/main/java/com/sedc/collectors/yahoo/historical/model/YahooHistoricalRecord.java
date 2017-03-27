@@ -1,26 +1,28 @@
 package com.sedc.collectors.yahoo.historical.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import javax.xml.bind.annotation.*;
 import java.util.Date;
 
 @Data
+@XmlRootElement(name="quote")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class YahooHistoricalRecord {
-    @JsonProperty("Symbol")
+    @XmlAttribute(name = "Symbol")
     private String symbol;
-    @JsonProperty("Date")
+    @XmlElement(name = "Date")
     private Date date;
-    @JsonProperty("Open")
+    @XmlElement(name = "Open")
     private Double open;
-    @JsonProperty("High")
+    @XmlElement(name = "High")
     private Double high;
-    @JsonProperty("Low")
+    @XmlElement(name = "Low")
     private Double low;
-    @JsonProperty("Close")
+    @XmlElement(name = "Close")
     private Double close;
-    @JsonProperty("Volume")
+    @XmlElement(name = "Volume")
     private Double volume;
-    @JsonProperty("Adj_Close")
+    @XmlElement(name = "Adj_Close")
     private Double adjClose;
 }

@@ -2,7 +2,7 @@ package com.sedc.collectors.yahoo.quote;
 
 import com.sedc.collectors.yahoo.quote.model.YahooQuoteRecord;
 import com.sedc.collectors.yahoo.util.YahooResourceHelper;
-import com.sedc.collectors.yahoo.util.YahooResultReader;
+import com.sedc.collectors.yahoo.util.YahooJsonReader;
 import com.sedc.core.model.StageYahooQuote;
 import com.sedc.managers.SymbolManager;
 import com.sedc.managers.SymbolManagerImpl;
@@ -17,6 +17,7 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
@@ -25,7 +26,6 @@ import org.springframework.core.io.UrlResource;
 
 import java.util.List;
 
-@Configurable
 public class YahooQuoteApplication {
 
     private static final Logger LOG = Logger.getLogger(YahooQuoteApplication.class);
@@ -33,15 +33,14 @@ public class YahooQuoteApplication {
     private JobLauncher jobLauncher;
     private StepBuilderFactory stepBuilderFactory;
     private JobBuilderFactory jobBuilderFactory;
-    private YahooResultReader<YahooQuoteRecord> reader;
+    private StaxEventItemReader<YahooQuoteRecord> reader;
     private ItemProcessor<YahooQuoteRecord, StageYahooQuote> processor;
     private ItemWriter<StageYahooQuote> writer;
 
-    @Autowired
     public YahooQuoteApplication(JobLauncher jobLauncher,
                                  StepBuilderFactory stepBuilderFactory,
                                  JobBuilderFactory jobBuilderFactory,
-                                 YahooResultReader<YahooQuoteRecord> reader,
+                                 StaxEventItemReader<YahooQuoteRecord> reader,
                                  ItemProcessor<YahooQuoteRecord, StageYahooQuote> processor,
                                  ItemWriter<StageYahooQuote> writer) {
         this.jobLauncher = jobLauncher;

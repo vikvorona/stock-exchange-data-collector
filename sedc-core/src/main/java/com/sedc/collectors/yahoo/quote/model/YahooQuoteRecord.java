@@ -1,38 +1,40 @@
 package com.sedc.collectors.yahoo.quote.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import javax.xml.bind.annotation.*;
+
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
+@XmlRootElement(name = "quote")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class YahooQuoteRecord {
-    @JsonProperty("Symbol")
+    @XmlAttribute(name = "Symbol")
     private String symbol;
-    @JsonProperty("AverageDailyVolume")
+    @XmlElement(name = "AverageDailyVolume")
     private Double averageDailyVolume;
-    @JsonProperty("Change")
+    @XmlElement(name = "Change")
     private Double change;
-    @JsonProperty("DaysLow")
+    @XmlElement(name = "DaysLow")
     private Double daysLow;
-    @JsonProperty("DaysHigh")
+    @XmlElement(name = "DaysHigh")
     private Double daysHigh;
-    @JsonProperty("YearLow")
+    @XmlElement(name = "YearLow")
     private Double yearLow;
-    @JsonProperty("YearHigh")
+    @XmlElement(name = "YearHigh")
     private Double yearHigh;
-    @JsonProperty("MarketCapitalization")
+    @XmlElement(name = "MarketCapitalization")
     private String marketCapitalization;
-    @JsonProperty("LastTradePriceOnly")
+    @XmlElement(name = "LastTradePriceOnly")
     private Double lastTradePriceOnly;
-    @JsonProperty("DaysRange")
+    @XmlElement(name = "DaysRange")
     private String daysRange;
-    @JsonProperty("Name")
+    @XmlElement(name = "Name")
     private String name;
-    @JsonProperty("StockSymbol")
+    @XmlElement(name = "StockSymbol")
     private String stockSymbol;
-    @JsonProperty("Volume")
+    @XmlElement(name = "Volume")
     private Double volume;
-    @JsonProperty("StockExchange")
+    @XmlElement(name = "StockExchange")
     private String stockExchange;
 }

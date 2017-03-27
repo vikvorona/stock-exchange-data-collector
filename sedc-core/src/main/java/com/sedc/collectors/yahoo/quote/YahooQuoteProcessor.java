@@ -8,12 +8,11 @@ public class YahooQuoteProcessor implements ItemProcessor<YahooQuoteRecord, Stag
     @Override
     public StageYahooQuote process(YahooQuoteRecord yahooQuoteRecord) throws Exception {
         StageYahooQuote stageYahooQuote = new StageYahooQuote();
+        stageYahooQuote.setSymbol(yahooQuoteRecord.getSymbol());
         stageYahooQuote.setAverageDailyVolume(yahooQuoteRecord.getAverageDailyVolume());
         stageYahooQuote.setChange(yahooQuoteRecord.getChange());
         stageYahooQuote.setDaysHigh(yahooQuoteRecord.getDaysHigh());
         stageYahooQuote.setDaysLow(yahooQuoteRecord.getDaysLow());
-
-
         stageYahooQuote.setLastTradePriceOnly(yahooQuoteRecord.getLastTradePriceOnly());
         stageYahooQuote.setName(yahooQuoteRecord.getName());
         stageYahooQuote.setStockExchange(yahooQuoteRecord.getStockExchange());

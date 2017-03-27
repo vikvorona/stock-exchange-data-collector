@@ -6,23 +6,38 @@
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/embedded-database.xml"/>
 
-    <bean id="yahooQuoteReader" class="com.sedc.collectors.yahoo.util.YahooResultReader">
+    <!-- Readers -->
+    <bean id="yahooQuoteXmlReader" class="org.springframework.batch.item.xml.StaxEventItemReader">
+        <property name="fragmentRootElementName" value="quote"/>
+        <property name="unmarshaller" ref="yahooQuoteRecordUnmarshaller"/>
+    </bean>
+    <bean id="yahooQuoteRecordUnmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound" value="com.sedc.collectors.yahoo.quote.model.YahooQuoteRecord"/>
+    </bean>
+
+    <bean id="yahooQuoteJsonReader" class="com.sedc.collectors.yahoo.util.YahooJsonReader">
         <constructor-arg name="resultKey" value="quote"/>
         <constructor-arg name="targetClass" value="com.sedc.collectors.yahoo.quote.model.YahooQuoteRecord"/>
     </bean>
 
+
+    <!-- Processors -->
     <bean id="yahooQuoteProcessor" class="com.sedc.collectors.yahoo.quote.YahooQuoteProcessor">
     </bean>
 
+
+    <!-- Writers -->
     <bean id="yahooQuoteWriter" class="org.springframework.batch.item.database.HibernateItemWriter">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+
+    <!-- Job Description -->
     <bean id="yahooQuoteApplication" class="com.sedc.collectors.yahoo.quote.YahooQuoteApplication">
         <constructor-arg ref="jobLauncher"/>
         <constructor-arg ref="stepBuilderFactory"/>
         <constructor-arg ref="jobBuilderFactory"/>
-        <constructor-arg ref="yahooQuoteReader"/>
+        <constructor-arg ref="yahooQuoteXmlReader"/>
         <constructor-arg ref="yahooQuoteProcessor"/>
         <constructor-arg ref="yahooQuoteWriter"/>
     </bean>

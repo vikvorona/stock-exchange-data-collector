@@ -13,7 +13,7 @@
 
     <bean id="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
 
-    <bean id="yahooHistoricalReader" class="com.sedc.collectors.yahoo.util.YahooResultReader">
+    <bean id="yahooHistoricalReader" class="com.sedc.collectors.yahoo.util.YahooJsonReader">
         <constructor-arg name="resultKey" value="quote"/>
         <constructor-arg name="targetClass" value="com.sedc.collectors.yahoo.historical.model.YahooHistoricalRecord"/>
     </bean>

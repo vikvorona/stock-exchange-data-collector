@@ -2,7 +2,6 @@ package com.sedc.collectors.yahoo.historical;
 
 import com.sedc.collectors.yahoo.historical.model.YahooHistoricalRecord;
 import com.sedc.collectors.yahoo.util.YahooResourceHelper;
-import com.sedc.collectors.yahoo.util.YahooResultReader;
 import com.sedc.core.model.StageYahooHistorical;
 import com.sedc.managers.SymbolManager;
 import com.sedc.managers.SymbolManagerImpl;
@@ -15,9 +14,9 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.UrlResource;
@@ -25,7 +24,6 @@ import org.springframework.core.io.UrlResource;
 import java.time.LocalDate;
 import java.util.List;
 
-@Configurable
 public class YahooHistoricalApplication {
 
     private static final Logger LOG = Logger.getLogger(YahooHistoricalApplication.class);
@@ -33,16 +31,15 @@ public class YahooHistoricalApplication {
     private JobLauncher jobLauncher;
     private StepBuilderFactory stepBuilderFactory;
     private JobBuilderFactory jobBuilderFactory;
-    private YahooResultReader<YahooHistoricalRecord> reader;
-    private YahooHistoricalProcessor processor;
+    private StaxEventItemReader<YahooHistoricalRecord> reader;
+    private ItemProcessor<YahooHistoricalRecord, StageYahooHistorical> processor;
     private ItemWriter<StageYahooHistorical> writer;
 
-    @Autowired
     public YahooHistoricalApplication(JobLauncher jobLauncher,
                                       StepBuilderFactory stepBuilderFactory,
                                       JobBuilderFactory jobBuilderFactory,
-                                      YahooResultReader<YahooHistoricalRecord> reader,
-                                      YahooHistoricalProcessor processor,
+                                      StaxEventItemReader<YahooHistoricalRecord> reader,
+                                      ItemProcessor<YahooHistoricalRecord, StageYahooHistorical> processor,
                                       ItemWriter<StageYahooHistorical> writer) {
         this.jobLauncher = jobLauncher;
         this.stepBuilderFactory = stepBuilderFactory;
