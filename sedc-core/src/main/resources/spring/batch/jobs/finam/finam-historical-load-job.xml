@@ -77,6 +77,23 @@
         <property name="delegate" ref="flatFileItemReader"/>
     </bean>
 
+    <!--store the data-->
+    <bean id="dbWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sql">
+            <value>
+                <![CDATA[
+            	insert into STAGE_FINAM_HISTORICAL(SYMBOL,PER,DATE,TIME)
+			        values (:ticker, :period, :date, :time)
+            ]]>
+            </value>
+        </property>
+        <!-- It will take care matching between object property and sql name parameter -->
+        <property name="itemSqlParameterSourceProvider">
+            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider"/>
+        </property>
+    </bean>
+
     <util:list id="urls" list-class="java.util.ArrayList"/>
 
     <batch:job id="finam-historical-load-job" job-repository="jobRepository">
@@ -91,7 +108,7 @@
         <batch:step id="loadToStage" parent="loadSymbols" next="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
-                             writer="flatFileItemWriter"
+                             writer="dbWriter"
                              commit-interval="100">
                 </batch:chunk>
             </batch:tasklet>
