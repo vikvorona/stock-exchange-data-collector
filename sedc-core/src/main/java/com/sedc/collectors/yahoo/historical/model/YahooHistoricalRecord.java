@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.*;
 import java.util.Date;
 
 @Data
-@XmlRootElement(name="quote")
+@XmlRootElement(name = "quote")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class YahooHistoricalRecord {
     @XmlAttribute(name = "Symbol")

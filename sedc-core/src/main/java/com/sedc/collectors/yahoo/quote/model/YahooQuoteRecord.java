@@ -1,6 +1,5 @@
 package com.sedc.collectors.yahoo.quote.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.xml.bind.annotation.*;

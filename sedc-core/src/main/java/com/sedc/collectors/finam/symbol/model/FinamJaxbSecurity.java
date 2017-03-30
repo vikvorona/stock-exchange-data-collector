@@ -8,19 +8,14 @@
 
 package com.sedc.collectors.finam.symbol.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.*;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p>
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -39,12 +34,10 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "value"
+        "value"
 })
 @XmlRootElement(name = "security")
 public class FinamJaxbSecurity {
@@ -74,11 +67,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getValue() {
         return value;
@@ -86,11 +77,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setValue(String value) {
         this.value = value;
@@ -98,11 +87,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the code property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCode() {
         return code;
@@ -110,11 +97,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the code property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setCode(String value) {
         this.code = value;
@@ -122,11 +107,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the board property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getBoard() {
         return board;
@@ -134,11 +117,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the board property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setBoard(String value) {
         this.board = value;
@@ -146,11 +127,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -158,11 +137,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -170,11 +147,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the shortName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getShortName() {
         return shortName;
@@ -182,11 +157,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the shortName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setShortName(String value) {
         this.shortName = value;
@@ -194,11 +167,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the priceStep property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Float }
-     *     
+     *
+     * @return possible object is
+     * {@link Float }
      */
     public Float getPriceStep() {
         return priceStep;
@@ -206,11 +177,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the priceStep property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Float }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Float }
      */
     public void setPriceStep(Float value) {
         this.priceStep = value;
@@ -218,11 +187,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the multiplier property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     * {@link Integer }
      */
     public Integer getMultiplier() {
         return multiplier;
@@ -230,11 +197,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the multiplier property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
     public void setMultiplier(Integer value) {
         this.multiplier = value;
@@ -242,11 +207,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the decimals property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Byte }
-     *     
+     *
+     * @return possible object is
+     * {@link Byte }
      */
     public Byte getDecimals() {
         return decimals;
@@ -254,11 +217,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the decimals property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Byte }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Byte }
      */
     public void setDecimals(Byte value) {
         this.decimals = value;
@@ -266,11 +227,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the currency property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCurrency() {
         return currency;
@@ -278,11 +237,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the currency property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setCurrency(String value) {
         this.currency = value;
@@ -290,11 +247,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getType() {
         return type;
@@ -302,11 +257,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setType(String value) {
         this.type = value;
@@ -314,11 +267,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Gets the value of the isin property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getIsin() {
         return isin;
@@ -326,11 +277,9 @@ public class FinamJaxbSecurity {
 
     /**
      * Sets the value of the isin property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setIsin(String value) {
         this.isin = value;
