@@ -7,7 +7,7 @@ public class SystemVariableManagerStub implements SystemVariableManager {
     @Override
     public String getSystemVariable(String name) {
         if (SystemVariables.LAST_UPDATE_DATE.equals(name)) {
-            return LocalDateTime.now().minusDays(7).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            return LocalDateTime.now().minusWeeks(1).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         }
         return null;
     }
