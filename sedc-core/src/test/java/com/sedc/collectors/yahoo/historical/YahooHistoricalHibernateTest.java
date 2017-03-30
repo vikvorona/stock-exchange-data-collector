@@ -27,6 +27,8 @@ import java.util.List;
 @ContextConfiguration("/spring/batch/jobs/yahoo-historical-load-hibernate-job-test.xml")
 public class YahooHistoricalHibernateTest {
 
+    private static final int EXPECTED_COUNT = 215;
+
     @Autowired
     private JobLauncher jobLauncher;
 
@@ -43,7 +45,7 @@ public class YahooHistoricalHibernateTest {
     private SessionFactory sessionFactory;
 
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
         List<String> symbols = symbolManager.getStringSymbolsBySource("FINAM_HISTORY");
 
         LocalDate startDate = LocalDate.now().minusMonths(1);
@@ -71,6 +73,6 @@ public class YahooHistoricalHibernateTest {
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_HISTORICAL").uniqueResult();
         session.close();
-        Assert.assertTrue(count.intValue() == 215);
+        Assert.assertTrue(count.intValue() == EXPECTED_COUNT);
     }
 }
