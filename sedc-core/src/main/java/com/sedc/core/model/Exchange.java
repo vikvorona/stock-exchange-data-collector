@@ -3,6 +3,7 @@ package com.sedc.core.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -18,7 +19,7 @@ public class Exchange {
     @SequenceGenerator(name = "EXCHANGE_GEN", sequenceName = "s_exchange_pk")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EXCHANGE_GEN")
     @Column(name = "EX_ID")
-    private Long id;
+    private BigDecimal id;
 
     @Column(name = "NAME")
     private String name;
@@ -29,12 +30,12 @@ public class Exchange {
     @Column(name = "COUNTRY")
     private String country;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "REGION_CG_ID")
     private CodeGeneric region;
 
     @Column(name = "TIMEZONE_UTC_DIFF")
-    private Integer timeZone;
+    private BigDecimal timeZone;
 
     @Column(name = "OPEN_LOCAL")
     private Time openLocal;

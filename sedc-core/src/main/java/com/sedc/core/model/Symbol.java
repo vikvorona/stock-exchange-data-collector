@@ -1,10 +1,9 @@
 package com.sedc.core.model;
 
 import lombok.Data;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
@@ -18,13 +17,16 @@ public class Symbol {
     @SequenceGenerator(name = "SYMBOL_GEN", sequenceName = "s_symbol_pk")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SYMBOL_GEN")
     @Column(name = "SYM_ID")
-    private Long id;
+    private BigDecimal id;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 100)
     private String description;
+
+    @Column(name = "ISIN", length = 12)
+    private String isin;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MASTER_SYM_ID")
