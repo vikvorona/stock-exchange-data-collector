@@ -18,8 +18,6 @@ public class FinamResourceGenerator implements ItemWriter<String> {
     @Autowired
     private String period;
     @Autowired
-    private String region;
-    @Autowired
     private Date dateFrom;
     @Autowired
     private Date dateTo;
@@ -28,7 +26,7 @@ public class FinamResourceGenerator implements ItemWriter<String> {
     public void write(List<? extends String> items) throws Exception {
 
         for (String symbol : items) {
-            UrlResource resource = new UrlResource(FinamUtils.buildUrl(symbol, dateFrom, dateTo));
+            UrlResource resource = new UrlResource(FinamUtils.buildUrl(symbol, dateFrom, dateTo, period));
             LOG.debug("Generated resource: " + resource);
             urls.add(resource);
         }
@@ -40,10 +38,6 @@ public class FinamResourceGenerator implements ItemWriter<String> {
 
     public void setPeriod(String period) {
         this.period = period;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     public void setDateFrom(Date dateFrom) {

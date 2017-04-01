@@ -46,8 +46,9 @@
 
     <bean name="fieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
 
-    <bean name="symbolReader" class="com.sedc.collectors.finam.historical.FinamSymbolReader">
+    <bean name="symbolReader" class="com.sedc.collectors.finam.historical.FinamSymbolReader" scope="step">
         <property name="symbolManager" ref="symbolManager"/>
+        <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
     <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
@@ -59,7 +60,6 @@
     <bean name="resourceGenerator" class="com.sedc.collectors.finam.historical.FinamResourceGenerator" scope="step">
         <property name="urls" ref="urls"/>
         <property name="period" value="#{jobParameters[period]}"/>
-        <property name="region" value="#{jobParameters[region]}"/>
         <property name="dateFrom">
             <bean factory-bean="dateFormat" factory-method="parse">
                 <constructor-arg value="24.02.2017" />
