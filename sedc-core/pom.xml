@@ -92,7 +92,7 @@
             <artifactId>postgresql</artifactId>
             <version>42.0.0</version>
         </dependency>
-  
+
 
         <!-- TEST DEPENDENCIES -->
 
@@ -136,7 +136,6 @@
             <version>1.2.136</version>
             <scope>test</scope>
         </dependency>
-
 
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>

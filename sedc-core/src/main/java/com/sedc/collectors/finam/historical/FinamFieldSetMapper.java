@@ -1,6 +1,6 @@
-package com.sedc.collectors.finam;
+package com.sedc.collectors.finam.historical;
 
-import com.sedc.collectors.finam.model.FinamApiRecord;
+import com.sedc.collectors.finam.historical.model.FinamApiRecord;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
