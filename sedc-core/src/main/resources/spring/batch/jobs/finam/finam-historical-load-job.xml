@@ -46,7 +46,7 @@
 
     <bean name="fieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
 
-    <bean name="symbolReader" class="com.sedc.collectors.finam.historical.FinamSymbolReader" scope="step">
+    <bean name="symbolReader" class="com.sedc.core.SymbolReader" scope="step">
         <property name="symbolManager" ref="symbolManager"/>
         <property name="region" value="#{jobParameters[region]}"/>
     </bean>
