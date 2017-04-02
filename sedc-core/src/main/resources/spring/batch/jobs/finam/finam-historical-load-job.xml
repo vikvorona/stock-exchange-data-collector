@@ -1,0 +1,125 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+	http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <import resource="classpath:spring/batch/config/context.xml"/>
+    <import resource="classpath:spring/batch/config/database.xml"/>
+
+    <bean id="flatFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+        <property name="lineMapper" ref="lineMapper"/>
+    </bean>
+
+    <bean id="stageFilter" class="com.sedc.collectors.finam.historical.StageTableFilter">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean id="flatFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+        <property name="resource" value="file:target/cvs/report.csv"/>
+        <property name="shouldDeleteIfExists" value="true"/>
+
+        <property name="lineAggregator">
+            <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+                <property name="delimiter" value=","/>
+                <property name="fieldExtractor">
+                    <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+                        <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean name="lineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+        <property name="lineTokenizer" ref="tokenizer"/>
+        <property name="fieldSetMapper" ref="fieldMapper"/>
+    </bean>
+
+    <bean name="tokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+        <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
+        <property name="delimiter" value=","/>
+    </bean>
+
+    <bean name="fieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
+
+    <bean name="symbolReader" class="com.sedc.collectors.finam.historical.FinamSymbolReader" scope="step">
+        <property name="symbolManager" ref="symbolManager"/>
+        <property name="region" value="#{jobParameters[region]}"/>
+    </bean>
+
+    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
+
+    <bean id="dateFormat" class="java.text.SimpleDateFormat">
+        <constructor-arg value="dd.MM.yyyy" />
+    </bean>
+
+    <bean name="resourceGenerator" class="com.sedc.collectors.finam.historical.FinamResourceGenerator" scope="step">
+        <property name="urls" ref="urls"/>
+        <property name="period" value="#{jobParameters[period]}"/>
+        <property name="dateFrom">
+            <bean factory-bean="dateFormat" factory-method="parse">
+                <constructor-arg value="24.02.2017" />
+            </bean>
+        </property>
+        <property name="dateTo">
+            <bean factory-bean="dateFormat" factory-method="parse">
+                <constructor-arg value="01.03.2017" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
+        <property name="resources" ref="urls"/>
+        <property name="delegate" ref="flatFileItemReader"/>
+    </bean>
+
+    <!--store the data-->
+    <bean id="dbWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sql">
+            <value>
+                <![CDATA[
+            	insert into STAGE_FINAM_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
+			        values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume)
+            ]]>
+            </value>
+        </property>
+        <!-- It will take care matching between object property and sql name parameter -->
+        <property name="itemSqlParameterSourceProvider">
+            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider"/>
+        </property>
+    </bean>
+
+    <util:list id="urls" list-class="java.util.ArrayList"/>
+
+    <batch:job id="finam-historical-load-job" job-repository="jobRepository">
+        <batch:step id="loadSymbols" next="loadToStage">
+            <batch:tasklet>
+                <batch:chunk reader="symbolReader"
+                             writer="resourceGenerator"
+                             commit-interval="1">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToStage" parent="loadSymbols" next="filterStage">
+            <batch:tasklet>
+                <batch:chunk reader="multiResourceReader"
+                             writer="dbWriter"
+                             commit-interval="100">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterStage" parent="loadToStage">
+            <batch:tasklet>
+                <batch:chunk reader="stageFilter"
+                             commit-interval="1">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+</beans>

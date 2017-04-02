@@ -5,6 +5,7 @@ import com.sedc.core.model.Industry;
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemProcessor;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class YahooIndustryProcessor implements ItemProcessor<JaxbIndustry, Industry> {
@@ -17,7 +18,7 @@ public class YahooIndustryProcessor implements ItemProcessor<JaxbIndustry, Indus
         if (Objects.isNull(item)) return null;
 
         Industry o = new Industry();
-        o.setId(item.getId());
+        o.setId(BigDecimal.valueOf(item.getId()));
         o.setName(item.getName());
         o.setSector(item.getSector());
 

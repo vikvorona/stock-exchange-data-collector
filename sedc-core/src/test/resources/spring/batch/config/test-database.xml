@@ -8,8 +8,8 @@
 
     <!-- connect to database -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL"/>
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL" />
         <property name="username" value="sa" />
         <property name="password" value="" />
     </bean>
@@ -43,6 +43,8 @@
 
     <!-- load the data into tables automatically -->
     <jdbc:initialize-database data-source="dataSource">
+        <jdbc:script location="database/code_generic.sql" />
+        <!--<jdbc:script location="database/GET_CG_ID_FROM_NAME.sql" />-->
         <jdbc:script location="database/exchange.sql" />
     </jdbc:initialize-database>
 
