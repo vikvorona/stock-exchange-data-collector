@@ -33,14 +33,10 @@ public class Symbol {
     private Symbol masterSymbol;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SOURCE_CG_ID")
-    private CodeGeneric source;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EX_ID")
     private Exchange exchange;
 
     @Column(name = "LAST_UPDATE_TM")
-    private Timestamp lastUpdateTm;
+    private Timestamp lastUpdateTm = new Timestamp(System.currentTimeMillis());
 
 }
