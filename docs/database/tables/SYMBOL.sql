@@ -1,7 +1,7 @@
 CREATE TABLE SYMBOL (
     SYM_ID              NUMERIC(18) NOT NULL DEFAULT nextval('S_SYMBOL_PK'),
     NAME                VARCHAR(20) NOT NULL,
-    DESCRIPTION         VARCHAR(40),
+    DESCRIPTION         VARCHAR(100),
     ISIN                VARCHAR(12),
     MASTER_SYM_ID       NUMERIC(18),
     EX_ID               NUMERIC(18),
