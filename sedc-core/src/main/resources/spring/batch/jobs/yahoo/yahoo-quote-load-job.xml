@@ -1,6 +1,6 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/batch
 	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
 	http://www.springframework.org/schema/beans
@@ -10,7 +10,7 @@
     <import resource="classpath:spring/batch/config/embedded-database.xml"/>
 
     <!-- Readers -->
-    <bean id="yahooReaderFactory" class="com.sedc.collectors.yahoo.util.YahooXmlReaderFactory">
+    <bean id="yahooReaderFactory" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator">
         <constructor-arg name="sourceEngineName" value="YAHOO_HISTORY"/>
         <constructor-arg name="symbolManager" ref="symbolManager"/>
         <constructor-arg name="systemVariableManager" ref="systemVariableManager"/>
