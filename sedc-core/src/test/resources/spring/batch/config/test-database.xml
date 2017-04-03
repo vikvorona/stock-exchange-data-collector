@@ -42,7 +42,7 @@
     </bean>
 
     <!-- load the data into tables automatically -->
-    <jdbc:initialize-database data-source="dataSource">
+    <jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
         <jdbc:script location="database/code_generic.sql" />
         <!--<jdbc:script location="database/GET_CG_ID_FROM_NAME.sql" />-->
         <jdbc:script location="database/exchange.sql" />
