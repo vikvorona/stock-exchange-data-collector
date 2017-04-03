@@ -1,6 +1,6 @@
-package com.sedc.collectors.finam;
+package com.sedc.collectors.finam.historical;
 
-import com.sedc.collectors.finam.model.FinamApiRecord;
+import com.sedc.collectors.finam.historical.model.FinamApiRecord;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
@@ -22,9 +22,7 @@ public class FinamFieldSetMapper implements FieldSetMapper<FinamApiRecord> {
         FinamApiRecord record = new FinamApiRecord();
         Integer i = 0;
         record.setTicker(fieldSet.readString(i));
-
-        String period = fieldSet.readString(++i);
-        record.setPeriod(FinamPeriod.getInstance(period));
+        record.setPeriod(fieldSet.readString(++i));
 
         String date = fieldSet.readString(++i);
         try {
