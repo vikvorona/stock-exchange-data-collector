@@ -37,6 +37,16 @@ docker run -d -p 8010:8080  --memory="512m" \
 
 echo "PGWeb installed in Docker, port 8010"
 
+# Install Jenkins
+docker run -d -p 8020:8080 -p 50000:50000 --memory="2048m" \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /apps/jenkins_home:/var/jenkins_home \
+    --restart=unless-stopped \
+    --name jenkins \
+    jenkins
+
+echo "Jenkins installed in Docker, port 8020"
+
 # Install Nginx
 docker run -d -p 80:80 -p 443:443 --memory="100m" \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -45,6 +55,7 @@ docker run -d -p 80:80 -p 443:443 --memory="100m" \
     -v /usr/share/nginx/html:/usr/share/nginx/html \
     --link portainer:portainer \
     --link pgweb:pgweb \
+    --link jenkins:jenkins \
     --restart=unless-stopped \
     --name=nginx \
     nginx
