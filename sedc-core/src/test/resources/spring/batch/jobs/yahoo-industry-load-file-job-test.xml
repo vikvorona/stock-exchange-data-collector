@@ -7,7 +7,7 @@
 	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
     <import resource="classpath:spring/batch/config/context.xml"/>
-    <import resource="classpath:spring/batch/config/database.xml"/>
+    <import resource="classpath:spring/batch/config/test-database.xml"/>
 
     <!--read the data from finam api-->
     <bean id="reader" class="org.springframework.batch.item.xml.StaxEventItemReader">
@@ -43,11 +43,6 @@
                 </property>
             </bean>
         </property>
-    </bean>
-
-    <bean id="app" class="com.sedc.collectors.yahoo.industry.YahooIndustryApplication">
-        <property name="jobLauncher" ref="jobLauncher"/>
-        <property name="job" ref="yahoo-industry-load-job"/>
     </bean>
 
     <batch:job id="yahoo-industry-load-job">

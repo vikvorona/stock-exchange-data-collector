@@ -1,11 +1,9 @@
 package com.sedc.collectors.yahoo.quote;
 
-/**
- * Created by SuperOleg on 01.03.2017.
- */
+import org.springframework.batch.core.launch.support.CommandLineJobRunner;
+
 public class YahooQuoteApplication {
-
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws Exception {
+        CommandLineJobRunner.main(new String[]{"spring/batch/jobs/yahoo/yahoo-quote-load-job.xml", "yahooQuoteLoadJob", "region=YAHOO_HISTORY"});
     }
 }

@@ -1,4 +1,4 @@
-package com.sedc.collectors.finam.historical;
+package com.sedc.core;
 
 import com.sedc.managers.SymbolManager;
 import org.apache.log4j.Logger;
@@ -11,9 +11,9 @@ import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
 
-public class FinamSymbolReader implements ItemReader<String>, InitializingBean, DisposableBean {
+public class SymbolReader implements ItemReader<String>, InitializingBean, DisposableBean {
 
-    private static final Logger LOG = Logger.getLogger(FinamSymbolReader.class);
+    private static final Logger LOG = Logger.getLogger(SymbolReader.class);
 
     @Autowired
     private SymbolManager symbolManager;
@@ -24,7 +24,7 @@ public class FinamSymbolReader implements ItemReader<String>, InitializingBean, 
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        List<String> symbols = symbolManager.getStringSymbolsBySource("FINAM_HISTORY");
+        List<String> symbols = symbolManager.getStringSymbolsBySource(region);
         buffer.addAll(symbols);
     }
 

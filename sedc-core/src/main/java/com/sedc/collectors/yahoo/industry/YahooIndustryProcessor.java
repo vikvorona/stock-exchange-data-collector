@@ -8,7 +8,7 @@ import org.springframework.batch.item.ItemProcessor;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class YahooIndustryProcessor  implements ItemProcessor<JaxbIndustry, Industry> {
+public class YahooIndustryProcessor implements ItemProcessor<JaxbIndustry, Industry> {
 
     private static final Logger LOG = Logger.getLogger(YahooIndustryProcessor.class);
 

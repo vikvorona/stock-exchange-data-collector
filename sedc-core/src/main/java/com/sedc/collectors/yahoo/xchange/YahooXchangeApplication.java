@@ -1,9 +1,9 @@
-package com.sedc.collectors.yahoo.forex;
+package com.sedc.collectors.yahoo.xchange;
 
 /**
  * Created by SuperOleg on 01.03.2017.
  */
-public class YahooForexApplication {
+public class YahooXchangeApplication {
 
     public static void main(String[] args) {
 
