@@ -20,18 +20,13 @@
     <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
 
     <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
+        <property name="sourceEngineName" value="YAHOO_HISTORICAL"/>
+        <property name="startDate">
+            <bean class="java.time.LocalDate" factory-method="parse">
+                <constructor-arg name="text" value="2017-02-24"/>
+            </bean>
+        </property>
         <property name="urls" ref="urls"/>
-        <property name="period" value="#{jobParameters[period]}"/>
-        <property name="dateFrom">
-            <bean factory-bean="dateFormat" factory-method="parse">
-                <constructor-arg value="24.02.2017"/>
-            </bean>
-        </property>
-        <property name="dateTo">
-            <bean factory-bean="dateFormat" factory-method="parse">
-                <constructor-arg value="01.03.2017"/>
-            </bean>
-        </property>
     </bean>
 
     <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
@@ -41,14 +36,18 @@
 
     <util:list id="urls" list-class="java.util.ArrayList"/>
 
-    <!-- Readers -->
-    <bean id="yahooReaderFactory" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator">
-        <constructor-arg name="sourceEngineName" value="YAHOO_HISTORY"/>
-        <constructor-arg name="symbolManager" ref="symbolManager"/>
-        <constructor-arg name="systemVariableManager" ref="systemVariableManager"/>
+    <bean id="reader" class="org.springframework.batch.item.xml.StaxEventItemReader">
+        <property name="fragmentRootElementName" value="quote"/>
+        <property name="unmarshaller" ref="unmarshaller"/>
     </bean>
 
-    <bean id="reader" factory-bean="yahooReaderFactory" factory-method="getHistoricalReader"/>
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>com.sedc.collectors.yahoo.historical.model.YahooHistoricalRecord</value>
+            </list>
+        </property>
+    </bean>
 
     <bean id="processor" class="com.sedc.collectors.yahoo.historical.YahooHistoricalProcessor"/>
 
