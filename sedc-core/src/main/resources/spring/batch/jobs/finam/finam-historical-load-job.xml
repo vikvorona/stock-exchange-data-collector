@@ -18,6 +18,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="snapshotLoader" class="com.sedc.collectors.finam.historical.SnapshotTableLoader">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <bean id="flatFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
         <property name="resource" value="file:target/cvs/report.csv"/>
         <property name="shouldDeleteIfExists" value="true"/>
@@ -94,6 +98,22 @@
         </property>
     </bean>
 
+    <bean id="snapshotWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sql">
+            <value>
+                <![CDATA[
+            	insert into SNAPSHOT_HISTORICAL(PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME,ACTIVE_FLAG)
+			        values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume, :active_flag)
+            ]]>
+            </value>
+        </property>
+        <!-- It will take care matching between object property and sql name parameter -->
+        <property name="itemSqlParameterSourceProvider">
+            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider"/>
+        </property>
+    </bean>
+
     <util:list id="urls" list-class="java.util.ArrayList"/>
 
     <batch:job id="finam-historical-load-job" job-repository="jobRepository">
@@ -113,9 +133,16 @@
                 </batch:chunk>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="filterStage" parent="loadToStage">
+        <batch:step id="filterStage" parent="loadToStage" next="loadToSnapshot">
             <batch:tasklet>
                 <batch:chunk reader="stageFilter"
+                             commit-interval="1">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToSnapshot" parent="filterStage">
+            <batch:tasklet>
+                <batch:chunk reader="snapshotLoader"
                              commit-interval="1">
                 </batch:chunk>
             </batch:tasklet>
