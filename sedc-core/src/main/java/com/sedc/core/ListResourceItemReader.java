@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ListResourceItemReader extends MultiResourceItemReader {
 
-    @Autowired
+    @Autowired(required = false)
     private List<UrlResource> resources;
 
     @Override
