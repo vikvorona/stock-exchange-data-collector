@@ -49,11 +49,12 @@ public class FinamTestCase {
 
     @Before
     public void setUp() throws Exception {
+        resources.clear();
         multiResourceReader.setResources(resources);
 
     }
 
-    private void launchStepFor(String value) throws Exception {
+    private JobExecution launchStepFor(String value) throws Exception {
         // write string to temp file
         File f = File.createTempFile(name.getMethodName(), null);
         FileWriter fw = new FileWriter(f);
@@ -62,14 +63,14 @@ public class FinamTestCase {
         // put temp file in resources
         resources.add(new UrlResource(f.toURI()));
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchStep("loadToStage");
-        Assert.assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
+        return jobLauncherTestUtils.launchStep("loadToStage");
     }
 
     @Test
     public void testCase1() throws Exception {
 
-        launchStepFor("GAZP,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        JobExecution jobExecution = launchStepFor("GAZP,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
 
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_FINAM_HISTORICAL WHERE "
@@ -80,12 +81,14 @@ public class FinamTestCase {
         Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
         q.executeUpdate();
         session.close();
-        Assert.assertTrue(count.intValue() == 1);
+        Assert.assertEquals("Count does not match", 1, count.intValue());
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCase2() throws Exception {
-        launchStepFor("GG,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        JobExecution jobExecution = launchStepFor("GG,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        Assert.assertEquals("Wrong SYMBOL, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+
         // TODO: Wrong SYMBOL doesn't throws an Exception
         Session session = sessionFactory.openSession();
         Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE SYMBOL = 'GG'");
@@ -93,14 +96,16 @@ public class FinamTestCase {
         session.close();
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCase3() throws Exception {
-        launchStepFor("GAZP,60,20170224,101500,aa,136.7000000,135.7000000,136.0700000,1063690");
+        JobExecution jobExecution = launchStepFor("GAZP,60,20170224,101500,aa,136.7000000,135.7000000,136.0700000,1063690");
+        Assert.assertEquals("Wrong OPEN, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCase4() throws Exception {
-        launchStepFor("GAZP,60,201702224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        JobExecution jobExecution = launchStepFor("GAZP,60,201702224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        Assert.assertEquals("Wrong DATE, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
         // TODO: Date format
         Session session = sessionFactory.openSession();
         Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
@@ -108,14 +113,17 @@ public class FinamTestCase {
         session.close();
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCase5() throws Exception {
-        launchStepFor("GAZP,60,201000365,101500,136.5100000,136.7000000,1063690");
+        JobExecution jobExecution = launchStepFor("GAZP,60,201000365,101500,136.5100000,136.7000000,1063690");
+        Assert.assertEquals("No HIGH, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCasePeriod() throws Exception {
-        launchStepFor("GAZP,Z,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        JobExecution jobExecution = launchStepFor("GAZP,Z,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        Assert.assertEquals("Wrong PER, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+
         // TODO: Wrong PER doesn't throws an Exception
         Session session = sessionFactory.openSession();
         Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
