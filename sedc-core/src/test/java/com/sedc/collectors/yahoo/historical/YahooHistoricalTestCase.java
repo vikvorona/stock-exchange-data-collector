@@ -20,7 +20,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +30,7 @@ import java.util.List;
 @ContextConfiguration(locations = {
         "/spring/batch/config/test-context.xml",
         "/spring/batch/jobs/yahoo/yahoo-historical-load-job.xml"})
-public class YahooTestCase {
+public class YahooHistoricalTestCase {
 
     @Rule
     public TestName name = new TestName();
@@ -53,7 +52,7 @@ public class YahooTestCase {
 
     }
 
-    private void launchStepFor(String value) throws Exception {
+    private JobExecution launchStepFor(String value) throws Exception {
         // write string to temp file
         File f = File.createTempFile(name.getMethodName(), null);
         FileWriter fw = new FileWriter(f);
@@ -62,8 +61,7 @@ public class YahooTestCase {
         // put temp file in resources
         resources.add(new UrlResource(f.toURI()));
 
-        JobExecution jobExecution = jobLauncherTestUtils.launchStep("loadToStage");
-        Assert.assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
+        return jobLauncherTestUtils.launchStep("loadToStage");
     }
 
     @Test
@@ -71,8 +69,17 @@ public class YahooTestCase {
 
         //launchStepFor("EURUSD,EUR/USD,1.0656,4/4/2017,1:36pm,1.0657,1.0656");
         //launchStepFor("GAZP,69,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
-        launchStepFor("YHOO,60,2016-09-01,42.779999,43.099998,42.720001,42.93,5575300");
-
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote Symbol=\"YHOO\">" +
+                "<Date>2016-09-01</Date>" +
+                "<Open>42.779999</Open>" +
+                "<High>43.099998</High>" +
+                "<Low>42.720001</Low>" +
+                "<Close>42.93</Close>" +
+                "<Volume>5575300</Volume>" +
+                "<Adj_Close>40.560001</Adj_Close>" +
+                "</quote>");
+        Assert.assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 //        Session session = sessionFactory.openSession();
 //        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_FXRATE WHERE "
 //                + "ID = 'EURUSD' AND NAME = 'EUR/USD' AND RATE = 1.0656 AND DATE = '4/4/2017' AND TIME = '1:36pm' AND ASK = 1.0657 "
