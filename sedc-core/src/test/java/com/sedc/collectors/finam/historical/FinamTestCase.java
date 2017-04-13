@@ -1,6 +1,7 @@
 package com.sedc.collectors.finam.historical;
 
 import com.sedc.core.ListResourceItemReader;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +72,15 @@ public class FinamTestCase {
         launchStepFor("GAZP,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
 
         Session session = sessionFactory.openSession();
-        // TODO: check value in database using session object
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_FINAM_HISTORICAL WHERE "
+                + "SYMBOL = 'GAZP' AND VOLUME = 1063690 AND OPEN = 136.51 AND HIGH = 136.7 AND LOW = 135.7 AND CLOSE = 136.07 "
+                + "AND DATE = '2017-02-24' AND TIME = '10:15:00' AND SYM_ID IS NOT NULL").uniqueResult();
+        // TODO: Rounded values
+        // TODO: Sym_Id is Null
+        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
+        q.executeUpdate();
         session.close();
+        Assert.assertTrue(count.intValue() == 1);
     }
+
 }
