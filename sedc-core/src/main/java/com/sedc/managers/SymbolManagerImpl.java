@@ -17,9 +17,9 @@ public class SymbolManagerImpl implements SymbolManager {
         }
 
         switch (sourceEngineName) {
-            case "FINAM_HISTORY":
+            case "EMEA":
                 return Arrays.asList("GAZP", "RTS", "SBRF", "VTBR");
-            case "YAHOO_HISTORY":
+            case "NAM":
                 return Arrays.asList("YHOO", "GE", "AAPL", "T", "MSFT");
         }
 
