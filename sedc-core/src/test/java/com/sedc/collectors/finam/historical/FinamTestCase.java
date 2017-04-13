@@ -83,4 +83,43 @@ public class FinamTestCase {
         Assert.assertTrue(count.intValue() == 1);
     }
 
+    @Test(expected = AssertionError.class)
+    public void testCase2() throws Exception {
+        launchStepFor("GG,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        // TODO: Wrong SYMBOL doesn't throws an Exception
+        Session session = sessionFactory.openSession();
+        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE SYMBOL = 'GG'");
+        q.executeUpdate();
+        session.close();
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCase3() throws Exception {
+        launchStepFor("GAZP,60,20170224,101500,aa,136.7000000,135.7000000,136.0700000,1063690");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCase4() throws Exception {
+        launchStepFor("GAZP,60,201702224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        // TODO: Date format
+        Session session = sessionFactory.openSession();
+        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
+        q.executeUpdate();
+        session.close();
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCase5() throws Exception {
+        launchStepFor("GAZP,60,201000365,101500,136.5100000,136.7000000,1063690");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCasePeriod() throws Exception {
+        launchStepFor("GAZP,Z,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        // TODO: Wrong PER doesn't throws an Exception
+        Session session = sessionFactory.openSession();
+        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
+        q.executeUpdate();
+        session.close();
+    }
 }
