@@ -21,11 +21,6 @@
 
     <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
         <property name="sourceEngineName" value="YAHOO_QUOTE"/>
-        <property name="startDate">
-            <bean class="java.time.LocalDate" factory-method="parse">
-                <constructor-arg name="text" value="2017-02-24"/>
-            </bean>
-        </property>
         <property name="urls" ref="resources"/>
     </bean>
 
