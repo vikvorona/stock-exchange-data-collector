@@ -1,36 +1,87 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/batch
 	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
 	http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
     http://www.springframework.org/schema/batch
-	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd">
+	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/test-database.xml"/>
 
-    <bean id="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
-
-    <bean id="yahooHistoricalReader" class="com.sedc.collectors.yahoo.util.YahooJsonReader">
-        <constructor-arg name="resultKey" value="quote"/>
-        <constructor-arg name="targetClass" value="com.sedc.collectors.yahoo.historical.model.YahooHistoricalRecord"/>
+    <bean name="symbolReader" class="com.sedc.core.SymbolReader" scope="step">
+        <property name="symbolManager" ref="symbolManager"/>
+        <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
-    <bean id="yahooHistoricalProcessor" class="com.sedc.collectors.yahoo.historical.YahooHistoricalProcessor"/>
+    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
 
-    <bean id="yahooHistoricalWriter" class="org.springframework.batch.item.database.HibernateItemWriter">
-        <property name="sessionFactory" ref="sessionFactory"/>
+    <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
+        <property name="sourceEngineName" value="YAHOO_HISTORICAL"/>
+        <property name="startDate">
+            <bean class="java.time.LocalDate" factory-method="parse">
+                <constructor-arg name="text" value="2017-02-24"/>
+            </bean>
+        </property>
+        <property name="urls" ref="resources"/>
     </bean>
 
-    <batch:job id="yahoo-historical-load-job">
-        <batch:step id="loadFromFile">
+    <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
+        <property name="resources" ref="resources"/>
+        <property name="delegate" ref="reader"/>
+    </bean>
+
+    <util:list id="resources" list-class="java.util.ArrayList"/>
+
+    <bean id="reader" class="org.springframework.batch.item.xml.StaxEventItemReader">
+        <property name="fragmentRootElementName" value="quote"/>
+        <property name="unmarshaller" ref="unmarshaller"/>
+    </bean>
+
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>com.sedc.collectors.yahoo.historical.model.YahooHistoricalRecord</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dbWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sql">
+            <value>
+                <![CDATA[
+            	insert into STAGE_YAHOO_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
+			        values (:symbol, 'D', :date, CAST('00:00:00' AS TIME), :open, :high, :low, :close, :volume)
+            ]]>
+            </value>
+        </property>
+        <!-- It will take care matching between object property and sql name parameter -->
+        <property name="itemSqlParameterSourceProvider">
+            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider"/>
+        </property>
+    </bean>
+
+    <!-- Job description -->
+    <batch:job id="yahooHistoricalLoadJob">
+        <batch:step id="loadSymbols" next="loadToStage">
             <batch:tasklet>
-                <batch:chunk reader="yahooHistoricalReader"
-                             writer="yahooHistoricalWriter"
-                             processor="yahooHistoricalProcessor"
+                <batch:chunk reader="symbolReader"
+                             writer="resourceGenerator"
                              commit-interval="1">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToStage">
+            <batch:tasklet>
+                <batch:chunk reader="multiResourceReader"
+                             writer="dbWriter"
+                             commit-interval="10">
                 </batch:chunk>
             </batch:tasklet>
         </batch:step>
