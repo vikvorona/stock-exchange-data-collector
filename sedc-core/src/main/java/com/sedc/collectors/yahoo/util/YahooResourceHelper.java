@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class YahooResourceHelper {
 
-    private static final String API_ROOT = "https://query.yahooapis.com/v1/public/yql";
+    private static final String API_ROOT = "http://query.yahooapis.com/v1/public/yql";
     private static final String YQL_COMMUNITY_TABLES = "store://datatables.org/alltableswithkeys";
 
     private static final String YQL_HISTORICAL = "select * from yahoo.finance.historicaldata where %1$s and %2$s";
