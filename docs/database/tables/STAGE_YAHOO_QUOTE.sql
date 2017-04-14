@@ -12,7 +12,7 @@ CREATE TABLE STAGE_YAHOO_QUOTE(
     LAST_TRADE_PRICE           NUMERIC(18),
     DAYS_RANGE_FROM            NUMERIC(18),
     DAYS_RANGE_TO              NUMERIC(18),
-    NAME                       VARCHAR(20),
+    NAME                       VARCHAR(100),
     VOLUME                     NUMERIC(18),
     STOCK_EXCHANGE             VARCHAR(18),
     EX_ID                      NUMERIC(18),
