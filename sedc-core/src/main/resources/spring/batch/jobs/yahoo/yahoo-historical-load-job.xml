@@ -26,15 +26,15 @@
                 <constructor-arg name="text" value="2017-02-24"/>
             </bean>
         </property>
-        <property name="urls" ref="urls"/>
+        <property name="urls" ref="resources"/>
     </bean>
 
     <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
-        <property name="resources" ref="urls"/>
+        <property name="resources" ref="resources"/>
         <property name="delegate" ref="reader"/>
     </bean>
 
-    <util:list id="urls" list-class="java.util.ArrayList"/>
+    <util:list id="resources" list-class="java.util.ArrayList"/>
 
     <bean id="reader" class="org.springframework.batch.item.xml.StaxEventItemReader">
         <property name="fragmentRootElementName" value="quote"/>
