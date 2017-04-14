@@ -27,7 +27,9 @@ public class YahooResourceGenerator implements ItemWriter<String> {
                 break;
             case "YAHOO_QUOTE":
                 resource = YahooResourceHelper.getQuoteResource((List<String>) list);
-
+                break;
+            case "YAHOO_XCHANGE":
+                resource = YahooResourceHelper.getXchangeResource((List<String>) list);
                 break;
             default:
                 throw new UnsupportedOperationException("Source engine " + sourceEngineName + " is unimplemented");

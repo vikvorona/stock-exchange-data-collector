@@ -21,6 +21,8 @@ public class SymbolManagerImpl implements SymbolManager {
                 return Arrays.asList("GAZP", "RTS", "SBRF", "VTBR");
             case "NAM":
                 return Arrays.asList("YHOO", "GE", "AAPL", "T", "MSFT");
+            case "FOREX":
+                return Arrays.asList("EURUSD","GBPUSD");
         }
 
         return Collections.emptyList();
