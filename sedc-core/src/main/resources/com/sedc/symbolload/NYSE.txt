@@ -1,4 +1,3 @@
-Symbol	Description
 A	Agilent Technologies
 AA	Alcoa Corporation
 AAC	Aac Holdings Inc

@@ -1,4 +1,3 @@
-Symbol	Description
 0001.HK	Cheung Kong (Holdings) Ltd
 0002.HK	CLP Holdings Ltd
 0003.HK	Hong Kong and China Gas Co. Ltd
