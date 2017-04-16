@@ -27,22 +27,6 @@
         <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
-    <bean id="flatFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
-        <property name="resource" value="file:target/cvs/report.csv"/>
-        <property name="shouldDeleteIfExists" value="true"/>
-
-        <property name="lineAggregator">
-            <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
-                <property name="delimiter" value=","/>
-                <property name="fieldExtractor">
-                    <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
-                        <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
-                    </bean>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
     <bean name="lineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
         <property name="lineTokenizer" ref="tokenizer"/>
         <property name="fieldSetMapper" ref="fieldMapper"/>
@@ -51,6 +35,7 @@
     <bean name="tokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
         <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
         <property name="delimiter" value=","/>
+        <property name="strict" value="false"/>
     </bean>
 
     <bean name="fieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
@@ -72,13 +57,13 @@
         <property name="urls" ref="urls"/>
         <property name="period" value="#{jobParameters[period]}"/>
         <property name="dateFrom">
-            <bean factory-bean="dateFormat" factory-method="parse">
-                <constructor-arg value="24.02.2017" />
+            <bean class="java.time.LocalDate" factory-method="parse">
+                <constructor-arg value="2017-02-24"/>
             </bean>
         </property>
         <property name="dateTo">
-            <bean factory-bean="dateFormat" factory-method="parse">
-                <constructor-arg value="01.03.2017" />
+            <bean class="java.time.LocalDate" factory-method="parse">
+                <constructor-arg value="2017-03-01"/>
             </bean>
         </property>
     </bean>
@@ -128,37 +113,32 @@
             <batch:tasklet>
                 <batch:chunk reader="symbolReader"
                              writer="resourceGenerator"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="loadToSourceEngine" parent="loadSymbols" next="loadToStage">
             <batch:tasklet>
                 <batch:chunk reader="sourceEngineLoader"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="loadToStage" parent="loadToSourceEngine" next="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
                              writer="dbWriter"
-                             commit-interval="100">
-                </batch:chunk>
+                             commit-interval="1000"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="filterStage" parent="loadToStage" next="loadToSnapshot">
             <batch:tasklet>
                 <batch:chunk reader="stageFilter"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="loadToSnapshot" parent="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="snapshotLoader"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>
