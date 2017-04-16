@@ -153,13 +153,4 @@
             </batch:tasklet>
         </batch:step>
     </batch:job>
-
-    <bean id="stageCleaner" class="org.springframework.batch.item.database.JdbcCursorItemReader">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="sql" value="DELETE FROM stage_finam_historical"/>
-        <property name="rowMapper">
-            <bean class="org.springframework.jdbc.core.ColumnMapRowMapper"/>
-        </property>
-    </bean>
-
 </beans>
