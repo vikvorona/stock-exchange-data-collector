@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class SystemVariableManagerStub implements SystemVariableManager {
+
     @Override
     public String getSystemVariable(String name) {
         if (SystemVariables.LAST_UPDATE_DATE.equals(name)) {
