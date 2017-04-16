@@ -17,7 +17,9 @@
         <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
-    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
+    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
     <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
         <property name="sourceEngineName" value="YAHOO_XCHANGE"/>

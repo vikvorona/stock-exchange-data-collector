@@ -1,7 +1,7 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:batch="http://www.springframework.org/schema/batch"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="
        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
 	http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -60,7 +60,9 @@
         <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
-    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
+    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
     <bean id="dateFormat" class="java.text.SimpleDateFormat">
         <constructor-arg value="dd.MM.yyyy" />

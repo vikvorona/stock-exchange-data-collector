@@ -24,7 +24,7 @@ public class SymbolReader implements ItemReader<String>, InitializingBean, Dispo
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        List<String> symbols = symbolManager.getStringSymbolsBySource(region);
+        List<String> symbols = symbolManager.getStringSymbolsByRegion(region);
         buffer.addAll(symbols);
     }
 

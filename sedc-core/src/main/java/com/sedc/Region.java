@@ -6,5 +6,6 @@ package com.sedc;
 public enum Region {
     NAM,
     EMEA,
-    APAC;
+    APAC,
+    FOREX
 }
