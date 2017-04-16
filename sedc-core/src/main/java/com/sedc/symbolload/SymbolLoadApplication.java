@@ -22,6 +22,12 @@ public class SymbolLoadApplication {
             case "SPBEX":
                 CommandLineJobRunner.main(new String[]{"spring/batch/jobs/symbol-load-spbex-job.xml", "symbol-load-spbex-job"});
                 break;
+            case "LSE":
+            case "NASDAQ":
+            case "NYSE":
+            case "SEHK":
+                CommandLineJobRunner.main(new String[]{"spring/batch/jobs/symbol-load-textfile-job.xml", "symbol-load-textfile-job", "exchange=" + exchange});
+                break;
             default:
                 LOG.error(exchange + " is not realized");
                 System.exit(1);
