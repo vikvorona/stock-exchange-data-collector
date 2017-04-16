@@ -58,6 +58,6 @@ public class SpbexMapper implements ItemProcessor<FieldSet, Symbol>, Initializin
 
         session.close();
 
-        Assert.notNull(spbex, "Cannot fined SPBEX exchange");
+        Assert.notNull(spbex, "Cannot find SPBEX exchange");
     }
 }
