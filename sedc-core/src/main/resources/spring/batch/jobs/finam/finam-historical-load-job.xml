@@ -25,6 +25,7 @@
     <bean id="sourceEngineLoader" class="com.sedc.collectors.finam.historical.SourceEngineLoader" scope="step">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="region" value="#{jobParameters[region]}"/>
+        <property name="source" value="FINAM"/>
     </bean>
 
     <bean name="lineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
@@ -142,5 +143,13 @@
             </batch:tasklet>
         </batch:step>
     </batch:job>
+
+    <bean id="stageCleaner" class="org.springframework.batch.item.database.JdbcCursorItemReader">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sql" value="DELETE FROM stage_finam_historical"/>
+        <property name="rowMapper">
+            <bean class="org.springframework.jdbc.core.ColumnMapRowMapper"/>
+        </property>
+    </bean>
 
 </beans>

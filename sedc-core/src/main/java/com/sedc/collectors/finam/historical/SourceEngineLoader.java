@@ -4,36 +4,44 @@ package com.sedc.collectors.finam.historical;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.sql.CallableStatement;
 
 public class SourceEngineLoader implements ItemReader<Object> {
 
     private static final Logger LOG = Logger.getLogger(SourceEngineLoader.class);
 
-    @Autowired
     private SessionFactory sessionFactory;
-    @Autowired
+
     private String region;
+
+    private String source;
 
     @Override
     public Object read() throws Exception {
         Session session = sessionFactory.openSession();
-        session.doWork(connection -> {
-            String query = "INSERT INTO SOURCE_CENTER_ENGINE_INSTANCE (sce_id, business_date) " +
-                    "VALUES ((select sce_id from source_center_engine " +
-                    "join ( " +
-                    " select cg_id from code_generic as cg_id where name = '" + region +
-                    "') code_generic on region_cg_id = cg_id " +
-                    "join ( " +
-                    " select sc_id from source_center as sc_id where name = 'FINAM' " +
-                    ") source_center on source_center_engine.sc_id = source_center.sc_id), '" +
-                    new java.sql.Date(System.currentTimeMillis()) + "');";
-            CallableStatement statement = connection.prepareCall(query);
-            statement.executeUpdate();
-        });
+        Transaction t = session.getTransaction();
+
+        t.begin();
+        try {
+            session.createSQLQuery("" +
+                    "INSERT INTO public.source_center_engine_instance (sce_id, business_date, start_tm)\n" +
+                    "select sce_id, now(), now()\n" +
+                    "from source_center_engine sce\n" +
+                    "    join source_center sc on sce.sc_id = sc.sc_id\n" +
+                    "    join code_generic cg on sce.region_cg_id = cg.cg_id\n" +
+                    "where sc.name = :source\n" +
+                    "    and cg.type = 'REGION'\n" +
+                    "    and cg.name = :region")
+                    .setString("source", source)
+                    .setString("region", region)
+                    .executeUpdate();
+            session.flush();
+            t.commit();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            t.rollback();
+        }
         session.close();
 
         return null;
@@ -45,5 +53,9 @@ public class SourceEngineLoader implements ItemReader<Object> {
 
     public void setRegion(String region) {
         this.region = region;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }
