@@ -1,33 +1,30 @@
 package com.sedc.collectors.finam;
 
-import org.springframework.util.StringUtils;
-
 /**
  * Created by oshulyakov on 3/1/2017.
  */
 public enum FinamPeriod {
 
-    TIK("0"), //TODO: for finam there is another format
-    ONE_MINUTE("1"),
-    FIVE_MINUTE("5"),
-    TEN_MINUTE("10"),
-    FIFTEEN_MINUTE("15"),
-    HALF_HOUR("30"),
-    ONE_HOUR("60"),
-    ONE_DAY("D"),
-    ONE_WEEK("W"),
-    ONE_MONTH("M");
+    TIK("0", 1), //TODO: for finam there is another format
+    ONE_MINUTE("1", 2),
+    FIVE_MINUTE("5", 3),
+    TEN_MINUTE("10", 4),
+    FIFTEEN_MINUTE("15", 5),
+    HALF_HOUR("30", 6),
+    ONE_HOUR("60", 7),
+    ONE_DAY("D", 8),
+    ONE_WEEK("W", 9),
+    ONE_MONTH("M", 10);
 
     private String value;
+    private Integer code;
 
-    FinamPeriod(String value) {
+    FinamPeriod(String value, Integer code) {
         this.value = value;
+        this.code = code;
     }
 
     public static FinamPeriod getInstance(String value) {
-
-        if (StringUtils.isEmpty(value))
-            return null;
 
         for (FinamPeriod p : FinamPeriod.values()) {
             if (p.getValue().equalsIgnoreCase(value)) {
@@ -35,14 +32,14 @@ public enum FinamPeriod {
             }
         }
 
-        return null;
+        throw new IllegalArgumentException(value);
     }
 
     public String getValue() {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public Integer getCode() {
+        return code;
     }
 }
