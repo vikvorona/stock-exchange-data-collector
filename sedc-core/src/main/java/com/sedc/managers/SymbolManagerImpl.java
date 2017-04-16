@@ -25,7 +25,7 @@ public class SymbolManagerImpl implements SymbolManager {
 
         Session session = sessionFactory.openSession();
         List<String> symbols = (List<String>) session.createSQLQuery("" +
-                "SELECT s.name\n" +
+                "SELECT DISTINCT s.name\n" +
                 "FROM symbol s\n" +
                 "    join exchange e on s.ex_id = e.ex_id\n" +
                 "    join code_generic cg on e.region_cg_id = cg.cg_id\n" +
