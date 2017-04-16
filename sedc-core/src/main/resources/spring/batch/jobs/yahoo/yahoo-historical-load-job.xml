@@ -3,9 +3,9 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/batch
-	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
-	http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
     http://www.springframework.org/schema/util
     http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
@@ -25,7 +25,12 @@
         <property name="sourceEngineName" value="YAHOO_HISTORICAL"/>
         <property name="startDate">
             <bean class="java.time.LocalDate" factory-method="parse">
-                <constructor-arg name="text" value="2017-02-24"/>
+                <constructor-arg value="${DATE_FROM}"/>
+            </bean>
+        </property>
+        <property name="endDate">
+            <bean class="java.time.LocalDate" factory-method="parse">
+                <constructor-arg value="${DATE_TO}"/>
             </bean>
         </property>
         <property name="urls" ref="resources"/>
@@ -56,8 +61,8 @@
         <property name="sql">
             <value>
                 <![CDATA[
-            	insert into STAGE_YAHOO_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
-			        values (:symbol, 'D', :date, CAST('00:00:00' AS TIME), :open, :high, :low, :close, :volume)
+                insert into STAGE_YAHOO_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
+                    values (:symbol, 'D', :date, CAST('00:00:00' AS TIME), :open, :high, :low, :close, :volume)
             ]]>
             </value>
         </property>

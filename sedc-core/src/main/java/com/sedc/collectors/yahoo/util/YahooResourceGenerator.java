@@ -1,5 +1,6 @@
 package com.sedc.collectors.yahoo.util;
 
+import lombok.Setter;
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.core.io.UrlResource;
@@ -11,11 +12,17 @@ public class YahooResourceGenerator implements ItemWriter<String> {
 
     private static final Logger LOG = Logger.getLogger(YahooResourceGenerator.class);
 
+    @Setter
     private List<UrlResource> urls;
 
+    @Setter
     private String sourceEngineName;
 
+    @Setter
     private LocalDate startDate;
+
+    @Setter
+    private LocalDate endDate;
 
     @Override
     public void write(List<? extends String> list) throws Exception {
@@ -23,7 +30,7 @@ public class YahooResourceGenerator implements ItemWriter<String> {
 
         switch (sourceEngineName) {
             case "YAHOO_HISTORICAL":
-                resource = YahooResourceHelper.getHistoricalDataResource((List<String>) list, startDate, LocalDate.now());
+                resource = YahooResourceHelper.getHistoricalDataResource((List<String>) list, startDate, endDate);
                 break;
             case "YAHOO_QUOTE":
                 resource = YahooResourceHelper.getQuoteResource((List<String>) list);
@@ -36,17 +43,5 @@ public class YahooResourceGenerator implements ItemWriter<String> {
         }
         LOG.debug("Generated resource: " + resource);
         urls.add(resource);
-    }
-
-    public void setUrls(List<UrlResource> urls) {
-        this.urls = urls;
-    }
-
-    public void setSourceEngineName(String sourceEngineName) {
-        this.sourceEngineName = sourceEngineName;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
     }
 }

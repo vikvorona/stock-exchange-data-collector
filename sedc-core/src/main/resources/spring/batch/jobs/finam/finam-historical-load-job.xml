@@ -4,8 +4,8 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="
        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
-	http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/database.xml"/>
@@ -59,12 +59,12 @@
         <property name="period" value="#{jobParameters[period]}"/>
         <property name="dateFrom">
             <bean class="java.time.LocalDate" factory-method="parse">
-                <constructor-arg value="2017-02-24"/>
+                <constructor-arg value="${DATE_FROM}"/>
             </bean>
         </property>
         <property name="dateTo">
             <bean class="java.time.LocalDate" factory-method="parse">
-                <constructor-arg value="2017-03-01"/>
+                <constructor-arg value="${DATE_TO}"/>
             </bean>
         </property>
     </bean>
@@ -80,8 +80,8 @@
         <property name="sql">
             <value>
                 <![CDATA[
-            	insert into STAGE_FINAM_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
-			        values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume)
+                insert into STAGE_FINAM_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
+                    values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume)
             ]]>
             </value>
         </property>
@@ -96,8 +96,8 @@
         <property name="sql">
             <value>
                 <![CDATA[
-            	insert into SNAPSHOT_HISTORICAL(PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME,ACTIVE_FLAG)
-			        values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume, :active_flag)
+                insert into SNAPSHOT_HISTORICAL(PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME,ACTIVE_FLAG)
+                    values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume, :active_flag)
             ]]>
             </value>
         </property>
