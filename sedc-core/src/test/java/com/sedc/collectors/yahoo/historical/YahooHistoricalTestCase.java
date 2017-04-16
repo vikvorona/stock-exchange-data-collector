@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,17 +80,30 @@ public class YahooHistoricalTestCase {
                 "<Volume>5575300</Volume>" +
                 "<Adj_Close>40.560001</Adj_Close>" +
                 "</quote>");
+//        JobExecution jobExecution = launchStepFor("" +
+//                "<quote Symbol=\"YHOO\">" +
+//                "<AverageDailyVolume>6981940</AverageDailyVolume>\n" +
+//                "<Change>+0.02</Change>" +
+//                "<Days_Low>46.16</DaysLow>" +
+//                "<DaysHigh>46.85</DaysHigh>" +
+//                "<YearLow>35.05</YearLow>" +
+//                "<YearHigh>47.19</YearHigh>" +
+//                "<MarketCapitalization>44.41B</MarketCapitalization>" +
+//                "<LastTradePriceOnly>46.43</LastTradePriceOnly>" +
+//                "<DaysRange>46.16 - 46.85</DaysRange>" +
+//                "<Name>Yahoo! Inc.</Name>" +
+//                "<Volume>7675378</Volume>" +
+//                "<StockExchange>NMS</StockExchange>" +
+//                "</quote>");
         Assert.assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-//        Session session = sessionFactory.openSession();
-//        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_FXRATE WHERE "
-//                + "ID = 'EURUSD' AND NAME = 'EUR/USD' AND RATE = 1.0656 AND DATE = '4/4/2017' AND TIME = '1:36pm' AND ASK = 1.0657 "
-//                + "AND BID = 1.0656").uniqueResult();
-//        // TODO: Rounded values
-//        // TODO: Sym_Id is Null
-//        Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_FXRATE WHERE ASK = 1.0657");
-//        q.executeUpdate();
-//        session.close();
-//        Assert.assertTrue(count.intValue() == 1);
+        Session session = sessionFactory.openSession();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_HISTORICAL WHERE Symbol='YHOO' AND Date = '2016-09-01' AND Open = 42.779999 AND High = 43.099998 AND Low = 42.720001 AND Close = 42.93 AND Volume = 5575300 AND Adj_Close = 40.560001").uniqueResult();
+        // TODO: Rounded values
+        // TODO: Sym_Id is Null
+        Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE Volume =  5575300");
+        q.executeUpdate();
+        session.close();
+        Assert.assertTrue(count.intValue() == 1);
     }
 
     @Test(expected = AssertionError.class)
