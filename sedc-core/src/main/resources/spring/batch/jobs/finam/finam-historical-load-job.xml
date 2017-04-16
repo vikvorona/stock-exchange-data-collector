@@ -18,6 +18,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="symIdLoader" class="com.sedc.collectors.finam.historical.SymIdLoader">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
     <bean id="snapshotLoader" class="com.sedc.collectors.finam.historical.SnapshotTableLoader">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
@@ -123,14 +127,20 @@
                              commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="loadToStage" parent="loadToSourceEngine" next="filterStage">
+        <batch:step id="loadToStage" parent="loadToSourceEngine" next="updateStage">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
                              writer="dbWriter"
                              commit-interval="1000"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="filterStage" parent="loadToStage" next="loadToSnapshot">
+        <batch:step id="updateStage" parent="loadToStage" next="filterStage">
+            <batch:tasklet>
+                <batch:chunk reader="symIdLoader"
+                             commit-interval="1000"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterStage" parent="updateStage" next="loadToSnapshot">
             <batch:tasklet>
                 <batch:chunk reader="stageFilter"
                              commit-interval="1"/>
