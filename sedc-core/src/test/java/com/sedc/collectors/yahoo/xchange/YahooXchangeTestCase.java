@@ -61,16 +61,15 @@ public class YahooXchangeTestCase {
 
     @Test
     public void testCase1() throws Exception {
-        //TODO: it doesn't work
         JobExecution jobExecution = launchStepFor("" +
-                "<quote id=\"TEST\">" +
+                "<rate id=\"TEST\">" +
                 "<Name>TEST</Name>" +
                 "<Rate>1.7</Rate>" +
                 "<Date>5/17/2017</Date>" +
                 "<Time>5:57pm</Time>" +
                 "<Ask>1.062</Ask>" +
                 "<Bid>1.0656</Bid>" +
-                "</quote>");;
+                "</rate>");;
         Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
 
         Session session = sessionFactory.openSession();
