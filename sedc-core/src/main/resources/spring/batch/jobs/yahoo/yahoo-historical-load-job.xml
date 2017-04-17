@@ -113,40 +113,34 @@
             <batch:tasklet>
                 <batch:chunk reader="symbolReader"
                              writer="resourceGenerator"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="50"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="clearStage" parent="loadSymbols" next="loadToStage">
             <batch:tasklet>
-                <batch:chunk reader="stageCleaner" commit-interval="1">
-                </batch:chunk>
+                <batch:chunk reader="stageCleaner" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="loadToStage" parent="clearStage" next="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
                              writer="dbWriter"
-                             commit-interval="1000">
-                </batch:chunk>
+                             commit-interval="1000"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="filterStage" parent="loadToStage" next="linkSymbols">
             <batch:tasklet>
-                <batch:chunk reader="dataFilter" commit-interval="1">
-                </batch:chunk>
+                <batch:chunk reader="dataFilter" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="linkSymbols" parent="filterStage" next="filterBySymbol">
             <batch:tasklet>
-                <batch:chunk reader="symbolLinker" commit-interval="1">
-                </batch:chunk>
+                <batch:chunk reader="symbolLinker" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="filterBySymbol" parent="linkSymbols">
             <batch:tasklet>
-                <batch:chunk reader="symbolFilter" commit-interval="1">
-                </batch:chunk>
+                <batch:chunk reader="symbolFilter" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>
