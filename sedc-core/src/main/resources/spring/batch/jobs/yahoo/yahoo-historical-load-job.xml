@@ -60,9 +60,9 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="sql" value="
                 insert into STAGE_YAHOO_HISTORICAL(SYMBOL,PER,DATE,OPEN,HIGH,LOW,CLOSE,VOLUME)
-                values (:symbol, 'D', :date, :open, :high, :low, :close, :volume)"/>
-        <property name="itemSqlParameterSourceProvider">
-            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider"/>
+                values (?, 'D', ?, ?, ?, ?, ?, ?)"/>
+        <property name="itemPreparedStatementSetter">
+            <bean class="com.sedc.collectors.yahoo.historical.YahooHibernateItemPreparedStatementSetter"/>
         </property>
     </bean>
 
