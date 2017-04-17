@@ -74,7 +74,7 @@
 
     <bean id="stageCleaner" class="com.sedc.core.JbdcBatchUpdater">
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="sql" value="DELETE FROM STAGE_YAHOO_HISTORICAL"/>
+        <property name="sql" value="TRUNCATE TABLE STAGE_YAHOO_HISTORICAL"/>
     </bean>
 
     <bean id="symbolLinker" class="com.sedc.core.JbdcBatchUpdater">
