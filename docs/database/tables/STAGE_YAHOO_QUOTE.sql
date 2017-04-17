@@ -1,5 +1,4 @@
 CREATE TABLE STAGE_YAHOO_QUOTE(
-    HASH                       NUMERIC(18),
     SYMBOL                     VARCHAR(20) NOT NULL,
     SYM_ID                     NUMERIC(18),
     AVG_DAILY_VOLUME           NUMERIC(18,2),
@@ -15,7 +14,6 @@ CREATE TABLE STAGE_YAHOO_QUOTE(
     NAME                       VARCHAR(100),
     VOLUME                     NUMERIC(18,2),
     STOCK_EXCHANGE             VARCHAR(18),
-    EX_ID                      NUMERIC(18),
     ACTIVE_FLAG                CHAR(1) DEFAULT 'Y' NOT NULL CHECK (ACTIVE_FLAG in ('Y','N') ),
     ACTIVE_REASON              VARCHAR(100),
 
