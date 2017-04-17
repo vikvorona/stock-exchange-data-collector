@@ -58,15 +58,9 @@
 
     <bean id="dbWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
         <property name="dataSource" ref="dataSource"/>
-        <property name="sql">
-            <value>
-                <![CDATA[
-                insert into STAGE_YAHOO_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
-                    values (:symbol, 'D', :date, CAST('00:00:00' AS TIME), :open, :high, :low, :close, :volume)
-            ]]>
-            </value>
-        </property>
-        <!-- It will take care matching between object property and sql name parameter -->
+        <property name="sql" value="
+                insert into STAGE_YAHOO_HISTORICAL(SYMBOL,PER,DATE,OPEN,HIGH,LOW,CLOSE,VOLUME)
+                values (:symbol, 'D', :date, :open, :high, :low, :close, :volume)"/>
         <property name="itemSqlParameterSourceProvider">
             <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider"/>
         </property>
