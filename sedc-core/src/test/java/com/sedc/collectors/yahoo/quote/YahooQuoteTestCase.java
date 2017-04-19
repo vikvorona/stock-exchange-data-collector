@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,15 +57,18 @@ public class YahooQuoteTestCase {
         fw.close();
         // put temp file in resources
         resources.add(new UrlResource(f.toURI()));
-
-        return jobLauncherTestUtils.launchStep("loadToStage");
+        jobLauncherTestUtils.launchStep("clearStage");
+        JobExecution result =  jobLauncherTestUtils.launchStep("loadToStage");
+        jobLauncherTestUtils.launchStep("filterStage");
+        jobLauncherTestUtils.launchStep("linkSymbols");
+        return result;
     }
 
     @Test
     public void testCase1() throws Exception {
 
         JobExecution jobExecution = launchStepFor("" +
-                "<quote symbol=\"TEST\">" +
+                "<quote symbol=\"GAZP\">" +
                 "<AverageDailyVolume>6599510</AverageDailyVolume>" +
                 "<Change>0.2934</Change>" +
                 "<DaysLow>46.9200</DaysLow>" +
@@ -77,13 +81,22 @@ public class YahooQuoteTestCase {
                 "<Name>Yahoo! Inc.</Name>" +
                 "<Volume>1875823</Volume>" +
                 "<StockExchange>NMS</StockExchange>" +
-                "</quote>");;
+                "</quote>");
+        Session session = sessionFactory.openSession();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_QUOTE WHERE "
+                       + "symbol = 'GAZP' and Avg_Daily_Volume = 6599510 and Days_Low = 46.9200"
+                       + "and Days_High = 47.2500 and Year_Low = 35.0500 and Name = 'Yahoo! Inc.' and Stock_Exchange = 'NMS' "
+                       +"and Change = 0.2900 and Days_Range_from = 46.9200 and Days_Range_to = 47.2500"
+                       +" and Sym_ID = (select s.Sym_ID from symbol s where s.name = 'GAZP') "
+                       +"and Year_High = 47.4200 and Last_Trade_Price = 47.1900 and Market_Capitalization = 45140000000 and Volume = 1875823").uniqueResult();
+//
+        session.close();
+
+        // TODO: SQL Query
+        Assert.assertEquals("Count does not match", 1, count.intValue());
         Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
 
-        Session session = sessionFactory.openSession();
-        // TODO: SQL Query
-        Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_QUOTE WHERE SYMBOL = 'TEST'");
-        q.executeUpdate();
-        session.close();
+
+
     }
 }
