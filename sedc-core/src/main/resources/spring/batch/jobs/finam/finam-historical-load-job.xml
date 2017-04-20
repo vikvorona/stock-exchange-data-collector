@@ -137,34 +137,44 @@
 
     <util:list id="urls" list-class="java.util.ArrayList"/>
 
+    <bean id="stageCleaner" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="TRUNCATE TABLE STAGE_FINAM_HISTORICAL"/>
+    </bean>
+
     <batch:job id="finam-historical-load-job" job-repository="jobRepository">
-        <batch:step id="loadSymbols" next="loadToSourceEngine">
+        <batch:step id="loadSymbols" next="clearStage">
             <batch:tasklet>
                 <batch:chunk reader="symbolReader"
                              writer="resourceGenerator"
                              commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="loadToSourceEngine" parent="loadSymbols" next="loadToStage">
+        <batch:step id="clearStage" parent="loadSymbols" next="loadToSourceEngine">
+            <batch:tasklet>
+                <batch:chunk reader="stageCleaner" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToSourceEngine" parent="clearStage" next="loadToStage">
             <batch:tasklet>
                 <batch:chunk reader="sourceEngineLoader"
                              commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="loadToStage" parent="loadToSourceEngine" next="updateStage">
+        <batch:step id="loadToStage" parent="loadToSourceEngine" next="linkSymbols">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
                              writer="dbWriter"
                              commit-interval="1000"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="updateStage" parent="loadToStage" next="filterStage">
+        <batch:step id="linkSymbols" parent="loadToStage" next="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="symIdUpdater"
                              commit-interval="1000"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="filterStage" parent="updateStage" next="loadToSnapshot">
+        <batch:step id="filterStage" parent="linkSymbols" next="loadToSnapshot">
             <batch:tasklet>
                 <batch:chunk reader="stageFilter"
                              commit-interval="1"/>

@@ -58,23 +58,17 @@
 
     <bean id="dbWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
         <property name="dataSource" ref="dataSource"/>
-        <property name="sql">
-            <value>
-                <![CDATA[
-                insert into STAGE_YAHOO_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
-                    values (:symbol, 'D', :date, CAST('00:00:00' AS TIME), :open, :high, :low, :close, :volume)
-            ]]>
-            </value>
-        </property>
-        <!-- It will take care matching between object property and sql name parameter -->
-        <property name="itemSqlParameterSourceProvider">
-            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider"/>
+        <property name="sql" value="
+                insert into STAGE_YAHOO_HISTORICAL(SYMBOL,PER,DATE,OPEN,HIGH,LOW,CLOSE,VOLUME)
+                values (?, 'D', ?, ?, ?, ?, ?, ?)"/>
+        <property name="itemPreparedStatementSetter">
+            <bean class="com.sedc.collectors.yahoo.historical.YahooHibernateItemPreparedStatementSetter"/>
         </property>
     </bean>
 
     <bean id="stageCleaner" class="com.sedc.core.JbdcBatchUpdater">
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="sql" value="DELETE FROM STAGE_YAHOO_HISTORICAL"/>
+        <property name="sql" value="TRUNCATE TABLE STAGE_YAHOO_HISTORICAL"/>
     </bean>
 
     <bean id="symbolLinker" class="com.sedc.core.JbdcBatchUpdater">
@@ -119,40 +113,34 @@
             <batch:tasklet>
                 <batch:chunk reader="symbolReader"
                              writer="resourceGenerator"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="50"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="clearStage" parent="loadSymbols" next="loadToStage">
             <batch:tasklet>
-                <batch:chunk reader="stageCleaner" commit-interval="1">
-                </batch:chunk>
+                <batch:chunk reader="stageCleaner" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="loadToStage" parent="clearStage" next="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
                              writer="dbWriter"
-                             commit-interval="1000">
-                </batch:chunk>
+                             commit-interval="1000"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="filterStage" parent="loadToStage" next="linkSymbols">
             <batch:tasklet>
-                <batch:chunk reader="dataFilter" commit-interval="1">
-                </batch:chunk>
+                <batch:chunk reader="dataFilter" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="linkSymbols" parent="filterStage" next="filterBySymbol">
             <batch:tasklet>
-                <batch:chunk reader="symbolLinker" commit-interval="1">
-                </batch:chunk>
+                <batch:chunk reader="symbolLinker" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="filterBySymbol" parent="linkSymbols">
             <batch:tasklet>
-                <batch:chunk reader="symbolFilter" commit-interval="1">
-                </batch:chunk>
+                <batch:chunk reader="symbolFilter" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>

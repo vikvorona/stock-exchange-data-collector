@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +22,10 @@ public class SymbolManagerImpl implements SymbolManager {
 
         if (StringUtils.isEmpty(region)) {
             return Collections.emptyList();
+        }
+
+        if (region.equalsIgnoreCase("FOREX")){
+            return Arrays.asList("EURUSD","GBPUSD", "YHOO");
         }
 
         Session session = sessionFactory.openSession();

@@ -12,7 +12,7 @@ public class YahooHistoricalRecord {
     @XmlAttribute(name = "Symbol")
     private String symbol;
     @XmlElement(name = "Date")
-    private Date date;
+    private String date;
     @XmlElement(name = "Open")
     private Double open;
     @XmlElement(name = "High")

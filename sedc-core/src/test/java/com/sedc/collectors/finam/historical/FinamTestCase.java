@@ -1,13 +1,10 @@
 package com.sedc.collectors.finam.historical;
 
 import com.sedc.core.ListResourceItemReader;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.hibernate.type.StandardBasicTypes;
+import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.ExitStatus;
@@ -44,14 +41,12 @@ public class FinamTestCase {
 
     @Autowired
     private ListResourceItemReader multiResourceReader;
-
     private List<UrlResource> resources = new ArrayList<>();
 
     @Before
     public void setUp() throws Exception {
         resources.clear();
         multiResourceReader.setResources(resources);
-
     }
 
     private JobExecution launchStepFor(String value) throws Exception {
@@ -63,37 +58,39 @@ public class FinamTestCase {
         // put temp file in resources
         resources.add(new UrlResource(f.toURI()));
 
-        return jobLauncherTestUtils.launchStep("loadToStage");
+        jobLauncherTestUtils.launchStep("clearStage");
+        JobExecution result = jobLauncherTestUtils.launchStep("loadToStage");
+        jobLauncherTestUtils.launchStep("filterStage");
+        jobLauncherTestUtils.launchStep("linkSymbols");
+        return result;
     }
 
     @Test
     public void testCase1() throws Exception {
-
         JobExecution jobExecution = launchStepFor("GAZP,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
         Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
 
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_FINAM_HISTORICAL WHERE "
-                + "SYMBOL = 'GAZP' AND VOLUME = 1063690 AND OPEN = 136.51 AND HIGH = 136.7 AND LOW = 135.7 AND CLOSE = 136.07 "
-                + "AND DATE = '2017-02-24' AND TIME = '10:15:00' AND SYM_ID IS NOT NULL").uniqueResult();
-        // TODO: Rounded values
-        // TODO: Sym_Id is Null
-        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
-        q.executeUpdate();
+                + "SYMBOL = 'GAZP' AND VOLUME = 1063690 AND OPEN = 136.51 AND HIGH = 136.7 AND LOW = 135.7 AND CLOSE = 136.07"
+                + "AND DATE = '2017-02-24' AND TIME = '10:15:00' AND SYM_ID = (select s.sym_id from symbol s where s.name = 'GAZP')").uniqueResult();
         session.close();
         Assert.assertEquals("Count does not match", 1, count.intValue());
     }
 
     @Test
     public void testCase2() throws Exception {
-        JobExecution jobExecution = launchStepFor("GG,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
-        Assert.assertEquals("Wrong SYMBOL, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
-
+        JobExecution jobExecution = launchStepFor("TEST,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
         // TODO: Wrong SYMBOL doesn't throws an Exception
         Session session = sessionFactory.openSession();
-        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE SYMBOL = 'GG'");
-        q.executeUpdate();
+        Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_FINAM_HISTORICAL WHERE SYMBOL = :symbol")
+                .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
+                .setString("symbol", "TEST")
+                .setMaxResults(1)
+                .uniqueResult();
         session.close();
+        Assert.assertEquals("Wrong SYMBOL, should not pass", "N", flag);
+        Assert.assertEquals("Wrong SYMBOL, should not pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
@@ -105,12 +102,10 @@ public class FinamTestCase {
     @Test
     public void testCase4() throws Exception {
         JobExecution jobExecution = launchStepFor("GAZP,60,201702224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
-        Assert.assertEquals("Wrong DATE, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
         // TODO: Date format
         Session session = sessionFactory.openSession();
-        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
-        q.executeUpdate();
         session.close();
+        Assert.assertEquals("Wrong DATE, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
@@ -119,15 +114,27 @@ public class FinamTestCase {
         Assert.assertEquals("No HIGH, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
+    @Ignore("Period is parsed before launch")
     @Test
     public void testCasePeriod() throws Exception {
         JobExecution jobExecution = launchStepFor("GAZP,Z,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
-        Assert.assertEquals("Wrong PER, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
-
         // TODO: Wrong PER doesn't throws an Exception
         Session session = sessionFactory.openSession();
-        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
-        q.executeUpdate();
         session.close();
+        Assert.assertEquals("Wrong PER, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+    }
+
+    @Test
+    public void testCaseSnapshot() throws Exception {
+        JobExecution jobExecution = launchStepFor("GAZP,60,20170924,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        jobLauncherTestUtils.launchStep("loadToSnapshot");
+        Session session = sessionFactory.openSession();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM SNAPSHOT_HISTORICAL WHERE "
+                + "VOLUME = 1063690 AND OPEN = 136.51 AND HIGH = 136.7 AND LOW = 135.7 AND CLOSE = 136.07 "
+                + "AND DATE = '2017-09-24' AND TIME = '10:15:00' AND SYM_ID = (select s.sym_id from symbol s where s.name = 'GAZP') ").uniqueResult();
+        session.createSQLQuery("DELETE FROM SNAPSHOT_HISTORICAL WHERE VOLUME = 1063690").executeUpdate();
+        session.close();
+        Assert.assertEquals("Count does not match", 1, count.intValue());
+        Assert.assertEquals("should pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 }

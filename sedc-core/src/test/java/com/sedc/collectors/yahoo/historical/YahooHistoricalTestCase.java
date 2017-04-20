@@ -78,7 +78,6 @@ public class YahooHistoricalTestCase {
                 "<Low>42.720001</Low>" +
                 "<Close>42.93</Close>" +
                 "<Volume>5575300</Volume>" +
-                "<Adj_Close>40.560001</Adj_Close>" +
                 "</quote>");
 //        JobExecution jobExecution = launchStepFor("" +
 //                "<quote Symbol=\"YHOO\">" +
@@ -97,7 +96,7 @@ public class YahooHistoricalTestCase {
 //                "</quote>");
         Assert.assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
         Session session = sessionFactory.openSession();
-        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_HISTORICAL WHERE Symbol='YHOO' AND Date = '2016-09-01' AND Open = 42.779999 AND High = 43.099998 AND Low = 42.720001 AND Close = 42.93 AND Volume = 5575300 AND Adj_Close = 40.560001").uniqueResult();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_HISTORICAL WHERE SYMBOL ='YHOO' AND DATE = '2016-09-01' AND OPEN = 42.779999 AND HIGH = 43.099998 AND LOW = 42.720001 AND CLOSE = 42.93 AND VOLUME = 5575300").uniqueResult();
         // TODO: Rounded values
         // TODO: Sym_Id is Null
         Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE Volume =  5575300");
@@ -108,41 +107,96 @@ public class YahooHistoricalTestCase {
 
     @Test(expected = AssertionError.class)
     public void testCase2() throws Exception {
-        launchStepFor("GG,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote Symbol=\"YHO\">" +
+                "<Date>2016-09-01</Date>" +
+                "<Open>42.779999</Open>" +
+                "<High>43.099998</High>" +
+                "<Low>42.720001</Low>" +
+                "<Close>42.93</Close>" +
+                "<Volume>5575300</Volume>" +
+                "</quote>");
         // TODO: Wrong SYMBOL doesn't throws an Exception
         Session session = sessionFactory.openSession();
-        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE SYMBOL = 'GG'");
+        Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE SYMBOL = 'YHO'");
         q.executeUpdate();
         session.close();
+        Assert.assertEquals("Wrong SYMBOL, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test(expected = AssertionError.class)
     public void testCase3() throws Exception {
-        launchStepFor("GAZP,60,20170224,101500,aa,136.7000000,135.7000000,136.0700000,1063690");
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote Symbol=\"YHOO\">" +
+                "<Date>2016-09-01</Date>" +
+                "<Open>aaa</Open>" +
+                "<High>43.099998</High>" +
+                "<Low>42.720001</Low>" +
+                "<Close>42.93</Close>" +
+                "<Volume>5575300</Volume>" +
+                "</quote>");
+        Session session = sessionFactory.openSession();
+        Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE SYMBOL = 'YHOO'");
+        q.executeUpdate();
+        session.close();
+        Assert.assertEquals("Wrong type of field OPEN, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test(expected = AssertionError.class)
     public void testCase4() throws Exception {
-        launchStepFor("GAZP,60,201702224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote Symbol=\"YHOO\">" +
+                "<Date>2016000901</Date>" +
+                "<Open>42.779999</Open>" +
+                "<High>43.099998</High>" +
+                "<Low>42.720001</Low>" +
+                "<Close>42.93</Close>" +
+                "<Volume>5575300</Volume>" +
+                "</quote>");
         // TODO: Date format
         Session session = sessionFactory.openSession();
-        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
+        Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE VOLUME = 5575300");
         q.executeUpdate();
         session.close();
+        Assert.assertEquals("Wrong DATE, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test(expected = AssertionError.class)
     public void testCase5() throws Exception {
-        launchStepFor("GAZP,60,201000365,101500,136.5100000,136.7000000,1063690");
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote Symbol=\"YHOO\">" +
+                "<Date>2016-09-01</Date>" +
+                "<Open>42.779999</Open>" +
+                "<High></High>" +
+                "<Low>42.720001</Low>" +
+                "<Close>42.93</Close>" +
+                "<Volume>5575300</Volume>" +
+                "</quote>");
+        // TODO: Date format
+        Session session = sessionFactory.openSession();
+        Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE VOLUME = 5575300");
+        q.executeUpdate();
+        session.close();
+        Assert.assertEquals("No HIGH, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test(expected = AssertionError.class)
     public void testCasePeriod() throws Exception {
-        launchStepFor("GAZP,Z,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote Symbol=\"YHOO\">" +
+                "<Per>Z</Per>" +
+                "<Date>2016-09-01</Date>" +
+                "<Open>42.779999</Open>" +
+                "<High>43.099998</High>" +
+                "<Low>42.720001</Low>" +
+                "<Close>42.93</Close>" +
+                "<Volume>5575300</Volume>" +
+                "</quote>");
         // TODO: Wrong PER doesn't throws an Exception
         Session session = sessionFactory.openSession();
-        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 1063690");
+        Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 5575300");
         q.executeUpdate();
         session.close();
+        Assert.assertEquals("Wrong PER, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 }

@@ -15,9 +15,8 @@ public class SymbolReader implements ItemReader<String>, InitializingBean, Dispo
 
     private static final Logger LOG = Logger.getLogger(SymbolReader.class);
 
-    @Autowired
     private SymbolManager symbolManager;
-    @Autowired
+
     private String region;
 
     private Queue<String> buffer = new ArrayDeque<>();

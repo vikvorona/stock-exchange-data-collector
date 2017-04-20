@@ -3,9 +3,9 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/batch
-	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
-	http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
     http://www.springframework.org/schema/util
     http://www.springframework.org/schema/util/spring-util.xsd">
 
@@ -36,6 +36,7 @@
     <bean id="reader" class="org.springframework.batch.item.xml.StaxEventItemReader">
         <property name="fragmentRootElementName" value="quote"/>
         <property name="unmarshaller" ref="unmarshaller"/>
+        <property name="strict" value="false"/>
     </bean>
 
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
@@ -48,37 +49,96 @@
 
     <bean id="dbWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
         <property name="dataSource" ref="dataSource"/>
-        <property name="sql">
-            <value>
-                <![CDATA[
+        <property name="sql" value="
                 INSERT INTO stage_yahoo_quote
-                (symbol, avg_daily_volume, "change", days_low, days_high, year_low, year_high, last_trade_price, name, volume)
-                VALUES(:symbol, :averageDailyVolume, :change, :daysLow, :daysHigh, :yearLow, :yearHigh, :lastTradePriceOnly, :name, :volume)
-            ]]>
-            </value>
-        </property>
-        <!-- It will take care matching between object property and sql name parameter -->
-        <property name="itemSqlParameterSourceProvider">
-            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider"/>
+                (symbol, avg_daily_volume, change, days_low, days_high, year_low, year_high, market_capitalization, last_trade_price, days_range_from, days_range_to, name, volume, stock_exchange)
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        />
+        <property name="itemPreparedStatementSetter">
+            <bean class="com.sedc.collectors.yahoo.quote.YahooQuoteItemPreparedStatementSetter"/>
         </property>
     </bean>
 
+    <bean id="stageCleaner" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="TRUNCATE TABLE stage_yahoo_quote"/>
+    </bean>
+
+    <bean id="symbolLinker" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            update stage_yahoo_quote tgt
+            set sym_id = (
+                select src.sym_id
+                from symbol src
+                where tgt.symbol=src.name
+                order by src.ex_id asc
+                limit 1)
+            where active_flag = 'Y'"
+        />
+    </bean>
+
+    <bean id="symbolFilter" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            update stage_yahoo_quote
+            set active_flag = 'N',
+                active_reason = 'Symbol not found'
+            where active_flag = 'Y' and sym_id is null"
+        />
+    </bean>
+
+    <bean id="dataFilter" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            update stage_yahoo_quote
+            set active_flag = 'N',
+                active_reason = 'Data is corrupted'
+            where symbol is null
+                or avg_daily_volume is null
+                or change is null
+                or days_low is null
+                or days_high is null
+                or year_low is null
+                or year_high is null
+                or last_trade_price is null"
+        />
+    </bean>
+
     <!-- Job Description -->
-    <batch:job id="yahooQuoteLoadJob">
-        <batch:step id="loadSymbols" next="loadToStage">
+    <batch:job id="yahooQuoteLoadJob" restartable="false">
+        <batch:step id="loadSymbols" next="clearStage">
             <batch:tasklet>
                 <batch:chunk reader="symbolReader"
                              writer="resourceGenerator"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="50"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="loadToStage">
+        <batch:step id="clearStage" parent="loadSymbols" next="loadToStage">
+            <batch:tasklet>
+                <batch:chunk reader="stageCleaner" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToStage" parent="clearStage" next="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
                              writer="dbWriter"
-                             commit-interval="1000">
-                </batch:chunk>
+                             commit-interval="1000"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterStage" parent="loadToStage" next="linkSymbols">
+            <batch:tasklet>
+                <batch:chunk reader="dataFilter" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="linkSymbols" parent="filterStage" next="filterBySymbol">
+            <batch:tasklet>
+                <batch:chunk reader="symbolLinker" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterBySymbol" parent="linkSymbols">
+            <batch:tasklet>
+                <batch:chunk reader="symbolFilter" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>
