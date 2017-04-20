@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,14 +57,18 @@ public class YahooXchangeTestCase {
         // put temp file in resources
         resources.add(new UrlResource(f.toURI()));
 
-        return jobLauncherTestUtils.launchStep("loadToStage");
+        jobLauncherTestUtils.launchStep("clearStage");
+        JobExecution result = jobLauncherTestUtils.launchStep("loadToStage");
+        jobLauncherTestUtils.launchStep("filterStage");
+        jobLauncherTestUtils.launchStep("linkSymbols");
+        return result;
     }
 
     @Test
     public void testCase1() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
-                "<rate id=\"TEST\">" +
-                "<Name>TEST</Name>" +
+                "<rate id=\"EURUSD\">" +
+                "<Name>EUR/USD</Name>" +
                 "<Rate>1.7</Rate>" +
                 "<Date>5/17/2017</Date>" +
                 "<Time>5:57pm</Time>" +
@@ -73,9 +78,9 @@ public class YahooXchangeTestCase {
         Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
 
         Session session = sessionFactory.openSession();
-        // TODO: SQL Query
-       /* Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_FXRATE WHERE ID = 'TEST'");
-        q.executeUpdate();*/
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_FXRATE WHERE Name='EUR/USD' " +
+                "and Rate=1.7 and Date = '2017-05-17' and Time= '17:57:00' and Ask= 1.062 and Bid = 1.0656").uniqueResult();
         session.close();
+        Assert.assertEquals("Count does not match", 1, count.intValue());
     }
 }
