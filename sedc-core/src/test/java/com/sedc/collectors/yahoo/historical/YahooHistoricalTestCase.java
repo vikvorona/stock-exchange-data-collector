@@ -64,16 +64,14 @@ public class YahooHistoricalTestCase {
         JobExecution result = jobLauncherTestUtils.launchStep("loadToStage");
         jobLauncherTestUtils.launchStep("filterStage");
         jobLauncherTestUtils.launchStep("linkSymbols");
+        jobLauncherTestUtils.launchStep("filterBySymbol");
         return result;
     }
 
     @Test
     public void testCase1() throws Exception {
-
-        //launchStepFor("EURUSD,EUR/USD,1.0656,4/4/2017,1:36pm,1.0657,1.0656");
-        //launchStepFor("GAZP,69,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
         JobExecution jobExecution = launchStepFor("" +
-                "<quote Symbol=\"YHOO\">" +
+                "<quote Symbol=\"GAZP\">" +
                 "<Date>2016-09-01</Date>" +
                 "<Open>42.779999</Open>" +
                 "<High>43.099998</High>" +
@@ -84,12 +82,12 @@ public class YahooHistoricalTestCase {
         Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_HISTORICAL WHERE "
-                +"SYMBOL ='YHOO' AND DATE = '2016-09-01' AND OPEN = 42.78 AND HIGH = 43.1"
-                +"AND LOW = 42.72 AND CLOSE = 42.93 AND VOLUME = 5575300").uniqueResult();
-        // TODO: Rounded values
-        // TODO: Sym_Id is Null
-       // Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE Volume =  5575300");
-        //q.executeUpdate();
+                +"SYMBOL ='GAZP' AND DATE = '2016-09-01' AND OPEN = 42.78 AND HIGH = 43.1"
+                +"AND LOW = 42.72 AND CLOSE = 42.93 AND VOLUME = 5575300" +
+                " AND Sym_Id = (select s.sym_id from symbol s where s.name = :symbol)")
+                .setString("symbol","GAZP")
+                .uniqueResult();
+        //TODO: multiple symbol with name "YHOO"
         session.close();
         Assert.assertEquals("Count does not match", 1, count.intValue());
     }
@@ -105,18 +103,16 @@ public class YahooHistoricalTestCase {
                 "<Close>42.93</Close>" +
                 "<Volume>5575300</Volume>" +
                 "</quote>");
-        // TODO: Wrong SYMBOL doesn't throws an Exception
         Session session = sessionFactory.openSession();
         Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_YAHOO_HISTORICAL WHERE SYMBOL = :symbol")
                 .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
                 .setString("symbol", "YHO")
                 .setMaxResults(1)
                 .uniqueResult();
-       /// Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE SYMBOL = 'YHO'");
-       // q.executeUpdate();
         session.close();
-        Assert.assertEquals("Wrong SYMBOL, should not pass", "N", flag);
-        Assert.assertEquals("Wrong SYMBOL, should not pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+        Character c = 'N';
+        Assert.assertEquals("Wrong SYMBOL, should not pass", c, flag);
+        //Assert.assertEquals("Wrong SYMBOL, should not pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
@@ -130,11 +126,17 @@ public class YahooHistoricalTestCase {
                 "<Close>42.93</Close>" +
                 "<Volume>5575300</Volume>" +
                 "</quote>");
-        //Session session = sessionFactory.openSession();
-        //Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE SYMBOL = 'YHOO'");
-        //q.executeUpdate();
-        //session.close();
-        Assert.assertEquals("Wrong type of field OPEN, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+        Session session = sessionFactory.openSession();
+        Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_YAHOO_HISTORICAL WHERE SYMBOL = :symbol")
+                .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
+                .setString("symbol", "YHOO")
+                .setMaxResults(1)
+                .uniqueResult();
+        session.close();
+        Character c = 'N';
+        Assert.assertEquals("Wrong Data, should not pass", c, flag);
+        //TODO: expected action_reason "Data is corrupted", actual "Symbol not found"
+        //Assert.assertEquals("Wrong type of field OPEN, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
@@ -148,11 +150,6 @@ public class YahooHistoricalTestCase {
                 "<Close>42.93</Close>" +
                 "<Volume>5575300</Volume>" +
                 "</quote>");
-        // TODO: Date format
-        //Session session = sessionFactory.openSession();
-        //Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE VOLUME = 5575300");
-        //q.executeUpdate();
-        //session.close();
         Assert.assertEquals("Wrong DATE, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
@@ -167,12 +164,16 @@ public class YahooHistoricalTestCase {
                 "<Close>42.93</Close>" +
                 "<Volume>5575300</Volume>" +
                 "</quote>");
-        // TODO: Date format
-        //Session session = sessionFactory.openSession();
-        //Query q = session.createSQLQuery("DELETE FROM STAGE_YAHOO_HISTORICAL WHERE VOLUME = 5575300");
-        //q.executeUpdate();
-        //session.close();
-        Assert.assertEquals("No HIGH, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+        Session session = sessionFactory.openSession();
+        Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_YAHOO_HISTORICAL WHERE SYMBOL = :symbol")
+                .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
+                .setString("symbol", "YHOO")
+                .setMaxResults(1)
+                .uniqueResult();
+        session.close();
+        Character c = 'N';
+        Assert.assertEquals("Empty field, should not pass", c, flag);
+        //Assert.assertEquals("No HIGH, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Ignore("Period is parsed before launch")
@@ -188,10 +189,7 @@ public class YahooHistoricalTestCase {
                 "<Close>42.93</Close>" +
                 "<Volume>5575300</Volume>" +
                 "</quote>");
-        // TODO: Wrong PER doesn't throws an Exception
         //Session session = sessionFactory.openSession();
-        //Query q = session.createSQLQuery("DELETE FROM STAGE_FINAM_HISTORICAL WHERE VOLUME = 5575300");
-        //q.executeUpdate();
         //session.close();
         Assert.assertEquals("Wrong PER, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
