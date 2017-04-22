@@ -12,8 +12,11 @@
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/database.xml"/>
 
-    <bean name="symbolReader" class="com.sedc.core.SymbolReader" scope="step">
+    <bean name="symbolReader" class="com.sedc.collectors.yahoo.YahooSymbolReader" scope="step">
         <property name="symbolManager" ref="symbolManager"/>
+        <property name="sourceCenterName" value="YAHOO_HISTORICAL"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
         <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
@@ -22,7 +25,7 @@
     </bean>
 
     <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
-        <property name="sourceEngineName" value="YAHOO_HISTORICAL"/>
+        <property name="sourceCenterName" value="YAHOO_HISTORICAL"/>
         <property name="startDate">
             <bean class="java.time.LocalDate" factory-method="parse">
                 <constructor-arg value="${DATE_FROM}"/>
@@ -34,6 +37,8 @@
             </bean>
         </property>
         <property name="urls" ref="resources"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
     </bean>
 
     <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
@@ -71,7 +76,7 @@
         <property name="sql" value="TRUNCATE TABLE STAGE_YAHOO_HISTORICAL"/>
     </bean>
 
-    <bean id="symbolLinker" class="com.sedc.core.JbdcBatchUpdater">
+    <bean id="symbolLinker" class="com.sedc.core.JbdcBatchUpdater" scope="step">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="sql" value="update stage_yahoo_historical tgt
                                     set sym_id = (
@@ -84,7 +89,7 @@
         />
     </bean>
 
-    <bean id="symbolFilter" class="com.sedc.core.JbdcBatchUpdater">
+    <bean id="symbolFilter" class="com.sedc.core.JbdcBatchUpdater" scope="step">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="sql" value="update stage_yahoo_historical
                                     set active_flag = 'N',
@@ -93,7 +98,7 @@
         />
     </bean>
 
-    <bean id="dataFilter" class="com.sedc.core.JbdcBatchUpdater">
+    <bean id="dataFilter" class="com.sedc.core.JbdcBatchUpdater" scope="step">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="sql" value="update stage_yahoo_historical
                                     set active_flag = 'N',
@@ -104,6 +109,24 @@
                                         or low is null
                                         or close is null
                                         or volume is null"
+        />
+    </bean>
+
+    <bean id="sourceCenterEngineInstance" class="com.sedc.core.model.SourceCenterEngineInstance">
+        <property name="businessDate">
+            <bean class="java.util.Date"/>
+        </property>
+    </bean>
+
+    <bean id="snapshotSaver" class="com.sedc.core.JbdcBatchUpdater" scope="step">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            INSERT INTO snapshot_historical (scei_id, business_date, sym_id, period, date, time, open, high, low, close, volume, active_flag)
+            SELECT scei.scei_id, scei.business_date, syh.sym_id, syh.per, syh.date, CAST('00:00:00' AS TIME), syh.open,
+                syh.high, syh.low, syh.close, syh.volume, syh.active_flag
+            FROM source_center_engine_instance as scei
+                JOIN stage_yahoo_historical as syh on 1 = 1
+            WHERE scei.scei_id = #{sourceCenterEngineInstance.getId()}"
         />
     </bean>
 
@@ -138,9 +161,15 @@
                 <batch:chunk reader="symbolLinker" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="filterBySymbol" parent="linkSymbols">
+        <batch:step id="filterBySymbol" parent="linkSymbols" next="saveToSnapshot">
             <batch:tasklet>
                 <batch:chunk reader="symbolFilter" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="saveToSnapshot" parent="filterBySymbol">
+            <batch:tasklet>
+                <batch:chunk reader="snapshotSaver"
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>

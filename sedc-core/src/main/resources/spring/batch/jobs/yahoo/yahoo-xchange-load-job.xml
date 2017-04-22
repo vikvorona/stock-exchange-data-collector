@@ -22,7 +22,7 @@
     </bean>
 
     <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
-        <property name="sourceEngineName" value="YAHOO_XCHANGE"/>
+        <property name="sourceCenterName" value="YAHOO_XCHANGE"/>
         <property name="urls" ref="resources"/>
     </bean>
 
