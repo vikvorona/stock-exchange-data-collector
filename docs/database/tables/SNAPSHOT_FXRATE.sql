@@ -1,10 +1,11 @@
 CREATE TABLE SNAPSHOT_FXRATE (
      SX_ID             NUMERIC(18) NOT NULL DEFAULT nextval('S_SNAPSHOT_FXRATE_PK'),
      SCEI_ID           NUMERIC(18) NOT NULL,
-     SYM_ID            NUMERIC(18) NOT NULL,
      BUSINESS_DATE     DATE NOT NULL,
+     SYM_ID            NUMERIC(18) NOT NULL,
      ID                VARCHAR(20) NOT NULL,
      NAME              VARCHAR(20) NOT NULL,
+     RATE              NUMERIC(18,4) NOT NULL,
      DATE              DATE NOT NULL,
      TIME              TIME NOT NULL,
      ASK               NUMERIC(18) NOT NULL,

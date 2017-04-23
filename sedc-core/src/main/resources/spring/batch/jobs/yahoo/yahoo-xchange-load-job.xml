@@ -7,13 +7,16 @@
     http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
     http://www.springframework.org/schema/util
-    http://www.springframework.org/schema/util/spring-util.xsd">
+    http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/database.xml"/>
 
-    <bean name="symbolReader" class="com.sedc.core.SymbolReader" scope="step">
+    <bean name="symbolReader" class="com.sedc.collectors.yahoo.YahooSymbolReader" scope="step">
         <property name="symbolManager" ref="symbolManager"/>
+        <property name="sourceCenterName" value="YAHOO_XCHANGE"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
         <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
@@ -36,7 +39,6 @@
     <bean id="reader" class="org.springframework.batch.item.xml.StaxEventItemReader">
         <property name="fragmentRootElementName" value="rate"/>
         <property name="unmarshaller" ref="unmarshaller"/>
-        <property name="strict" value="false"/>
     </bean>
 
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
@@ -100,8 +102,26 @@
         />
     </bean>
 
-    <!-- Job Description -->
-    <batch:job id="yahooXchangeLoadJob" restartable="false">
+    <bean id="sourceCenterEngineInstance" class="com.sedc.core.model.SourceCenterEngineInstance">
+        <property name="businessDate">
+            <bean class="java.util.Date"/>
+        </property>
+    </bean>
+
+    <bean id="snapshotSaver" class="com.sedc.core.JbdcBatchUpdater" scope="step">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            INSERT INTO snapshot_fxrate (scei_id, business_date, sym_id, id, name, rate, date, time, ask, bid)
+            SELECT scei.scei_id, scei.business_date, syf.sym_id, syf.id, syf.name, syf.rate, syf.date, syf.time, syf.ask, syf.bid
+            FROM source_center_engine_instance as scei
+                JOIN stage_yahoo_fxrate as syf on 1 = 1
+            WHERE scei.scei_id = #{sourceCenterEngineInstance.getId()}
+                AND syf.active_flag = 'Y'"
+        />
+    </bean>
+
+    <!-- Job description -->
+    <batch:job id="yahooXchangeLoadJob">
         <batch:step id="loadSymbols" next="clearStage">
             <batch:tasklet>
                 <batch:chunk reader="symbolReader"
@@ -131,9 +151,15 @@
                 <batch:chunk reader="symbolLinker" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="filterBySymbol" parent="linkSymbols">
+        <batch:step id="filterBySymbol" parent="linkSymbols" next="saveToSnapshot">
             <batch:tasklet>
                 <batch:chunk reader="symbolFilter" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="saveToSnapshot" parent="filterBySymbol">
+            <batch:tasklet>
+                <batch:chunk reader="snapshotSaver"
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>
