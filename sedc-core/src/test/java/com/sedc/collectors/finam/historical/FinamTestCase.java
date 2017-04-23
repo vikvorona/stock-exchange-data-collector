@@ -78,6 +78,7 @@ public class FinamTestCase {
         Assert.assertEquals("Count does not match", 1, count.intValue());
     }
 
+    @Ignore
     @Test
     public void testCase2() throws Exception {
         JobExecution jobExecution = launchStepFor("TEST,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
