@@ -21,9 +21,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by oshulyakov on 4/11/2017.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
         "/spring/batch/config/test-context.xml",
@@ -60,16 +57,15 @@ public class FinamTestCase {
 
         jobLauncherTestUtils.launchStep("clearStage");
         JobExecution result = jobLauncherTestUtils.launchStep("loadToStage");
-        jobLauncherTestUtils.launchStep("filterStage");
         jobLauncherTestUtils.launchStep("linkSymbols");
+        jobLauncherTestUtils.launchStep("filterStage");
         return result;
     }
 
     @Test
-    public void testCase1() throws Exception {
+    public void testCaseStagePositive() throws Exception {
         JobExecution jobExecution = launchStepFor("GAZP,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
         Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
-
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_FINAM_HISTORICAL WHERE "
                 + "SYMBOL = 'GAZP' AND VOLUME = 1063690 AND OPEN = 136.51 AND HIGH = 136.7 AND LOW = 135.7 AND CLOSE = 136.07"
@@ -78,10 +74,10 @@ public class FinamTestCase {
         Assert.assertEquals("Count does not match", 1, count.intValue());
     }
 
+
     @Test
-    public void testCase2() throws Exception {
+    public void testCaseStageNegativeWrongSymbol() throws Exception {
         JobExecution jobExecution = launchStepFor("TEST,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
-        // TODO: Wrong SYMBOL doesn't throws an Exception
         Session session = sessionFactory.openSession();
         Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_FINAM_HISTORICAL WHERE SYMBOL = :symbol")
                 .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
@@ -89,43 +85,36 @@ public class FinamTestCase {
                 .setMaxResults(1)
                 .uniqueResult();
         session.close();
-        Assert.assertEquals("Wrong SYMBOL, should not pass", "N", flag);
-        Assert.assertEquals("Wrong SYMBOL, should not pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+        Character c = 'N';
+        Assert.assertEquals("Wrong SYMBOL, should not pass", c, flag);
     }
 
     @Test
-    public void testCase3() throws Exception {
+    public void testCaseStageNegativeWrongData() throws Exception {
         JobExecution jobExecution = launchStepFor("GAZP,60,20170224,101500,aa,136.7000000,135.7000000,136.0700000,1063690");
         Assert.assertEquals("Wrong OPEN, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
-    public void testCase4() throws Exception {
+    public void testCaseStageNegativeWrongDate() throws Exception {
         JobExecution jobExecution = launchStepFor("GAZP,60,201702224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
-        // TODO: Date format
-        Session session = sessionFactory.openSession();
-        session.close();
         Assert.assertEquals("Wrong DATE, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
-    public void testCase5() throws Exception {
+    public void testCaseStageNegativeEmptyField() throws Exception {
         JobExecution jobExecution = launchStepFor("GAZP,60,201000365,101500,136.5100000,136.7000000,1063690");
         Assert.assertEquals("No HIGH, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
-    @Ignore("Period is parsed before launch")
     @Test
-    public void testCasePeriod() throws Exception {
+    public void testCaseStageNegativeWrongPeriod() throws Exception {
         JobExecution jobExecution = launchStepFor("GAZP,Z,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
-        // TODO: Wrong PER doesn't throws an Exception
-        Session session = sessionFactory.openSession();
-        session.close();
         Assert.assertEquals("Wrong PER, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
-    public void testCaseSnapshot() throws Exception {
+    public void testCaseSnapshotPositive() throws Exception {
         JobExecution jobExecution = launchStepFor("GAZP,60,20170924,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
         jobLauncherTestUtils.launchStep("loadToSnapshot");
         Session session = sessionFactory.openSession();
@@ -135,6 +124,17 @@ public class FinamTestCase {
         session.createSQLQuery("DELETE FROM SNAPSHOT_HISTORICAL WHERE VOLUME = 1063690").executeUpdate();
         session.close();
         Assert.assertEquals("Count does not match", 1, count.intValue());
-        Assert.assertEquals("should pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+    }
+
+    @Test
+    public void testCaseSnapshotNegative() throws Exception {
+        JobExecution jobExecution = launchStepFor("TEST,60,20170924,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
+        jobLauncherTestUtils.launchStep("loadToSnapshot");
+        Session session = sessionFactory.openSession();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM SNAPSHOT_HISTORICAL WHERE "
+                + "VOLUME = 1063690 AND OPEN = 136.51 AND HIGH = 136.7 AND LOW = 135.7 AND CLOSE = 136.07 "
+                + "AND DATE = '2017-09-24' AND TIME = '10:15:00'").uniqueResult();
+        session.close();
+        Assert.assertEquals("Count does not match", 0, count.intValue());
     }
 }

@@ -69,7 +69,7 @@ public class YahooHistoricalTestCase {
     }
 
     @Test
-    public void testCase1() throws Exception {
+    public void testCaseStagePositive() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<quote Symbol=\"GAZP\">" +
                 "<Date>2016-09-01</Date>" +
@@ -93,7 +93,7 @@ public class YahooHistoricalTestCase {
     }
 
     @Test
-    public void testCase2() throws Exception {
+    public void testCaseStageNegativeWrongSymbol() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<quote Symbol=\"YHO\">" +
                 "<Date>2016-09-01</Date>" +
@@ -116,7 +116,7 @@ public class YahooHistoricalTestCase {
     }
 
     @Test
-    public void testCase3() throws Exception {
+    public void  testCaseStageNegativeWrongData() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<quote Symbol=\"YHOO\">" +
                 "<Date>2016-09-01</Date>" +
@@ -140,7 +140,7 @@ public class YahooHistoricalTestCase {
     }
 
     @Test
-    public void testCase4() throws Exception {
+    public void  testCaseStageNegativeWrongDate() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<quote Symbol=\"YHOO\">" +
                 "<Date>2016000901</Date>" +
@@ -154,7 +154,7 @@ public class YahooHistoricalTestCase {
     }
 
     @Test
-    public void testCase5() throws Exception {
+    public void testCaseStageNegativeEmptyField() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<quote Symbol=\"YHOO\">" +
                 "<Date>2016-09-01</Date>" +
@@ -176,9 +176,9 @@ public class YahooHistoricalTestCase {
         //Assert.assertEquals("No HIGH, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
-    @Ignore("Period is parsed before launch")
+    @Ignore("useless")
     @Test
-    public void testCasePeriod() throws Exception {
+    public void testCaseStageNegativeWrongPeriod() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<quote Symbol=\"YHOO\">" +
                 "<Per>Z</Per>" + 
@@ -194,26 +194,46 @@ public class YahooHistoricalTestCase {
         Assert.assertEquals("Wrong PER, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
-    @Ignore("there are not load to snapshot yet")
+
     @Test
-    public void testCaseSnapshot() throws Exception {
+    public void testCaseSnapshotPositive() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<quote Symbol=\"YHOO\">" +
-                "<Date>2016-09-01</Date>" +
+                "<Date>2016-09-02</Date>" +
                 "<Open>42.779999</Open>" +
                 "<High>43.099998</High>" +
                 "<Low>42.720001</Low>" +
                 "<Close>42.93</Close>" +
                 "<Volume>5575300</Volume>" +
                 "</quote>");
-        jobLauncherTestUtils.launchStep("loadToSnapshot");
+        jobLauncherTestUtils.launchStep("saveToSnapshot");
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM SNAPSHOT_HISTORICAL WHERE "
                 +"SYMBOL ='YHOO' AND DATE = '2016-09-01' AND OPEN = 42.78 AND HIGH = 43.1"
-                +"AND LOW = 42.72 AND CLOSE = 42.93 AND VOLUME = 5575300").uniqueResult();
+                +"AND LOW = 42.72 AND CLOSE = 42.93 AND VOLUME = 5575300 AND SYM_ID = (select s.sym_id from symbol s where s.name = 'YHOO') ").uniqueResult();
         session.createSQLQuery("DELETE FROM SNAPSHOT_HISTORICAL WHERE VOLUME = 1063690").executeUpdate();
         session.close();
         Assert.assertEquals("Count does not match", 1, count.intValue());
         Assert.assertEquals("should pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+    }
+
+    @Test
+    public void testCaseSnapshotNegative() throws Exception {
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote Symbol=\"YHO\">" +
+                "<Date>2016-09-02</Date>" +
+                "<Open>42.779999</Open>" +
+                "<High>43.099998</High>" +
+                "<Low>42.720001</Low>" +
+                "<Close>42.93</Close>" +
+                "<Volume>5575300</Volume>" +
+                "</quote>");
+        jobLauncherTestUtils.launchStep("saveToSnapshot");
+        Session session = sessionFactory.openSession();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM SNAPSHOT_HISTORICAL WHERE "
+                + "DATE = '2016-09-01' AND OPEN = 42.78 AND HIGH = 43.1"
+                + "AND LOW = 42.72 AND CLOSE = 42.93 AND VOLUME = 5575300").uniqueResult();
+        session.close();
+        Assert.assertEquals("Count does not match", 0, count.intValue());
     }
 }

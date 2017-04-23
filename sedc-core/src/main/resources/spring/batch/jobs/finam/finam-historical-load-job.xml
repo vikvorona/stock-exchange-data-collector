@@ -14,22 +14,51 @@
         <property name="lineMapper" ref="lineMapper"/>
     </bean>
 
-    <bean id="stageFilter" class="com.sedc.collectors.finam.historical.StageTableFilter">
+    <bean id="stageFilter" class="com.sedc.core.JbdcBatchUpdater" scope="step">
         <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="update stage_finam_historical
+                                    set active_flag = 'N',
+                                    active_reason = 'Symbol not found'
+                                    where sym_id is null"
+        />
     </bean>
 
-    <bean id="symIdLoader" class="com.sedc.collectors.finam.historical.SymIdLoader">
+    <bean id="symIdUpdater" class="com.sedc.core.JbdcBatchUpdater">
         <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="update STAGE_FINAM_HISTORICAL
+            set sym_id=subquery.sym_id
+            from (select s.name, s.sym_id
+            from SYMBOL s, stage_finam_historical
+            where s.name = stage_finam_historical.symbol) as subquery
+            where subquery.name = stage_finam_historical.symbol;"
+        />
     </bean>
 
-    <bean id="snapshotLoader" class="com.sedc.collectors.finam.historical.SnapshotTableLoader">
+    <bean id="snapshotLoader" class="com.sedc.core.JbdcBatchUpdater">
         <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="insert into snapshot_historical (scei_id, business_date, sym_id, period, date, time, open, high, low, close, volume, active_flag)
+            with source_center_engine_instance as (
+            select scei_id, business_date FROM source_center_engine_instance ORDER BY scei_id DESC LIMIT 1
+            ), stage_finam_historical as (
+            select sym_id, per, date, time, open, high, low, close, volume, active_flag from stage_finam_historical
+            )
+            select scei.scei_id, scei.business_date, sfh.sym_id, sfh.per, sfh.date, sfh.time, sfh.open,
+            sfh.high, sfh.low, sfh.close, sfh.volume, sfh.active_flag
+            from source_center_engine_instance as scei, stage_finam_historical as sfh"
+        />
     </bean>
 
-    <bean id="sourceEngineLoader" class="com.sedc.collectors.finam.historical.SourceEngineLoader" scope="step">
+    <bean id="sourceEngineLoader" class="com.sedc.core.JbdcBatchUpdater" scope="step">
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="region" value="#{jobParameters[region]}"/>
-        <property name="source" value="FINAM"/>
+        <property name="sql" value="INSERT INTO public.source_center_engine_instance (sce_id, business_date, start_tm)
+            select sce_id, now(), now()
+            from source_center_engine sce
+                join source_center sc on sce.sc_id = sc.sc_id
+                join code_generic cg on sce.region_cg_id = cg.cg_id
+            where sc.name = 'FINAM'
+            and cg.type = 'REGION'
+            and cg.name = '#{jobParameters[region]}'"
+        />
     </bean>
 
     <bean name="lineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
@@ -55,7 +84,7 @@
     </bean>
 
     <bean id="dateFormat" class="java.text.SimpleDateFormat">
-        <constructor-arg value="dd.MM.yyyy" />
+        <constructor-arg value="dd.MM.yyyy"/>
     </bean>
 
     <bean name="resourceGenerator" class="com.sedc.collectors.finam.historical.FinamResourceGenerator" scope="step">
@@ -146,7 +175,7 @@
         </batch:step>
         <batch:step id="linkSymbols" parent="loadToStage" next="filterStage">
             <batch:tasklet>
-                <batch:chunk reader="symIdLoader"
+                <batch:chunk reader="symIdUpdater"
                              commit-interval="1000"/>
             </batch:tasklet>
         </batch:step>
