@@ -78,7 +78,6 @@ public class FinamTestCase {
         Assert.assertEquals("Count does not match", 1, count.intValue());
     }
 
-    @Ignore
     @Test
     public void testCase2() throws Exception {
         JobExecution jobExecution = launchStepFor("TEST,60,20170224,101500,136.5100000,136.7000000,135.7000000,136.0700000,1063690");
@@ -90,7 +89,8 @@ public class FinamTestCase {
                 .setMaxResults(1)
                 .uniqueResult();
         session.close();
-        Assert.assertEquals("Wrong SYMBOL, should not pass", "N", flag);
+        Character c = 'N';
+        Assert.assertEquals("Wrong SYMBOL, should not pass", c, flag);
         Assert.assertEquals("Wrong SYMBOL, should not pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 

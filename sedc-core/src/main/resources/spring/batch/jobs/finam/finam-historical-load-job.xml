@@ -14,8 +14,13 @@
         <property name="lineMapper" ref="lineMapper"/>
     </bean>
 
-    <bean id="stageFilter" class="com.sedc.collectors.finam.historical.StageTableFilter">
+    <bean id="stageFilter" class="com.sedc.core.JbdcBatchUpdater" scope="step">
         <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="update stage_finam_historical
+                                    set active_flag = 'N',
+                                    active_reason = 'Symbol not found'
+                                    where sym_id is null"
+        />
     </bean>
 
     <bean id="symIdUpdater" class="com.sedc.core.JbdcBatchUpdater">
@@ -79,7 +84,7 @@
     </bean>
 
     <bean id="dateFormat" class="java.text.SimpleDateFormat">
-        <constructor-arg value="dd.MM.yyyy" />
+        <constructor-arg value="dd.MM.yyyy"/>
     </bean>
 
     <bean name="resourceGenerator" class="com.sedc.collectors.finam.historical.FinamResourceGenerator" scope="step">
