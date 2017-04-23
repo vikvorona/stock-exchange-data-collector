@@ -4,10 +4,8 @@ import com.sedc.core.ListResourceItemReader;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.hibernate.type.StandardBasicTypes;
+import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.ExitStatus;
@@ -58,9 +56,10 @@ public class YahooQuoteTestCase {
         // put temp file in resources
         resources.add(new UrlResource(f.toURI()));
         jobLauncherTestUtils.launchStep("clearStage");
-        JobExecution result =  jobLauncherTestUtils.launchStep("loadToStage");
+        JobExecution result = jobLauncherTestUtils.launchStep("loadToStage");
         jobLauncherTestUtils.launchStep("filterStage");
         jobLauncherTestUtils.launchStep("linkSymbols");
+        jobLauncherTestUtils.launchStep("filterBySymbol");
         return result;
     }
 
@@ -69,34 +68,157 @@ public class YahooQuoteTestCase {
 
         JobExecution jobExecution = launchStepFor("" +
                 "<quote symbol=\"GAZP\">" +
-                "<AverageDailyVolume>6599510</AverageDailyVolume>" +
-                "<Change>0.2934</Change>" +
-                "<DaysLow>46.9200</DaysLow>" +
-                "<DaysHigh>47.2500</DaysHigh>" +
+                "<AverageDailyVolume>6981940</AverageDailyVolume>" +
+                "<Change>0.02</Change>" +
+                "<DaysLow>46.85</DaysLow>" +
+                "<DaysHigh>47.25</DaysHigh>" +
                 "<YearLow>35.0500</YearLow>" +
-                "<YearHigh>47.4150</YearHigh>" +
-                "<MarketCapitalization>45.14B</MarketCapitalization>" +
-                "<LastTradePriceOnly>47.1934</LastTradePriceOnly>" +
-                "<DaysRange>46.9200 - 47.2500</DaysRange>" +
+                "<YearHigh>47.19</YearHigh>" +
+                "<MarketCapitalization>44.41B</MarketCapitalization>" +
+                "<LastTradePriceOnly>46.43</LastTradePriceOnly>" +
+                "<DaysRange>46.16 - 47.85</DaysRange>" +
                 "<Name>Yahoo! Inc.</Name>" +
-                "<Volume>1875823</Volume>" +
+                "<Volume>7675378</Volume>" +
                 "<StockExchange>NMS</StockExchange>" +
                 "</quote>");
+
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_QUOTE WHERE "
-                       + "symbol = 'GAZP' and Avg_Daily_Volume = 6599510 and Days_Low = 46.9200"
-                       + "and Days_High = 47.2500 and Year_Low = 35.0500 and Name = 'Yahoo! Inc.' and Stock_Exchange = 'NMS' "
-                       +"and Change = 0.2900 and Days_Range_from = 46.9200 and Days_Range_to = 47.2500"
-                       +" and Sym_ID = (select s.Sym_ID from symbol s where s.name = 'GAZP') "
-                       +"and Year_High = 47.4200 and Last_Trade_Price = 47.1900 and Market_Capitalization = 45140000000 and Volume = 1875823").uniqueResult();
-//
-        session.close();
+                + "symbol = 'GAZP' and Avg_Daily_Volume = 6981940 and Days_Low = 46.85"
+                + "and Days_High = 47.25 and Year_Low = 35.0500 and Name = 'Yahoo! Inc.' and Stock_Exchange = 'NMS' "
+                + "and Change = 0.02 and Days_Range_from = 46.16 and Days_Range_to = 47.85"
+                + " and Sym_ID = (select s.Sym_ID from symbol s where s.name = 'GAZP') "
+                + "and Year_High = 47.1900 and Last_Trade_Price = 46.43 and Market_Capitalization = 44410000000 and Volume = 7675378").uniqueResult();
 
-        // TODO: SQL Query
+        session.close();
         Assert.assertEquals("Count does not match", 1, count.intValue());
         Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
 
 
+    }
 
+    @Test
+    public void testCase2() throws Exception {
+
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote symbol=\"TEST\">" +
+                "<AverageDailyVolume>6981940</AverageDailyVolume>" +
+                "<Change>0.02</Change>" +
+                "<DaysLow>46.85</DaysLow>" +
+                "<DaysHigh>47.25</DaysHigh>" +
+                "<YearLow>35.0500</YearLow>" +
+                "<YearHigh>47.19</YearHigh>" +
+                "<MarketCapitalization>44.41B</MarketCapitalization>" +
+                "<LastTradePriceOnly>46.43</LastTradePriceOnly>" +
+                "<DaysRange>46.16 - 47.85</DaysRange>" +
+                "<Name>Yahoo! Inc.</Name>" +
+                "<Volume>7675378</Volume>" +
+                "<StockExchange>NMS</StockExchange>" +
+                "</quote>");
+        Session session = sessionFactory.openSession();
+        Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_YAHOO_QUOTE WHERE SYMBOL = :symbol")
+                .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
+                .setString("symbol", "TEST")
+                .setMaxResults(1)
+                .uniqueResult();
+        session.close();
+        Character c = 'N';
+        Assert.assertEquals("Wrong SYMBOL", c, flag);
+        //Assert.assertEquals("Wrong symbol, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+    }
+    @Test
+    public void testCase3() throws Exception {
+
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote symbol=\"GAZP\">" +
+                "<AverageDailyVolume>6981940</AverageDailyVolume>" +
+                "<Change>0.02</Change>" +
+                "<DaysLow>46.85</DaysLow>" +
+                "<DaysHigh>47.25</DaysHigh>" +
+                "<YearLow>35.0500</YearLow>" +
+                "<YearHigh>47.19</YearHigh>" +
+                "<MarketCapitalization>44.41B</MarketCapitalization>" +
+                "<LastTradePriceOnly>46.43</LastTradePriceOnly>" +
+                "<DaysRange>46.16 - 47.85</DaysRange>" +
+                "<Name>Yahoo! Inc.</Name>" +
+                "<Volume>aa</Volume>" +
+                "<StockExchange>NMS</StockExchange>" +
+                "</quote>");
+        Session session = sessionFactory.openSession();
+        Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_YAHOO_QUOTE WHERE SYMBOL = :symbol")
+                .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
+                .setString("symbol", "GAZP")
+                .setMaxResults(1)
+                .uniqueResult();
+        session.close();
+        Character c = 'N';
+        Assert.assertEquals("Wrong Data", c, flag);
+        //TODO: Wrong Data don't change an Active_Flag
+       // Assert.assertEquals("Wrong Volume, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+    }
+    @Test
+    public void testCase4() throws Exception {
+
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote symbol=\"GAZP\">" +
+                "<AverageDailyVolume>6981940</AverageDailyVolume>" +
+                "<Change>0.02</Change>" +
+                "<DaysLow>46.85</DaysLow>" +
+                "<DaysHigh>47.25</DaysHigh>" +
+                "<YearLow>35.0500</YearLow>" +
+                "<YearHigh>47.19</YearHigh>" +
+                "<MarketCapitalization>44.41B</MarketCapitalization>" +
+                "<LastTradePriceOnly>46.43</LastTradePriceOnly>" +
+                "<DaysRange>46.16 - 47.85</DaysRange>" +
+                "<Name></Name>" +
+                "<Volume>7675378</Volume>" +
+                "<StockExchange>NMS</StockExchange>" +
+                "</quote>");
+        Session session = sessionFactory.openSession();
+        Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_YAHOO_QUOTE WHERE SYMBOL = :symbol")
+                .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
+                .setString("symbol", "GAZP")
+                .setMaxResults(1)
+                .uniqueResult();
+        session.close();
+        Character c = 'N';
+        Assert.assertEquals("Empty field", c, flag);
+        //TODO: Empty fields don't change an Active_Flag
+        //Assert.assertEquals("Wrong name, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+
+
+    }
+    @Ignore
+    @Test
+    public void testCaseSnapshot() throws Exception {
+        JobExecution jobExecution = launchStepFor("" +
+                "<quote symbol=\"GAZP\">" +
+                "<AverageDailyVolume>6981940</AverageDailyVolume>" +
+                "<Change>0.02</Change>" +
+                "<DaysLow>46.85</DaysLow>" +
+                "<DaysHigh>47.25</DaysHigh>" +
+                "<YearLow>35.0500</YearLow>" +
+                "<YearHigh>47.19</YearHigh>" +
+                "<MarketCapitalization>44.41B</MarketCapitalization>" +
+                "<LastTradePriceOnly>46.43</LastTradePriceOnly>" +
+                "<DaysRange>46.16 - 47.85</DaysRange>" +
+                "<Name>Yahoo! Inc.</Name>" +
+                "<Volume>7675378</Volume>" +
+                "<StockExchange>NMS</StockExchange>" +
+                "</quote>");
+
+        jobLauncherTestUtils.launchStep("loadToSnapshot");
+        Session session = sessionFactory.openSession();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_QUOTE WHERE "
+                + "symbol = 'GAZP' and Avg_Daily_Volume = 6981940 and Days_Low = 46.85"
+                + "and Days_High = 47.25 and Year_Low = 35.0500 and Name = 'Yahoo! Inc.' and Stock_Exchange = 'NMS' "
+                + "and Change = 0.02 and Days_Range_from = 46.16 and Days_Range_to = 47.85"
+                + " and Sym_ID = (select s.Sym_ID from symbol s where s.name = 'GAZP') "
+                + "and Year_High = 47.1900 and Last_Trade_Price = 46.43 and Market_Capitalization = 44410000000 and Volume = 7675378").uniqueResult();
+        session.createSQLQuery("DELETE FROM SNAPSHOT_YAHOO_QUOTE WHERE VOLUME = 7675378").executeUpdate();
+
+        session.close();
+        Assert.assertEquals("Count does not match", 1, count.intValue());
+        Assert.assertEquals("should pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 }
