@@ -7,13 +7,16 @@
     http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
     http://www.springframework.org/schema/util
-    http://www.springframework.org/schema/util/spring-util.xsd">
+    http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/database.xml"/>
 
-    <bean name="symbolReader" class="com.sedc.core.SymbolReader" scope="step">
+    <bean name="symbolReader" class="com.sedc.collectors.yahoo.YahooSymbolReader" scope="step">
         <property name="symbolManager" ref="symbolManager"/>
+        <property name="sourceCenterName" value="YAHOO_QUOTE"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
         <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
@@ -24,6 +27,8 @@
     <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
         <property name="sourceCenterName" value="YAHOO_QUOTE"/>
         <property name="urls" ref="resources"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
     </bean>
 
     <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
@@ -36,7 +41,6 @@
     <bean id="reader" class="org.springframework.batch.item.xml.StaxEventItemReader">
         <property name="fragmentRootElementName" value="quote"/>
         <property name="unmarshaller" ref="unmarshaller"/>
-        <property name="strict" value="false"/>
     </bean>
 
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
@@ -101,12 +105,31 @@
                 or days_high is null
                 or year_low is null
                 or year_high is null
+                or market_capitalization is null
                 or last_trade_price is null"
         />
     </bean>
 
-    <!-- Job Description -->
-    <batch:job id="yahooQuoteLoadJob" restartable="false">
+    <bean id="sourceCenterEngineInstance" class="com.sedc.core.model.SourceCenterEngineInstance">
+        <property name="businessDate">
+            <bean class="java.util.Date"/>
+        </property>
+    </bean>
+
+    <bean id="snapshotSaver" class="com.sedc.core.JbdcBatchUpdater" scope="step">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            INSERT INTO snapshot_quote (scei_id, business_date, sym_id, avg_daily_volume, change, days_low, days_high, year_low, year_high, market_capitalization, last_trade_price, days_range_from, days_range_to, name, volume, stock_exchange)
+            SELECT scei.scei_id, scei.business_date, sym_id, avg_daily_volume, change, days_low, days_high, year_low, year_high, market_capitalization, last_trade_price, days_range_from, days_range_to, name, volume, stock_exchange
+            FROM source_center_engine_instance as scei
+                JOIN stage_yahoo_quote as syq on 1 = 1
+            WHERE scei.scei_id = #{sourceCenterEngineInstance.getId()}
+                AND syq.active_flag = 'Y'"
+        />
+    </bean>
+
+    <!-- Job description -->
+    <batch:job id="yahooQuoteLoadJob">
         <batch:step id="loadSymbols" next="clearStage">
             <batch:tasklet>
                 <batch:chunk reader="symbolReader"
@@ -136,9 +159,15 @@
                 <batch:chunk reader="symbolLinker" commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="filterBySymbol" parent="linkSymbols">
+        <batch:step id="filterBySymbol" parent="linkSymbols" next="saveToSnapshot">
             <batch:tasklet>
                 <batch:chunk reader="symbolFilter" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="saveToSnapshot" parent="filterBySymbol">
+            <batch:tasklet>
+                <batch:chunk reader="snapshotSaver"
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>
