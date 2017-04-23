@@ -1,6 +1,7 @@
 package com.sedc.core;
 
 import lombok.Setter;
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -17,6 +18,7 @@ public class JbdcBatchUpdater implements ItemReader {
     @Override
     public Object read() throws Exception {
         Session session = sessionFactory.openSession();
+        session.setFlushMode(FlushMode.COMMIT);
         Transaction t = session.getTransaction();
         t.begin();
         try {
