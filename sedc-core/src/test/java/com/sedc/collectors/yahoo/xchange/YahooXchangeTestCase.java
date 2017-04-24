@@ -3,6 +3,7 @@ package com.sedc.collectors.yahoo.xchange;
 import com.sedc.core.ListResourceItemReader;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.StandardBasicTypes;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -74,13 +75,97 @@ public class YahooXchangeTestCase {
                 "<Time>5:57pm</Time>" +
                 "<Ask>1.062</Ask>" +
                 "<Bid>1.0656</Bid>" +
-                "</rate>");;
+                "</rate>");
         Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
 
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_FXRATE WHERE Name='EUR/USD' " +
-                "and Rate=1.7 and Date = '2017-05-17' and Time= '17:57:00' and Ask= 1.062 and Bid = 1.0656").uniqueResult();
+                "and Rate=1.7 and Date = '2017-05-17' and Time= '17:57:00' and Ask= 1.062 and Bid = 1.06").uniqueResult();
         session.close();
         Assert.assertEquals("Count does not match", 1, count.intValue());
+    }
+
+    @Test
+    public void testCase2() throws Exception {
+        JobExecution jobExecution = launchStepFor("" +
+                "<rate id=\"EURUSD\">" +
+                "<Name>EUR/USD</Name>" +
+                "<Rate>1.7</Rate>" +
+                "<Date>5/17/2017</Date>" +
+                "<Time>5:57pm</Time>" +
+                "<Ask>1.062</Ask>" +
+                "<Bid>1.06</Bid>" +
+                "</rate>");
+        Session session = sessionFactory.openSession();
+        Assert.assertEquals("Wrong id, should not pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+    }
+
+    @Test
+    public void testInsertWrongTime() throws Exception {
+        JobExecution jobExecution = launchStepFor("" +
+                "<rate id=\"EURUSD\">" +
+                "<Name>EUR/USD</Name>" +
+                "<Rate>1.7</Rate>" +
+                "<Date>5/17/2017</Date>" +
+                "<Time>enter</Time>" +
+                "<Ask>1.062</Ask>" +
+                "<Bid>1.0656</Bid>" +
+                "</rate>");
+        Assert.assertEquals("Wrong TIME, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+    }
+
+    @Test
+    public void testInsertWrongDate() throws Exception {
+        JobExecution jobExecution = launchStepFor("" +
+                "<rate id=\"EURUSD\">" +
+                "<Name>EUR/USD</Name>" +
+                "<Rate>1.7</Rate>" +
+                "<Date>5517/2017</Date>" +
+                "<Time>enter</Time>" +
+                "<Ask>1.062</Ask>" +
+                "<Bid>1.0656</Bid>" +
+                "</rate>");
+        // TODO: Date format
+        Session session = sessionFactory.openSession();
+        session.close();
+        Assert.assertEquals("Wrong DATE, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+    }
+
+    @Test
+    public void testInsertEmptyName() throws Exception {
+        JobExecution jobExecution = launchStepFor("" +
+                "<rate id=\"EURUSD\">" +
+                "<Name></Name>" +
+                "<Rate>1.7</Rate>" +
+                "<Date>5/17/2017</Date>" +
+                "<Time>enter</Time>" +
+                "<Ask>1.062</Ask>" +
+                "<Bid>1.0656</Bid>" +
+                "</rate>");
+        // TODO: Date format
+        Session session = sessionFactory.openSession();
+        session.close();
+        Assert.assertEquals("Empty string, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+    }
+
+    @Test
+    public void testCaseSnapshot() throws Exception {
+        JobExecution jobExecution = launchStepFor("" +
+                "<rate id=\"EURUSD\">" +
+                "<Name>EUR/USD</Name>" +
+                "<Rate>1.7</Rate>" +
+                "<Date>5/17/2017</Date>" +
+                "<Time>5:57pm</Time>" +
+                "<Ask>1.062</Ask>" +
+                "<Bid>1.0656</Bid>" +
+                "</rate>");
+        jobLauncherTestUtils.launchStep("loadToSnapshot");
+        Session session = sessionFactory.openSession();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_FXRATE WHERE Name='EUR/USD' \" +\n" +
+                "                \"and Rate=1.7 and Date = '2017-05-17' and Time= '17:57:00' and Ask= 1.062 and Bid = 1.06\")").uniqueResult();
+        session.createSQLQuery("DELETE FROM SNAPSHOT_HISTORICAL WHERE Name='EUR/USD'").executeUpdate();
+        session.close();
+        Assert.assertEquals("Count does not match", 1, count.intValue());
+        Assert.assertEquals("should pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 }
