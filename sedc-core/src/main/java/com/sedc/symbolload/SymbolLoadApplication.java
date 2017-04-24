@@ -22,6 +22,7 @@ public class SymbolLoadApplication {
             case "SPBEX":
                 CommandLineJobRunner.main(new String[]{"spring/batch/jobs/symbol-load-spbex-job.xml", "symbol-load-spbex-job"});
                 break;
+            case "FOREX":
             case "LSE":
             case "NASDAQ":
             case "NYSE":
