@@ -1,7 +1,6 @@
 package com.sedc.collectors.yahoo.historical;
 
 import com.sedc.core.ListResourceItemReader;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.StandardBasicTypes;
@@ -112,7 +111,6 @@ public class YahooHistoricalTestCase {
         session.close();
         Character c = 'N';
         Assert.assertEquals("Wrong SYMBOL, should not pass", c, flag);
-        //Assert.assertEquals("Wrong SYMBOL, should not pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
@@ -136,7 +134,6 @@ public class YahooHistoricalTestCase {
         Character c = 'N';
         Assert.assertEquals("Wrong Data, should not pass", c, flag);
         //TODO: expected action_reason "Data is corrupted", actual "Symbol not found"
-        //Assert.assertEquals("Wrong type of field OPEN, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
@@ -173,32 +170,12 @@ public class YahooHistoricalTestCase {
         session.close();
         Character c = 'N';
         Assert.assertEquals("Empty field, should not pass", c, flag);
-        //Assert.assertEquals("No HIGH, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
-
-    @Ignore("useless")
-    @Test
-    public void testCaseStageNegativeWrongPeriod() throws Exception {
-        JobExecution jobExecution = launchStepFor("" +
-                "<quote Symbol=\"YHOO\">" +
-                "<Per>Z</Per>" + 
-                "<Date>2016-09-01</Date>" +
-                "<Open>42.779999</Open>" +
-                "<High>43.099998</High>" +
-                "<Low>42.720001</Low>" +
-                "<Close>42.93</Close>" +
-                "<Volume>5575300</Volume>" +
-                "</quote>");
-        //Session session = sessionFactory.openSession();
-        //session.close();
-        Assert.assertEquals("Wrong PER, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
-    }
-
 
     @Test
     public void testCaseSnapshotPositive() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
-                "<quote Symbol=\"YHOO\">" +
+                "<quote Symbol=\"GAZP\">" +
                 "<Date>2016-09-02</Date>" +
                 "<Open>42.779999</Open>" +
                 "<High>43.099998</High>" +
@@ -209,11 +186,13 @@ public class YahooHistoricalTestCase {
         jobLauncherTestUtils.launchStep("saveToSnapshot");
         Session session = sessionFactory.openSession();
         BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM SNAPSHOT_HISTORICAL WHERE "
-                +"SYMBOL ='YHOO' AND DATE = '2016-09-01' AND OPEN = 42.78 AND HIGH = 43.1"
-                +"AND LOW = 42.72 AND CLOSE = 42.93 AND VOLUME = 5575300 AND SYM_ID = (select s.sym_id from symbol s where s.name = 'YHOO') ").uniqueResult();
-        session.createSQLQuery("DELETE FROM SNAPSHOT_HISTORICAL WHERE VOLUME = 1063690").executeUpdate();
+                +"DATE = '2016-09-02' AND OPEN = 42.78 AND HIGH = 43.1"
+                +"AND LOW = 42.72 AND CLOSE = 42.93 AND VOLUME = 5575300" +
+                " AND Sym_Id = (select s.sym_id from symbol s where s.name = 'GAZP')").uniqueResult();
+        session.createSQLQuery("DELETE FROM SNAPSHOT_HISTORICAL WHERE VOLUME = 5575300").executeUpdate();
         session.close();
         Assert.assertEquals("Count does not match", 1, count.intValue());
+        //TODO: Doesn't rec in snapshot
         Assert.assertEquals("should pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
