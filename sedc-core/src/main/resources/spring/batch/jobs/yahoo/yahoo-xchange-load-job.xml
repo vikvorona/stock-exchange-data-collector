@@ -27,6 +27,8 @@
     <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
         <property name="sourceCenterName" value="YAHOO_XCHANGE"/>
         <property name="urls" ref="resources"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
     </bean>
 
     <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
@@ -72,7 +74,7 @@
             set sym_id = (
                 select src.sym_id
                 from symbol src
-                where tgt.name=src.name
+                where tgt.id=src.name
                 order by src.ex_id asc
                 limit 1)
             where active_flag = 'Y'"

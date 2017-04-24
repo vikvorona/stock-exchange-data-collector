@@ -18,4 +18,4 @@ INSERT INTO EXCHANGE VALUES(nextval('S_EXCHANGE_PK'), 'SPBEX', 'Saint Petersburg
 
 INSERT INTO EXCHANGE VALUES(nextval('S_EXCHANGE_PK'), 'MICEX', 'Moscow Exchange', 'Russia', GET_CG_ID_FROM_NAME('REGION', 'EMEA'), 3, CAST( '09:30:00' AS TIME), CAST( '19:00:00' AS TIME), now());
 
-INSERT INTO EXCHANGE VALUES(nextval('S_EXCHANGE_PK'), 'FOREX', 'Foreign Exchange', null, null, null, null, null, now());
+INSERT INTO EXCHANGE VALUES(nextval('S_EXCHANGE_PK'), 'FOREX', 'Foreign Exchange', null, GET_CG_ID_FROM_NAME('REGION', 'FOREX'), 0, CAST( '00:00:00' AS TIME), CAST( '23:59:59' AS TIME), now());

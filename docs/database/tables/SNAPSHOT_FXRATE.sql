@@ -3,13 +3,13 @@ CREATE TABLE SNAPSHOT_FXRATE (
      SCEI_ID           NUMERIC(18) NOT NULL,
      BUSINESS_DATE     DATE NOT NULL,
      SYM_ID            NUMERIC(18) NOT NULL,
-     ID                VARCHAR(20) NOT NULL,
-     NAME              VARCHAR(20) NOT NULL,
+     ID                VARCHAR(100) NOT NULL,
+     NAME              VARCHAR(100) NOT NULL,
      RATE              NUMERIC(18,4) NOT NULL,
      DATE              DATE NOT NULL,
      TIME              TIME NOT NULL,
-     ASK               NUMERIC(18) NOT NULL,
-     BID               NUMERIC(18) NOT NULL,
+     ASK               NUMERIC(18,4) NOT NULL,
+     BID               NUMERIC(18,4) NOT NULL,
 
      CONSTRAINT IPK_SNAPSHOT_FXRATE PRIMARY KEY (SX_ID)
 );
