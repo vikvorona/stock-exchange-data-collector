@@ -86,7 +86,6 @@ public class YahooHistoricalTestCase {
                 " AND Sym_Id = (select s.sym_id from symbol s where s.name = :symbol)")
                 .setString("symbol","GAZP")
                 .uniqueResult();
-        //TODO: multiple symbol with name "YHOO"
         session.close();
         Assert.assertEquals("Count does not match", 1, count.intValue());
     }
