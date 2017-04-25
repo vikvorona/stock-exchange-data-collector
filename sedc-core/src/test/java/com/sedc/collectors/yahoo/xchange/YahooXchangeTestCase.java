@@ -62,11 +62,12 @@ public class YahooXchangeTestCase {
         JobExecution result = jobLauncherTestUtils.launchStep("loadToStage");
         jobLauncherTestUtils.launchStep("filterStage");
         jobLauncherTestUtils.launchStep("linkSymbols");
+        jobLauncherTestUtils.launchStep("filterBySymbol");
         return result;
     }
 
     @Test
-    public void testCase1() throws Exception {
+    public void testCaseStagePositive() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<rate id=\"EURUSD\">" +
                 "<Name>EUR/USD</Name>" +
@@ -79,16 +80,19 @@ public class YahooXchangeTestCase {
         Assert.assertEquals("Should pass good", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
 
         Session session = sessionFactory.openSession();
-        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_FXRATE WHERE Name='EUR/USD' " +
-                "and Rate=1.7 and Date = '2017-05-17' and Time= '17:57:00' and Ask= 1.062 and Bid = 1.06").uniqueResult();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM " +
+                "STAGE_YAHOO_FXRATE WHERE Name='EUR/USD' " +
+                "and Rate=1.7 and Date = '2017-05-17' and Time= '17:57:00' " +
+                "and Ask= 1.062 and Bid = 1.0656 " +
+                "and Sym_Id = (select s.sym_id from symbol s where s.name = 'EURUSD')").uniqueResult();
         session.close();
         Assert.assertEquals("Count does not match", 1, count.intValue());
     }
 
     @Test
-    public void testCase2() throws Exception {
+    public void testCaseStageNegativeWrongId() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
-                "<rate id=\"EURUSD\">" +
+                "<rate id=\"UUU\">" +
                 "<Name>EUR/USD</Name>" +
                 "<Rate>1.7</Rate>" +
                 "<Date>5/17/2017</Date>" +
@@ -97,11 +101,40 @@ public class YahooXchangeTestCase {
                 "<Bid>1.06</Bid>" +
                 "</rate>");
         Session session = sessionFactory.openSession();
-        Assert.assertEquals("Wrong id, should not pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+        Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_YAHOO_FXRATE WHERE ID = :id")
+                .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
+                .setString("id", "UUU")
+                .setMaxResults(1)
+                .uniqueResult();
+        session.close();
+        Character c = 'N';
+        Assert.assertEquals("Wrong Id, should not pass", c, flag);
     }
 
     @Test
-    public void testInsertWrongTime() throws Exception {
+    public void testCaseStageNegativeWrongData() throws Exception {
+        JobExecution jobExecution = launchStepFor("" +
+                "<rate id=\"EURUSD\">" +
+                "<Name>EUR/USD</Name>" +
+                "<Rate>aa</Rate>" +
+                "<Date>5/17/2017</Date>" +
+                "<Time>5:57pm</Time>" +
+                "<Ask>1.062</Ask>" +
+                "<Bid>1.06</Bid>" +
+                "</rate>");
+        Session session = sessionFactory.openSession();
+        Character flag = (Character) session.createSQLQuery("SELECT ACTIVE_FLAG FROM STAGE_YAHOO_FXRATE WHERE ID = :id")
+                .addScalar("ACTIVE_FLAG", StandardBasicTypes.CHARACTER)
+                .setString("id", "EURUSD")
+                .setMaxResults(1)
+                .uniqueResult();
+        session.close();
+        Character c = 'N';
+        Assert.assertEquals("Wrong Data, should not pass", c, flag);
+    }
+
+    @Test
+    public void testCaseStageNegativeWrongTime() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<rate id=\"EURUSD\">" +
                 "<Name>EUR/USD</Name>" +
@@ -115,7 +148,7 @@ public class YahooXchangeTestCase {
     }
 
     @Test
-    public void testInsertWrongDate() throws Exception {
+    public void testCaseStageNegativeWrongDate() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<rate id=\"EURUSD\">" +
                 "<Name>EUR/USD</Name>" +
@@ -125,14 +158,11 @@ public class YahooXchangeTestCase {
                 "<Ask>1.062</Ask>" +
                 "<Bid>1.0656</Bid>" +
                 "</rate>");
-        // TODO: Date format
-        Session session = sessionFactory.openSession();
-        session.close();
         Assert.assertEquals("Wrong DATE, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
-    public void testInsertEmptyName() throws Exception {
+    public void testCaseStageNegativeEmptyField() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<rate id=\"EURUSD\">" +
                 "<Name></Name>" +
@@ -142,14 +172,11 @@ public class YahooXchangeTestCase {
                 "<Ask>1.062</Ask>" +
                 "<Bid>1.0656</Bid>" +
                 "</rate>");
-        // TODO: Date format
-        Session session = sessionFactory.openSession();
-        session.close();
-        Assert.assertEquals("Empty string, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
+        Assert.assertEquals("Empty field, should not pass", ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
 
     @Test
-    public void testCaseSnapshot() throws Exception {
+    public void testCaseSnapshotPositive() throws Exception {
         JobExecution jobExecution = launchStepFor("" +
                 "<rate id=\"EURUSD\">" +
                 "<Name>EUR/USD</Name>" +
@@ -159,12 +186,14 @@ public class YahooXchangeTestCase {
                 "<Ask>1.062</Ask>" +
                 "<Bid>1.0656</Bid>" +
                 "</rate>");
-        jobLauncherTestUtils.launchStep("loadToSnapshot");
+        jobLauncherTestUtils.launchStep("saveToSnapshot");
         Session session = sessionFactory.openSession();
-        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM STAGE_YAHOO_FXRATE WHERE Name='EUR/USD' \" +\n" +
-                "                \"and Rate=1.7 and Date = '2017-05-17' and Time= '17:57:00' and Ask= 1.062 and Bid = 1.06\")").uniqueResult();
-        session.createSQLQuery("DELETE FROM SNAPSHOT_HISTORICAL WHERE Name='EUR/USD'").executeUpdate();
+        BigInteger count = (BigInteger) session.createSQLQuery("SELECT count(1) FROM SNAPSHOT_FXRATE WHERE " +
+                "Name='EUR/USD' and Rate=1.7 and Date = '2017-05-17' and " +
+                "Time= '17:57:00' and Ask= 1.062 and Bid = 1.0656").uniqueResult();
+        session.createSQLQuery("DELETE FROM SNAPSHOT_FXRATE WHERE Bid=1.0656").executeUpdate();
         session.close();
+        //TODO: saving to snapshot doesn't work
         Assert.assertEquals("Count does not match", 1, count.intValue());
         Assert.assertEquals("should pass", ExitStatus.COMPLETED.getExitCode(), jobExecution.getExitStatus().getExitCode());
     }
