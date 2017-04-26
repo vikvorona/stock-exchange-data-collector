@@ -106,7 +106,9 @@
                 or year_low is null
                 or year_high is null
                 or market_capitalization is null
-                or last_trade_price is null"
+                or last_trade_price is null
+                or volume is null
+                or name = ''"
         />
     </bean>
 

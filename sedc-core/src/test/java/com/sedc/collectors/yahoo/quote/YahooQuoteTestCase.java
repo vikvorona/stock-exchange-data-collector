@@ -1,7 +1,6 @@
 package com.sedc.collectors.yahoo.quote;
 
 import com.sedc.core.ListResourceItemReader;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.StandardBasicTypes;
@@ -149,7 +148,6 @@ public class YahooQuoteTestCase {
         session.close();
         Character c = 'N';
         Assert.assertEquals("Wrong Data", c, flag);
-        //TODO: Wrong Volume don't change an Active_Flag
     }
 
     @Test
@@ -179,7 +177,6 @@ public class YahooQuoteTestCase {
         session.close();
         Character c = 'N';
         Assert.assertEquals("Empty field", c, flag);
-        //TODO: Empty fields don't change an Active_Flag
     }
 
     @Test
