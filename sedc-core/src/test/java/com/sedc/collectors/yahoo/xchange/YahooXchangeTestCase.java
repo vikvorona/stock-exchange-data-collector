@@ -1,6 +1,8 @@
 package com.sedc.collectors.yahoo.xchange;
 
+import com.sedc.Region;
 import com.sedc.core.ListResourceItemReader;
+import com.sedc.core.model.SourceCenterEngineInstance;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.StandardBasicTypes;
@@ -12,6 +14,8 @@ import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
@@ -22,6 +26,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,10 +47,14 @@ public class YahooXchangeTestCase {
     @Autowired
     private ListResourceItemReader multiResourceReader;
 
+    @Autowired
+    private SourceCenterEngineInstance sourceCenterEngineInstance;
+
     private List<UrlResource> resources = new ArrayList<>();
 
     @Before
     public void setUp() throws Exception {
+        resources.clear();
         multiResourceReader.setResources(resources);
     }
 
@@ -58,12 +67,11 @@ public class YahooXchangeTestCase {
         // put temp file in resources
         resources.add(new UrlResource(f.toURI()));
 
-        jobLauncherTestUtils.launchStep("clearStage");
-        JobExecution result = jobLauncherTestUtils.launchStep("loadToStage");
-        jobLauncherTestUtils.launchStep("filterStage");
-        jobLauncherTestUtils.launchStep("linkSymbols");
-        jobLauncherTestUtils.launchStep("filterBySymbol");
-        return result;
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("region", Region.FOREX.name())
+                .addDate("launchTime", new Date())
+                .toJobParameters();
+        return jobLauncherTestUtils.launchJob(jobParameters);
     }
 
     @Test
