@@ -94,7 +94,7 @@
         <property name="sql" value="update stage_yahoo_historical
                                     set active_flag = 'N',
                                     active_reason = 'Symbol not found'
-                                    where sym_id is null"
+                                    where sym_id is null and active_flag = 'Y'"
         />
     </bean>
 
