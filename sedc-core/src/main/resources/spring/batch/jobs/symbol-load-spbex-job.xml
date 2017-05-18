@@ -1,6 +1,6 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/batch
 	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
 	http://www.springframework.org/schema/beans
@@ -31,7 +31,7 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean id="writer" class="org.springframework.batch.item.database.HibernateItemWriter">
+    <bean id="writer" class="com.sedc.symbolload.SymbolWriter">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 

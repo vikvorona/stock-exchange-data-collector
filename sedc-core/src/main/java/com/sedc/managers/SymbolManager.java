@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SymbolManager {
 
-    List<String> getStringSymbolsBySource(String sourceEngineName);
+    List<String> getStringSymbolsByRegion(String sourceEngineName);
 
     List<Symbol> getSymbolsBySource(String sourceEngineName);
 

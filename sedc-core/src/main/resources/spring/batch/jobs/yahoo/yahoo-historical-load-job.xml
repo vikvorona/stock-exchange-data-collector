@@ -3,38 +3,50 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/batch
-	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
-	http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
     http://www.springframework.org/schema/util
-    http://www.springframework.org/schema/util/spring-util.xsd">
+    http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/database.xml"/>
 
-    <bean name="symbolReader" class="com.sedc.core.SymbolReader" scope="step">
+    <bean name="symbolReader" class="com.sedc.collectors.yahoo.YahooSymbolReader" scope="step">
         <property name="symbolManager" ref="symbolManager"/>
+        <property name="sourceCenterName" value="YAHOO_HISTORICAL"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
         <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
-    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
+    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
     <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
-        <property name="sourceEngineName" value="YAHOO_HISTORICAL"/>
+        <property name="sourceCenterName" value="YAHOO_HISTORICAL"/>
         <property name="startDate">
             <bean class="java.time.LocalDate" factory-method="parse">
-                <constructor-arg name="text" value="2017-02-24"/>
+                <constructor-arg value="${DATE_FROM}"/>
             </bean>
         </property>
-        <property name="urls" ref="urls"/>
+        <property name="endDate">
+            <bean class="java.time.LocalDate" factory-method="parse">
+                <constructor-arg value="${DATE_TO}"/>
+            </bean>
+        </property>
+        <property name="urls" ref="resources"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
     </bean>
 
     <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
-        <property name="resources" ref="urls"/>
+        <property name="resources" ref="resources"/>
         <property name="delegate" ref="reader"/>
     </bean>
 
-    <util:list id="urls" list-class="java.util.ArrayList"/>
+    <util:list id="resources" list-class="java.util.ArrayList"/>
 
     <bean id="reader" class="org.springframework.batch.item.xml.StaxEventItemReader">
         <property name="fragmentRootElementName" value="quote"/>
@@ -49,29 +61,115 @@
         </property>
     </bean>
 
-    <bean id="processor" class="com.sedc.collectors.yahoo.historical.YahooHistoricalProcessor"/>
+    <bean id="dbWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sql" value="
+                insert into STAGE_YAHOO_HISTORICAL(SYMBOL,PER,DATE,OPEN,HIGH,LOW,CLOSE,VOLUME)
+                values (?, 'D', ?, ?, ?, ?, ?, ?)"/>
+        <property name="itemPreparedStatementSetter">
+            <bean class="com.sedc.collectors.yahoo.historical.YahooHibernateItemPreparedStatementSetter"/>
+        </property>
+    </bean>
 
-    <bean id="dbWriter" class="org.springframework.batch.item.database.HibernateItemWriter">
+    <bean id="stageCleaner" class="com.sedc.core.JbdcBatchUpdater">
         <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="TRUNCATE TABLE STAGE_YAHOO_HISTORICAL"/>
+    </bean>
+
+    <bean id="symbolLinker" class="com.sedc.core.JbdcBatchUpdater" scope="step">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="update stage_yahoo_historical tgt
+                                    set sym_id = (
+                                        select src.sym_id
+                                        from symbol src
+                                        where tgt.symbol=src.name
+                                        order by src.ex_id asc
+                                        limit 1)
+                                    where active_flag = 'Y'"
+        />
+    </bean>
+
+    <bean id="symbolFilter" class="com.sedc.core.JbdcBatchUpdater" scope="step">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="update stage_yahoo_historical
+                                    set active_flag = 'N',
+                                    active_reason = 'Symbol not found'
+                                    where sym_id is null and active_flag = 'Y'"
+        />
+    </bean>
+
+    <bean id="dataFilter" class="com.sedc.core.JbdcBatchUpdater" scope="step">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="update stage_yahoo_historical
+                                    set active_flag = 'N',
+                                        active_reason = 'Data is corrupted'
+                                    where symbol is null
+                                        or open is null
+                                        or high is null
+                                        or low is null
+                                        or close is null
+                                        or volume is null"
+        />
+    </bean>
+
+    <bean id="sourceCenterEngineInstance" class="com.sedc.core.model.SourceCenterEngineInstance">
+        <property name="businessDate">
+            <bean class="java.util.Date"/>
+        </property>
+    </bean>
+
+    <bean id="snapshotSaver" class="com.sedc.core.JbdcBatchUpdater" scope="step">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            INSERT INTO snapshot_historical (scei_id, business_date, sym_id, period, date, time, open, high, low, close, volume, active_flag)
+            SELECT scei.scei_id, scei.business_date, syh.sym_id, syh.per, syh.date, CAST('00:00:00' AS TIME), syh.open,
+                syh.high, syh.low, syh.close, syh.volume, syh.active_flag
+            FROM source_center_engine_instance as scei
+                JOIN stage_yahoo_historical as syh on 1 = 1
+            WHERE scei.scei_id = #{sourceCenterEngineInstance.getId()}"
+        />
     </bean>
 
     <!-- Job description -->
     <batch:job id="yahooHistoricalLoadJob">
-        <batch:step id="loadSymbols" next="loadToStage">
+        <batch:step id="loadSymbols" next="clearStage">
             <batch:tasklet>
                 <batch:chunk reader="symbolReader"
                              writer="resourceGenerator"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="50"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="loadToStage">
+        <batch:step id="clearStage" parent="loadSymbols" next="loadToStage">
+            <batch:tasklet>
+                <batch:chunk reader="stageCleaner" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToStage" parent="clearStage" next="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
                              writer="dbWriter"
-                             processor="processor"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="1000"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterStage" parent="loadToStage" next="linkSymbols">
+            <batch:tasklet>
+                <batch:chunk reader="dataFilter" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="linkSymbols" parent="filterStage" next="filterBySymbol">
+            <batch:tasklet>
+                <batch:chunk reader="symbolLinker" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterBySymbol" parent="linkSymbols" next="saveToSnapshot">
+            <batch:tasklet>
+                <batch:chunk reader="symbolFilter" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="saveToSnapshot" parent="filterBySymbol">
+            <batch:tasklet>
+                <batch:chunk reader="snapshotSaver"
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>

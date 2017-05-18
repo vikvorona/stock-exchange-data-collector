@@ -50,6 +50,6 @@ public class MicexMapper implements ItemProcessor<MicexRow, Symbol>, Initializin
 
         session.close();
 
-        Assert.notNull(micex, "Cannot fined MICEX exchange");
+        Assert.notNull(micex, "Cannot find MICEX exchange");
     }
 }

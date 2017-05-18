@@ -1,7 +1,7 @@
 package com.sedc.collectors.yahoo.historical;
 
-import com.sedc.collectors.yahoo.util.YahooResourceHelper;
 import com.sedc.collectors.yahoo.util.YahooJsonReader;
+import com.sedc.collectors.yahoo.util.YahooResourceHelper;
 import com.sedc.managers.SymbolManager;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -46,7 +46,7 @@ public class YahooHistoricalHibernateTest {
 
     @Before
     public void setUp() throws Exception {
-        List<String> symbols = symbolManager.getStringSymbolsBySource("FINAM_HISTORY");
+        List<String> symbols = symbolManager.getStringSymbolsByRegion("FINAM_HISTORY");
 
         LocalDate startDate = LocalDate.now().minusMonths(1);
         LocalDate endDate = LocalDate.now();

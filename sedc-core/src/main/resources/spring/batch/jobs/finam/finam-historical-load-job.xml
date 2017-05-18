@@ -1,11 +1,11 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:batch="http://www.springframework.org/schema/batch"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="
        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
-	http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="classpath:spring/batch/config/context.xml"/>
     <import resource="classpath:spring/batch/config/database.xml"/>
@@ -14,28 +14,51 @@
         <property name="lineMapper" ref="lineMapper"/>
     </bean>
 
-    <bean id="stageFilter" class="com.sedc.collectors.finam.historical.StageTableFilter">
+    <bean id="stageFilter" class="com.sedc.core.JbdcBatchUpdater" scope="step">
         <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="update stage_finam_historical
+                                    set active_flag = 'N',
+                                    active_reason = 'Symbol not found'
+                                    where sym_id is null"
+        />
     </bean>
 
-    <bean id="snapshotLoader" class="com.sedc.collectors.finam.historical.SnapshotTableLoader">
+    <bean id="symIdUpdater" class="com.sedc.core.JbdcBatchUpdater">
         <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="update STAGE_FINAM_HISTORICAL
+            set sym_id=subquery.sym_id
+            from (select s.name, s.sym_id
+            from SYMBOL s, stage_finam_historical
+            where s.name = stage_finam_historical.symbol) as subquery
+            where subquery.name = stage_finam_historical.symbol;"
+        />
     </bean>
 
-    <bean id="flatFileItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
-        <property name="resource" value="file:target/cvs/report.csv"/>
-        <property name="shouldDeleteIfExists" value="true"/>
+    <bean id="snapshotLoader" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="insert into snapshot_historical (scei_id, business_date, sym_id, period, date, time, open, high, low, close, volume, active_flag)
+            with source_center_engine_instance as (
+            select scei_id, business_date FROM source_center_engine_instance ORDER BY scei_id DESC LIMIT 1
+            ), stage_finam_historical as (
+            select sym_id, per, date, time, open, high, low, close, volume, active_flag from stage_finam_historical
+            )
+            select scei.scei_id, scei.business_date, sfh.sym_id, sfh.per, sfh.date, sfh.time, sfh.open,
+            sfh.high, sfh.low, sfh.close, sfh.volume, sfh.active_flag
+            from source_center_engine_instance as scei, stage_finam_historical as sfh"
+        />
+    </bean>
 
-        <property name="lineAggregator">
-            <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
-                <property name="delimiter" value=","/>
-                <property name="fieldExtractor">
-                    <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
-                        <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
-                    </bean>
-                </property>
-            </bean>
-        </property>
+    <bean id="sourceEngineLoader" class="com.sedc.core.JbdcBatchUpdater" scope="step">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="INSERT INTO public.source_center_engine_instance (sce_id, business_date, start_tm)
+            select sce_id, now(), now()
+            from source_center_engine sce
+                join source_center sc on sce.sc_id = sc.sc_id
+                join code_generic cg on sce.region_cg_id = cg.cg_id
+            where sc.name = 'FINAM'
+            and cg.type = 'REGION'
+            and cg.name = '#{jobParameters[region]}'"
+        />
     </bean>
 
     <bean name="lineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
@@ -46,6 +69,7 @@
     <bean name="tokenizer" class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
         <property name="names" value="ticker,period,date,time,open,high,low,close,volume"/>
         <property name="delimiter" value=","/>
+        <property name="strict" value="false"/>
     </bean>
 
     <bean name="fieldMapper" class="com.sedc.collectors.finam.historical.FinamFieldSetMapper"/>
@@ -55,23 +79,25 @@
         <property name="region" value="#{jobParameters[region]}"/>
     </bean>
 
-    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl"/>
+    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
     <bean id="dateFormat" class="java.text.SimpleDateFormat">
-        <constructor-arg value="dd.MM.yyyy" />
+        <constructor-arg value="dd.MM.yyyy"/>
     </bean>
 
     <bean name="resourceGenerator" class="com.sedc.collectors.finam.historical.FinamResourceGenerator" scope="step">
         <property name="urls" ref="urls"/>
         <property name="period" value="#{jobParameters[period]}"/>
         <property name="dateFrom">
-            <bean factory-bean="dateFormat" factory-method="parse">
-                <constructor-arg value="24.02.2017" />
+            <bean class="java.time.LocalDate" factory-method="parse">
+                <constructor-arg value="${DATE_FROM}"/>
             </bean>
         </property>
         <property name="dateTo">
-            <bean factory-bean="dateFormat" factory-method="parse">
-                <constructor-arg value="01.03.2017" />
+            <bean class="java.time.LocalDate" factory-method="parse">
+                <constructor-arg value="${DATE_TO}"/>
             </bean>
         </property>
     </bean>
@@ -87,8 +113,8 @@
         <property name="sql">
             <value>
                 <![CDATA[
-            	insert into STAGE_FINAM_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
-			        values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume)
+                insert into STAGE_FINAM_HISTORICAL(SYMBOL,PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME)
+                    values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume)
             ]]>
             </value>
         </property>
@@ -103,8 +129,8 @@
         <property name="sql">
             <value>
                 <![CDATA[
-            	insert into SNAPSHOT_HISTORICAL(PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME,ACTIVE_FLAG)
-			        values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume, :active_flag)
+                insert into SNAPSHOT_HISTORICAL(PER,DATE,TIME,OPEN,HIGH,LOW,CLOSE,VOLUME,ACTIVE_FLAG)
+                    values (:ticker, :period, :date, :time, :open, :high, :low, :close, :volume, :active_flag)
             ]]>
             </value>
         </property>
@@ -116,37 +142,54 @@
 
     <util:list id="urls" list-class="java.util.ArrayList"/>
 
+    <bean id="stageCleaner" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="TRUNCATE TABLE STAGE_FINAM_HISTORICAL"/>
+    </bean>
+
     <batch:job id="finam-historical-load-job" job-repository="jobRepository">
-        <batch:step id="loadSymbols" next="loadToStage">
+        <batch:step id="loadSymbols" next="clearStage">
             <batch:tasklet>
                 <batch:chunk reader="symbolReader"
                              writer="resourceGenerator"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="loadToStage" parent="loadSymbols" next="filterStage">
+        <batch:step id="clearStage" parent="loadSymbols" next="loadToSourceEngine">
+            <batch:tasklet>
+                <batch:chunk reader="stageCleaner" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToSourceEngine" parent="clearStage" next="loadToStage">
+            <batch:tasklet>
+                <batch:chunk reader="sourceEngineLoader"
+                             commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToStage" parent="loadToSourceEngine" next="linkSymbols">
             <batch:tasklet>
                 <batch:chunk reader="multiResourceReader"
                              writer="dbWriter"
-                             commit-interval="100">
-                </batch:chunk>
+                             commit-interval="1000"/>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="filterStage" parent="loadToStage" next="loadToSnapshot">
+        <batch:step id="linkSymbols" parent="loadToStage" next="filterStage">
+            <batch:tasklet>
+                <batch:chunk reader="symIdUpdater"
+                             commit-interval="1000"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterStage" parent="linkSymbols" next="loadToSnapshot">
             <batch:tasklet>
                 <batch:chunk reader="stageFilter"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
         <batch:step id="loadToSnapshot" parent="filterStage">
             <batch:tasklet>
                 <batch:chunk reader="snapshotLoader"
-                             commit-interval="1">
-                </batch:chunk>
+                             commit-interval="1"/>
             </batch:tasklet>
         </batch:step>
     </batch:job>
-
 </beans>

@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.*;
 @XmlRootElement(name = "quote")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class YahooQuoteRecord {
-    @XmlAttribute(name = "Symbol")
+    @XmlAttribute(name = "symbol")
     private String symbol;
     @XmlElement(name = "AverageDailyVolume")
     private Double averageDailyVolume;

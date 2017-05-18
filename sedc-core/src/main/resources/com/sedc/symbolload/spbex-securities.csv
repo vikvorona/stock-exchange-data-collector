@@ -1,4 +1,3 @@
-Row;s_level_name;e_full_name;e_INN_code;s_sec_type_name_dop;s_sec_form_name_full;s_RTS_code;s_ISIN_code;si_gos_reg_num;si_gos_reg_date;s_face_value;s_face_value_currency;s_quot_list_in_date;s_segment;s_date_defolt;s_date_technic_defolt
 1;Некотировальная часть Списка;Акционерный Коммерческий Банк «Алмазэргиэнбанк» Акционерное общество;1435138944;Облигации;Облигации биржевые;ALEB01;RU000A0JX3K4;4B040102602B;23.12.2016 0:00:00;1000,000000000000;RUB;23.12.2016 0:00:00;Восход;;
 2;Некотировальная часть Списка;Alcoa Corporation;;Акции;Акции иностранного эмитента  обыкновенные;AA;US0138721065;;;0,010000000000;USD;22.11.2016 0:00:00;;;
 3;Некотировальная часть Списка;Arconic Inc.;;Акции;Акции иностранного эмитента  обыкновенные;ARNC;US03965L1008;;;1,000000000000;USD;22.11.2016 0:00:00;;;

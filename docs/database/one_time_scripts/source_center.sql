@@ -1,0 +1,3 @@
+INSERT INTO SOURCE_CENTER VALUES (nextval('S_SOURCE_CENTER_PK'), 'FINAM', 'Finam export API', NOW(), 'Y');
+
+INSERT INTO SOURCE_CENTER VALUES (nextval('S_SOURCE_CENTER_PK'), 'YAHOO', 'Yahoo finance API', NOW(), 'Y');

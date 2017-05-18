@@ -1,9 +1,168 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
     <import resource="classpath:spring/batch/config/context.xml"/>
-    <import resource="classpath:spring/batch/config/embedded-database.xml"/>
+    <import resource="classpath:spring/batch/config/database.xml"/>
 
+    <bean name="symbolReader" class="com.sedc.collectors.yahoo.YahooSymbolReader" scope="step">
+        <property name="symbolManager" ref="symbolManager"/>
+        <property name="sourceCenterName" value="YAHOO_XCHANGE"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="region" value="#{jobParameters[region]}"/>
+    </bean>
+
+    <bean name="symbolManager" class="com.sedc.managers.SymbolManagerImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <bean name="resourceGenerator" class="com.sedc.collectors.yahoo.util.YahooResourceGenerator" scope="step">
+        <property name="sourceCenterName" value="YAHOO_XCHANGE"/>
+        <property name="urls" ref="resources"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="scei" ref="sourceCenterEngineInstance"/>
+    </bean>
+
+    <bean name="multiResourceReader" class="com.sedc.core.ListResourceItemReader">
+        <property name="resources" ref="resources"/>
+        <property name="delegate" ref="reader"/>
+    </bean>
+
+    <util:list id="resources" list-class="java.util.ArrayList"/>
+
+    <bean id="reader" class="org.springframework.batch.item.xml.StaxEventItemReader">
+        <property name="fragmentRootElementName" value="rate"/>
+        <property name="unmarshaller" ref="unmarshaller"/>
+    </bean>
+
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>com.sedc.collectors.yahoo.xchange.model.YahooXchangeRecord</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dbWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sql" value="
+                INSERT INTO stage_yahoo_fxrate
+                (id, name, rate, date, time, ask, bid)
+                VALUES(?, ?, ?, ?, ?, ?, ?)"/>
+        <property name="itemPreparedStatementSetter">
+            <bean class="com.sedc.collectors.yahoo.xchange.YahooXchangeItemPreparedStatementSetter"/>
+        </property>
+    </bean>
+
+    <bean id="stageCleaner" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="TRUNCATE TABLE stage_yahoo_fxrate"/>
+    </bean>
+
+    <bean id="symbolLinker" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            update stage_yahoo_fxrate tgt
+            set sym_id = (
+                select src.sym_id
+                from symbol src
+                where tgt.id=src.name
+                order by src.ex_id asc
+                limit 1)
+            where active_flag = 'Y'"
+        />
+    </bean>
+
+    <bean id="symbolFilter" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            update stage_yahoo_fxrate
+            set active_flag = 'N',
+                active_reason = 'Symbol not found'
+            where active_flag = 'Y' and sym_id is null"
+        />
+    </bean>
+
+    <bean id="dataFilter" class="com.sedc.core.JbdcBatchUpdater">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            update stage_yahoo_fxrate
+            set active_flag = 'N',
+                active_reason = 'Data is corrupted'
+            where id is null
+                or rate is null
+                or ask is null
+                or bid is null"
+        />
+    </bean>
+
+    <bean id="sourceCenterEngineInstance" class="com.sedc.core.model.SourceCenterEngineInstance">
+        <property name="businessDate">
+            <bean class="java.util.Date"/>
+        </property>
+    </bean>
+
+    <bean id="snapshotSaver" class="com.sedc.core.JbdcBatchUpdater" scope="step">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sql" value="
+            INSERT INTO snapshot_fxrate (scei_id, business_date, sym_id, id, name, rate, date, time, ask, bid)
+            SELECT scei.scei_id, scei.business_date, syf.sym_id, syf.id, syf.name, syf.rate, syf.date, syf.time, syf.ask, syf.bid
+            FROM source_center_engine_instance as scei
+                JOIN stage_yahoo_fxrate as syf on 1 = 1
+            WHERE scei.scei_id = #{sourceCenterEngineInstance.getId()}
+                AND syf.active_flag = 'Y'"
+        />
+    </bean>
+
+    <!-- Job description -->
+    <batch:job id="yahooXchangeLoadJob">
+        <batch:step id="loadSymbols" next="clearStage">
+            <batch:tasklet>
+                <batch:chunk reader="symbolReader"
+                             writer="resourceGenerator"
+                             commit-interval="50"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="clearStage" parent="loadSymbols" next="loadToStage">
+            <batch:tasklet>
+                <batch:chunk reader="stageCleaner" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="loadToStage" parent="clearStage" next="filterStage">
+            <batch:tasklet>
+                <batch:chunk reader="multiResourceReader"
+                             writer="dbWriter"
+                             commit-interval="1000"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterStage" parent="loadToStage" next="linkSymbols">
+            <batch:tasklet>
+                <batch:chunk reader="dataFilter" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="linkSymbols" parent="filterStage" next="filterBySymbol">
+            <batch:tasklet>
+                <batch:chunk reader="symbolLinker" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="filterBySymbol" parent="linkSymbols" next="saveToSnapshot">
+            <batch:tasklet>
+                <batch:chunk reader="symbolFilter" commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="saveToSnapshot" parent="filterBySymbol">
+            <batch:tasklet>
+                <batch:chunk reader="snapshotSaver"
+                             commit-interval="1"/>
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
 </beans>

@@ -19,6 +19,6 @@ public class FinamHistoricalApplication {
         Region region = Region.valueOf(args[1]);
 
         CommandLineJobRunner.main(new String[]{"spring/batch/jobs/finam/finam-historical-load-job.xml", "finam-historical-load-job",
-                "period=" + period, "region=" + region});
+                "period=" + period.getCode(), "region=" + region});
     }
 }
